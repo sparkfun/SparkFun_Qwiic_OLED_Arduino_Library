@@ -29,16 +29,16 @@ The following demos work on validated hardware (see below)
 * Arduino Objects - right now mostly C++
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
-* ESP32 compbiles, but fails to run - Looks like an I2C issue
+* 
 ## Hardware
 ### Tested/Working
 * Qwiic Micro OLED
 * Qwiic "narrow OLED"
 * Artemis
 * SAMD51
+* ESP32
 ### To Be Tested/Supported
 * Qwiic Transparent OLED
-* ESP32
 * STM32
 * RP2040
 * SAMD21
