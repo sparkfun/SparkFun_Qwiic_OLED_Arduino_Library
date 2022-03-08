@@ -76,20 +76,22 @@ bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataT
 // writeRegisterRegion()
 //
 //
-int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length){
 
+int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length){
 
     uint16_t nSent;
     uint16_t nRemaining=length;
+    uint16_t nToWrite;
 
     while(nRemaining > 0){
 
         _i2cPort->beginTransmission(i2c_address);
         _i2cPort->write(offset);
 
-        nSent = _i2cPort->write(data, (nRemaining > kChunkSize ? kChunkSize : nRemaining));
+        nToWrite = (nRemaining > kChunkSize ? kChunkSize : nRemaining);
+        nSent = _i2cPort->write(data, nToWrite);
 
-        nRemaining -= nSent;
+        nRemaining -= nToWrite;        // Note - use nToWrite, not nSent, or lock on esp32
         data += nSent; // move up to remaining data in buffer
 
         // only release bus if we've sent all data
