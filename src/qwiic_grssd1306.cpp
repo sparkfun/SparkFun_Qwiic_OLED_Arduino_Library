@@ -208,9 +208,9 @@ bool QwGrSSD1306::init(void){
 
 	_idraw.draw_rect_filled = _idraw.draw_line_vert;
 
+
 	// Start the device setup - sending commands to device. See command defs in header, and
 	// device datasheet
-
 	send_dev_command(kCmdDisplayOff);
 
 	send_dev_command(kCmdSetDisplayClockDiv, 0x80);
@@ -555,7 +555,7 @@ bool QwGrSSD1306::set_screenbuffer_address(uint8_t page, uint8_t column){
 ////////////////////////////////////////////////////////////////////////////////////
 // display()
 //
-// Send the areas of the graphics buffer to the device's screen buffer. Only send 
+// Send the "dirty" areas of the graphics buffer to the device's screen buffer. Only send 
 // the areas that need to be updated. The update region is based on new graphics to
 // display, and any currently displayed items that need to be erased.
 
@@ -568,7 +568,7 @@ void QwGrSSD1306::display(){
 
 	for(int i=0; i < _nPages; i++){
 
-		// We keep erase rect seperate from dirty rect. Make temp copy of 
+		// We keep the erase rect seperate from dirty rect. Make temp copy of 
 		// dirty rect page range, expand to include erase rect page range.
 
 		transferRange = _pageState[i];

@@ -21,10 +21,10 @@
 // be set in the device. These are the pins that connect the display to
 // the SSD1306.
 //
-#define kDefaultPinConfig  		0x12
+#define kDefaultPinConfig		0x12
 #define kDefaultPreCharge		0xF1
-#define kDefaultVCOMDeselect    0x40
-#define kDefaultContrast 		0x8F
+#define kDefaultVCOMDeselect	0x40
+#define kDefaultContrast		0x8F
 
 // Graphic pixel write operator function types
 typedef enum gr_op_funcs {
@@ -136,6 +136,7 @@ protected:
 	void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
 
+	///////////////////////////////////////////////////////////////////////////
 	// configuration methods for sub-classes. Settings unique to a device 
 	void set_comm_pins(uint8_t);
 	void set_pre_charge(uint8_t);
