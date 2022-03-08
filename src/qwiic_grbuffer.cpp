@@ -29,8 +29,8 @@ _QwIDraw_vtable * GetIDrawVTable(_QwIDraw *obj){
 // This method pulls out the vtable of this object and determines what methods are
 // defined in the QwIDraw interface.
 //
-// Using what is defined, the draw function array values are set. This class uses 
-// the draw function arrays to skip call time vtable method lookup and call the 
+// Using what is defined, the functions in _idraw interfade are set. This class uses 
+// the draw functions in this interface to skip call time vtable method lookup and call the 
 // target method directly. 
 //
 // Ideally this pattern/implementation increase performace a slight bit. Also it 
