@@ -98,6 +98,7 @@ public:
 	virtual bool init(void );
 	bool is_initialized(void){ return _isInit;};
 	
+	// method to set the communication bus this object should use
 	void set_comm_bus(QwI2C &theBus, uint8_t id_bus);
 
 	// Set the current color/pixel write operation
@@ -125,10 +126,13 @@ protected:
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	// Internal, fast draw routines 
-	// Pixels
+	// Internal, fast draw routines - this are used in the overall 
+	// draw interface (_QwIDraw) for this object/device/system. 
+	//
+	// >> Pixels <<
 	void  draw_pixel(uint8_t x, uint8_t y);
 
+	// >> Fast Lines <<
 	void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
 
@@ -161,8 +165,8 @@ private:
 	QwI2C 			  * _i2cBus;       // pointer to our i2c bus object
 	uint8_t				_i2c_address;  // address of the device
 
-	// Comp Pin's hardware config - can be different for each device,
-	// so we need to stash 
+	// Stash values for settings that are unique to each device.
+
 	uint8_t				_initHWComPins;
 	uint8_t    	        _initPreCharge;
 	uint8_t				_initVCOMDeselect;

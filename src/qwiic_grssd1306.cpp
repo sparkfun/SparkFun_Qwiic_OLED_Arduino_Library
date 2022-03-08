@@ -101,8 +101,8 @@
 // 
 // See datasheet for details
 //
-#define kDeviceSendCommand  0x00
-#define kDeviceSendData  	0x40
+#define kDeviceSendCommand	0x00
+#define kDeviceSendData		0x40
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ QwGrSSD1306::QwGrSSD1306() {
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-// initialize()
+// init()
 //
 // Called when the device/system is up and ready to be "initialized."
 //
@@ -203,7 +203,7 @@ bool QwGrSSD1306::init(void){
 
 	// At this point, the main device interface is filled in. This classes draw_line_vert()
 	// can also draw filled rects, so hack the device table to have draw_rect_filled points
-	// to this calsses draw_line_vert(), which should be the method in the draw_line_vert entry
+	// to this classes draw_line_vert(), which should be the method in the draw_line_vert entry
 	// of the draw interface.
 
 	_idraw.draw_rect_filled = _idraw.draw_line_vert;
@@ -237,8 +237,8 @@ bool QwGrSSD1306::init(void){
 
 	// Finish up setting up this object
 
-	// set our current color to white
-	set_color(GrOpPixSet); // GrOpWhite value is > 0
+	// set our current color to white (set a pixel)
+	set_color(GrOpPixSet); 
 
 	// Number of pages used for this device?
 	_nPages = _viewport.height/kByteNBits;  // height / number of pixels per byte. TODO - support multiples != 8
@@ -356,7 +356,7 @@ void QwGrSSD1306::erase(void){
 		// Areas that haven't been sent to the screen/device but
 		// "dirty"
 		//
-		// Add the areas with pixels set, but have been sent to the 
+		// Add the areas with pixels set and have been sent to the 
 		// device - this is the contents of _pageErase
 
 		page_check_bounds_desc(_pageState[i], _pageErase[i]);
@@ -365,11 +365,11 @@ void QwGrSSD1306::erase(void){
 		if(page_is_clean(_pageState[i]))
 			continue;
 
-		// clear out memory that is dirting on this page
+		// clear out memory that is dirty on this page
 		memset(_pBuffer + i * _viewport.width + _pageState[i].xmin, 0,
 			   _pageState[i].xmax - _pageState[i].xmin + 1 ); // add one b/c values are 0 based
 
-		// clear out any pending dirty range - that's gone
+		// clear out any pending dirty range for this page - it's erased
 		page_set_clean(_pageState[i]);
 	}
 
@@ -391,7 +391,7 @@ void QwGrSSD1306::draw_pixel(uint8_t x, uint8_t y){
 		return; // out of bounds
 
 	_pixelBitOpsFn[_pix_op](_pBuffer + x + y/kByteNBits * _viewport.width, // pixel offset
-					        byte_bits[mod_byte(y)]);  // which bit to se
+					        byte_bits[mod_byte(y)]);  // which bit to set in byte
 
 	page_check_bounds(_pageState[y/kByteNBits], x); // update dirty range for page
 
@@ -422,7 +422,7 @@ void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	// Get the start of this line in the graphics buffer
 	uint8_t *pBuffer = _pBuffer +  x0 + y0/kByteNBits * _viewport.width;
 
-	// increment up x and set the target pixel using the pixel operator function
+	// walk up x and set the target pixel using the pixel operator function
 	for(int i=x0; i <= x1; i++, pBuffer++)
 		curOpFn(pBuffer, bit);
 	
@@ -458,13 +458,12 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	// pixel operator function
 
 	// Note: This function can also be used to draw filled rects - just iterate 
-	//       in the x direction. The base rect fill calls this method x1-x0 times,
-	//       with some extra overhead per call.
-	//
-	//       Just iterating over each page - x1-x0 times here - save overhead costs.
+	//       in the x direction. The base rect fill (in grBuffer) calls this method x1-x0 times,
+	//       and each of those calls has some overhead. So just iterating over each page - 
+	//       x1-x0 times here - save overhead costs.
 	//  
 	//       To make this work, make sure x0 > x1. Also, this method is wired in as the
-	//       draw_rect_filled entry in the draw interace. This is done above in the 
+	//       draw_rect_filled entry in the draw interface. This is done above in the 
 	//       init process.     
 
 	int xinc; 

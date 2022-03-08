@@ -9,8 +9,8 @@
 #include "qwiic_grssd1306.h"
 
 
-
-// Set the defaults for the SparkFun Qwiic MicroOLED
+//////////////////////////////////////////////////////////////////
+// Set the defaults for the SparkFun Qwiic "Narrow" OLED
 
 #define kOLEDNarrowWidth  	128
 #define kOLEDNarrowHeight 	32
@@ -27,7 +27,7 @@ class QwOLEDNarrow : public QwGrSSD1306 {
 
 public:
 
-	// Constructor - setup the viewport for this device. 
+	// Constructor - setup the viewport and default address for this device. 
 	QwOLEDNarrow() : 
 		QwGrSSD1306(kOLEDNarrowWidth, kOLEDNarrowHeight)
 		{

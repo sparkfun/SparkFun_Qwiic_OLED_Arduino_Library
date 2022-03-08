@@ -24,7 +24,7 @@
 #endif
 
 
-const static 	uint16_t kChunkSize = kMaxTransferBuffer -1;
+const static 	uint16_t kChunkSize = kMaxTransferBuffer - 1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor

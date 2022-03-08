@@ -16,7 +16,7 @@
 
   Distributed as-is; no warranty is given.
  */
-#define MICRO
+//#define MICRO
 
 
 #if defined(MICRO)
