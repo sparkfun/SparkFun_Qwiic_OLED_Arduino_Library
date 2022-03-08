@@ -1,0 +1,13 @@
+{
+    "name": "SparkFun Qwiic OLED Arduino Library",
+    "version": "0.8",
+    "keywords": "display oled graphics",
+    "description": "Library for all SparkFun Qwiic OLED boards",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library.git"
+    },
+    "frameworks": "arduino",
+    "platforms": "*"
+}
