@@ -27,6 +27,9 @@ The following demos work on validated hardware (see below)
 * Fonts
 * Bitmap images
 * Arduino Objects - right now mostly C++
+### Known Issues
+* Filled circles being clipped/not drawn based on positon 
+* ESP32 compbiles, but fails to run - Looks like an I2C issue
 ## Hardware
 ### Tested/Working
 * Qwiic Micro OLED
@@ -41,3 +44,4 @@ The following demos work on validated hardware (see below)
 * SAMD21
 * Teensy
 * Redboard
+* nrf52840
