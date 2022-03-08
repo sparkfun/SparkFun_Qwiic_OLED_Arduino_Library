@@ -2,7 +2,7 @@
 
 A new Arduino library to support SparkFun's qwiic OLED boards
 
-Currently in Development - Alpha Testing
+Currently in Development - Alpha
 ========================================
 
 ## Demos
