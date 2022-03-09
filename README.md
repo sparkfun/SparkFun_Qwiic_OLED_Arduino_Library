@@ -43,6 +43,6 @@ The following demos work on validated hardware (see below)
 * SAMD21
 * nrf5280
 ### To Be Tested/Supported
-* RP2040
+* RP2040 - Not working. Note - doesn't work with old Micro OLED library either
 * Teensy
 * Redboard
