@@ -37,9 +37,9 @@ The following demos work on validated hardware (see below)
 * Artemis
 * SAMD51
 * ESP32
+* STM32
 ### To Be Tested/Supported
 * Qwiic Transparent OLED
-* STM32
 * RP2040
 * SAMD21
 * Teensy
