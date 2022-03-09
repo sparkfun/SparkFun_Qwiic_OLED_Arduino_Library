@@ -352,8 +352,8 @@ void QwGrSSD1306::erase(void){
 	for(uint8_t i=0; i < _nPages; i++){
 
 		// _pageState 
-		// The current "dirty" areas of the graphics buffer.
-		// Areas that haven't been sent to the screen/device but
+		// The current "dirty" areas of the graphics [local] buffer.
+		// Areas that haven't been sent to the screen/device but are
 		// "dirty"
 		//
 		// Add the areas with pixels set and have been sent to the 
@@ -460,7 +460,7 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	// Note: This function can also be used to draw filled rects - just iterate 
 	//       in the x direction. The base rect fill (in grBuffer) calls this method x1-x0 times,
 	//       and each of those calls has some overhead. So just iterating over each page - 
-	//       x1-x0 times here - save overhead costs.
+	//       x1-x0 times here - saves overhead costs.
 	//  
 	//       To make this work, make sure x0 > x1. Also, this method is wired in as the
 	//       draw_rect_filled entry in the draw interface. This is done above in the 
