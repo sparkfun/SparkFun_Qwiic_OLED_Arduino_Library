@@ -38,6 +38,7 @@ The following demos work on validated hardware (see below)
 * SAMD51
 * ESP32
 * STM32
+* SAMD21
 ### To Be Tested/Supported
 * Qwiic Transparent OLED
 * RP2040
