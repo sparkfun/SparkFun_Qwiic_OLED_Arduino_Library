@@ -16,17 +16,25 @@
 
   Distributed as-is; no warranty is given.
  */
+
 //#define MICRO
+//#define NARROW
 
 
 #if defined(MICRO)
 #include <qwiic_oledmicro.h> 
 QwOLEDMicro myOLED;
+const char * deviceName = "Micro OLED";
 
-#else 
+#elif defined(NARROW)
 #include <qwiic_olednarrow.h> 
 QwOLEDNarrow myOLED;
+const char * deviceName = "Narrow OLED";
 
+#else
+#include <qwiic_oledtransp.h>
+QwOLEDTransparent myOLED;
+const char * deviceName = "Transparent OLED";
 #endif
 
 QwI2C i2cBus;
@@ -66,7 +74,11 @@ void setup()
 {
     delay(100);   //Give display time to power on
     Serial.begin(115200);
-    Serial.println(F("Micro OLED Example"));
+    Serial.println("\n\r-----------------------------------");
+
+    Serial.print("Running Test #1 on: ");
+    Serial.println(String(deviceName));
+
 
     i2cBus.init();
     myOLED.set_comm_bus(i2cBus, myOLED.default_address);
@@ -76,7 +88,7 @@ void setup()
         while(1);
     }
 
-    Serial.println("Init Success");
+    Serial.println("- Init Success");
 
     width = myOLED.getWidth();
     height = myOLED.getHeight();
@@ -85,6 +97,8 @@ void setup()
     draw_total_time =0;
     n_draws=0;
 
+    // set a template for our framerate display
+    Serial.print("- Frame Rate: 00.00"); 
 }
 
 void loop()
@@ -142,8 +156,16 @@ void drawCube()
   draw_total_time += millis() - milStart;
   n_draws++;
 
-  if(n_draws % 30 == 0){
-    Serial.print("Frame Rate: "); 
-    Serial.println(((float)draw_total_time)/n_draws);
+  // output framerate?
+  if(n_draws % 120 == 0){
+      // backspace over old number 
+      Serial.print("\b\b\b\b\b");  // backspace over old number
+      Serial.print(((float)draw_total_time)/n_draws);
+
+      if(n_draws > 1000){ // reset after a bit...
+          n_draws = 0;
+          draw_total_time=0;
+      }
   }
+
 }
