@@ -42,7 +42,7 @@ The following demos work on validated hardware (see below)
 * STM32
 * SAMD21
 * nrf5280
+* Teensy (MicroMod + ATP carrier)
 ### To Be Tested/Supported
 * RP2040 - Not working. Note - doesn't work with old Micro OLED library either
-* Teensy
 * Redboard
