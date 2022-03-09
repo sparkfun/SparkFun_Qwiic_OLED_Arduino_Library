@@ -29,7 +29,8 @@ The following demos work on validated hardware (see below)
 * Arduino Objects - right now mostly C++
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
-* 
+* Narrow OLED - some pixels - max X are not getting erased at times 
+  * See on nrf5280 and ESP32
 ## Hardware
 ### Tested/Working
 * Qwiic Micro OLED
@@ -39,10 +40,9 @@ The following demos work on validated hardware (see below)
 * ESP32
 * STM32
 * SAMD21
+* nrf5280
 ### To Be Tested/Supported
 * Qwiic Transparent OLED
 * RP2040
-* SAMD21
 * Teensy
 * Redboard
-* nrf52840
