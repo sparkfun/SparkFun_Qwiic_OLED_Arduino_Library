@@ -43,6 +43,6 @@ The following demos work on validated hardware (see below)
 * SAMD21
 * nrf5280
 * Teensy (MicroMod + ATP carrier)
+* Redboard Plus (works mostly. Cube demo w/ Transparent OLED fails - runs out of memory - not surprizing)
 ### To Be Tested/Supported
 * RP2040 - Not working. Note - doesn't work with old Micro OLED library either
-* Redboard
