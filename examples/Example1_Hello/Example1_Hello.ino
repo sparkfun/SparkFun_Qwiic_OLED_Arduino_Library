@@ -24,17 +24,26 @@
   Distributed as-is; no warranty is given.
 */
 
+//#include "Arduino.h"
+
 //#define MICRO
+//#define NARROW
 
 
 #if defined(MICRO)
 #include <qwiic_oledmicro.h> 
 QwOLEDMicro myOLED;
+const char * deviceName = "Micro OLED";
 
-#else 
+#elif defined(NARROW)
 #include <qwiic_olednarrow.h> 
 QwOLEDNarrow myOLED;
+const char * deviceName = "Narrow OLED";
 
+#else
+#include <qwiic_oledtransp.h>
+QwOLEDTransparent myOLED;
+const char * deviceName = "Transparent OLED";
 #endif
 
 QwI2C i2cBus;
@@ -174,7 +183,11 @@ void setup()
 {
     delay(100);   //Give display time to power on
     Serial.begin(115200);
-    Serial.println(F("Micro OLED Example"));
+
+    Serial.println("\n\r-----------------------------------");
+
+    Serial.print("Running Test #1 on: ");
+    Serial.println(String(deviceName));
 
 
     i2cBus.init();
@@ -185,7 +198,7 @@ void setup()
         while(1);
     }
 
-    Serial.println("Init Success");
+    Serial.println("- Init Success");
 
     width = myOLED.getWidth();
     height = myOLED.getHeight();
@@ -201,8 +214,8 @@ void loop(){
         testFunctions[i]();
         myOLED.display();
         delay(1000);
-        Serial.println(">>>>>> End Test Loop <<<<<<");
-    }
 
+    }
+    Serial.println(">>>>>> End Test Loop <<<<<<");
     delay(1000);
 }
