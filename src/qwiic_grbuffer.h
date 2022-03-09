@@ -87,23 +87,23 @@ public:
 	QwGrBufferDevice(){};
 	QwGrBufferDevice(uint8_t width, uint8_t height) : QwGrBufferDevice(0, 0, width, height){};
 	QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
-		setViewport(x0, y0, width, height);
+		set_viewport(x0, y0, width, height);
 	};
 
 
 	// Buffer location on the device
-	void setViewport(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
+	void set_viewport(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
 		_viewport.x = x0;
 		_viewport.y = y0;
 		_viewport.width = width;
 		_viewport.height = height;
 	};
 
-	QwRect   getViewport(void){ return _viewport;};
-	uint16_t getOriginX(void){ return _viewport.x; };
-	uint16_t getOriginY(void){ return _viewport.y; };	
-	uint16_t getWidth(void){ return _viewport.width; };
-	uint16_t getHeight(void){ return _viewport.height;};
+	QwRect   get_viewport(void){ return _viewport;};
+	uint16_t get_origin_x(void){ return _viewport.x; };
+	uint16_t get_origin_y(void){ return _viewport.y; };
+	uint16_t get_width(void){ return _viewport.width; };
+	uint16_t get_height(void){ return _viewport.height;};
 
 
 	// Interface methods that a sublcass fills in.
