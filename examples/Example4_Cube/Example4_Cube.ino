@@ -17,8 +17,10 @@
   Distributed as-is; no warranty is given.
  */
 
+#include <stdint.h>
+
 //#define MICRO
-//#define NARROW
+#define NARROW
 
 
 #if defined(MICRO)
@@ -43,8 +45,8 @@ QwI2C i2cBus;
 int width;
 int height;
 
-uint draw_total_time;
-uint n_draws;
+uint32_t draw_total_time;
+uint32_t n_draws;
 
 float d = 3;
 float px[] = {
@@ -139,7 +141,7 @@ void drawCube()
   }
 
   // Calculate draw time...
-  uint milStart = millis();
+  uint32_t milStart = millis();
 
   myOLED.erase();
   for (int i = 0; i < 3; i++)
