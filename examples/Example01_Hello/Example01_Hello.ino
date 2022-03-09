@@ -24,7 +24,7 @@
   Distributed as-is; no warranty is given.
 */
 
-//#include "Arduino.h"
+#include <stdint.h>
 
 //#define MICRO
 //#define NARROW
@@ -208,7 +208,7 @@ void setup()
 
 void loop(){
 
-    for(int i=0; i < sizeof(testFunctions)/sizeof(testFunctions[0]); i++){
+    for(uint8_t i=0; i < sizeof(testFunctions)/sizeof(testFunctions[0]); i++){
 
         myOLED.erase();
         testFunctions[i]();
