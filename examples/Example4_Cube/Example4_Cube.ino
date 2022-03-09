@@ -90,8 +90,8 @@ void setup()
 
     Serial.println("- Init Success");
 
-    width = myOLED.getWidth();
-    height = myOLED.getHeight();
+    width = myOLED.get_width();
+    height = myOLED.get_height();
 
     // for frame rate calc
     draw_total_time =0;
