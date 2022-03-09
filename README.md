@@ -35,6 +35,7 @@ The following demos work on validated hardware (see below)
 ### Tested/Working
 * Qwiic Micro OLED
 * Qwiic "narrow OLED"
+* Qwiic Transparent OLED
 * Artemis
 * SAMD51
 * ESP32
@@ -42,7 +43,6 @@ The following demos work on validated hardware (see below)
 * SAMD21
 * nrf5280
 ### To Be Tested/Supported
-* Qwiic Transparent OLED
 * RP2040
 * Teensy
 * Redboard
