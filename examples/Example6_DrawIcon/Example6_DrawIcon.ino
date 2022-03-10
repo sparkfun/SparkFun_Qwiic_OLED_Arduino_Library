@@ -90,6 +90,8 @@ uint8_t truck[] = {
 int iconHeight = 16;
 int iconWidth = 19;
 
+uint32_t draw_total_time;
+uint32_t n_draws;
 
 void setup(){
 
@@ -115,15 +117,51 @@ void setup(){
     width = myOLED.get_width();
     height = myOLED.get_height();
 
-    myOLED.bitmap(8, 8, iconWidth, iconHeight, truck, iconWidth, iconHeight);
-    myOLED.line(8,1,8+iconWidth, 1);
-    myOLED.line(35,8, 35, 8+iconHeight);
-    myOLED.display();
+    draw_total_time =0;
+    n_draws=0;
+
+    // set a template for our framerate display
+    Serial.println("- Frame Rate"); 
   
 }
 
+int iconX = 8;
+int iconXChangeAmount = 1;
+int iconY = 8;
+int iconYChangeAmount = 1;
+
 void loop(){
   
-    delay(5000);
+    // Calculate draw time...
+    uint32_t milStart = millis();
+    myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
+    myOLED.display();
+    //Move the icon
+    iconX += iconXChangeAmount;
+    iconY += iconYChangeAmount;
+
+    if (iconX + iconWidth >= width)
+      iconXChangeAmount *= -1; //Change direction
+    if (iconX == 0)
+      iconXChangeAmount *= -1; //Change direction
+
+    if (iconY + iconHeight >= height)
+      iconYChangeAmount *= -1; //Change direction
+    if (iconY == 0)
+      iconYChangeAmount *= -1; //Change direction
+
+    draw_total_time += millis() - milStart;
+    n_draws++;
+
+    // output framerate?
+    if(n_draws % 120 == 0){
+
+        Serial.println(((float)draw_total_time)/n_draws);
+
+        if(n_draws > 1000){ // reset after a bit...
+            n_draws = 0;
+            draw_total_time=0;
+        }
+    }
 }
 
