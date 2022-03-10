@@ -583,7 +583,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 									bmp_data << grStartBit, grSetBits);
 
 		}
-		// move both buffer y values by the number of bits transferred
+		// move up our y values (graphics buffer and bitmap) by the number of bits transferred
 		y0 += neededBits;
 		bmp_y += neededBits;
 
