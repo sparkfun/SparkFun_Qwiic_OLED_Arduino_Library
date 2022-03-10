@@ -475,10 +475,10 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 		startBit = mod_byte(y0);	//start bit in this byte
 
 		// last bit of this byte to set? Does the line end in this byte, or continue on...
-		endBit = y0 + kByteNBits - startBit > y1 ? mod_byte(y1)  : kByteNBits ;	
+		endBit = y0 + kByteNBits - startBit > y1 ? mod_byte(y1)  : kByteNBits-1;	
 
 		// Set the bits from startBit to endBit
-		setBits = (0xFF >> kByteNBits - endBit) << startBit; // what bits are being set in this byte		
+		setBits = (0xFF >> (kByteNBits - endBit)-1) << startBit; // what bits are being set in this byte		
 		
 		// set the bits in the graphics buffer using the current byte operator function
 		
@@ -486,12 +486,112 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 		for(xinc = x0; xinc <= x1; xinc++)
 			_pixelByteOpsFn[_pix_op](_pBuffer + i * _viewport.width + xinc, setBits, setBits);
 
-		y0 += endBit - startBit;  // increment Y0 to next page
+		y0 += endBit - startBit + 1;  // increment Y0 to next page
 
 		page_check_bounds_range(_pageState[i], x0, x1); // mark dirty range in page desc
 	}
 
 }
+////////////////////////////////////////////////////////////////////////////////////
+// >>> IN DEVELOPMENT <<<
+////////////////////////////////////////////////////////////////////////////////////
+// draw_bitmap()
+//
+// Draw a 8 bit encoded (aka same y layout as this device) bitmap to the screen
+//
+void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t dst_height, 
+							  uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
+
+	// TO DO - find the range in the graphics buffer to write to 
+	//         - based on position, size of screen, bmp size ...etc
+
+	uint8_t bmp_x = 0; // fix
+	uint8_t bmp_y = 0; // fix
+
+	uint8_t xinc, page0, page1;
+	uint8_t startBit, endBit, grSetBits, grStartBit;	
+
+	uint8_t bmp_mask[2];
+	uint8_t bmp_data, bmpPage;
+
+	uint8_t remainingBits;
+	uint8_t neededBits;	
+
+	uint8_t y1 = y0+dst_height-1;
+
+	page0 = y0/kByteNBits;
+	page1 = y1/kByteNBits;
+
+
+
+	printf("locations: %d, %d, %d, %d\n", x0, y0, dst_width, dst_height);
+	printf("ICON - pages to write to: %d - %d\n", page0, page1);
+	// Loop over the memory pages in the graphics buffer
+	for(int i=page0; i <= page1; i++){
+
+		printf("\nStart of loop: y0: %d\n", y0);
+		// First, get the number of destination bits in the current page
+		grStartBit = mod_byte(y0);	//start bit
+		
+		// last bit of this byte to set? Does the copy region end in this byte, or continue on...
+		endBit = y0 + kByteNBits - grStartBit > y1 ? mod_byte(y1)  : kByteNBits-1;	
+
+		// Set the bits from startBit to endBit
+		grSetBits = (0xFF >> (kByteNBits - endBit - 1)) << grStartBit; // what bits are being set in this byte	
+
+		// how many bits of data do we need to transfer from the bitmap?
+		neededBits = endBit - grStartBit + 1;
+		
+		printf("DEST: Page: %d - start %d, end %d, needed: %d, mask: %x\n", i, grStartBit,endBit, neededBits, grSetBits );
+		// Okay, we have how much data to transfer to the current page. Now build the data
+		// from the bitmap.
+
+		// First, build bit masks for pulling the data out of the bmp array. The data
+		// might straddle two bytes, so build two masks
+
+		// as above, get the start and end bites for the current position in the bmp.
+		startBit = mod_byte(bmp_y);
+		endBit = (kByteNBits - startBit > neededBits ? startBit + neededBits  : kByteNBits)-1;			
+		
+
+		// Set the bits from startBit to endBit
+		bmp_mask[0] = (0xFF >> (kByteNBits - endBit-1)) << startBit; 
+
+		// any remaining bits to get?
+		remainingBits = neededBits - (endBit - startBit + 1); 
+		bmp_mask[1] = 0xFF >> (kByteNBits - remainingBits);
+
+		// What row in the source bitmap
+		bmpPage = bmp_y/kByteNBits;
+		printf("BMP: Page: %d - start %d, end %d, remain: %d, mask 0: %x\n", 
+				bmpPage, startBit,endBit, remainingBits, bmp_mask[0] );
+		// we have the mask for the bmp - loop over the width of the copy region, pulling out
+		// bmp data and writing it to the graphics buffer
+		for(xinc = 0; xinc < dst_width; xinc++  ){
+
+			// get data out of current image location and shift if needed
+			bmp_data = (pBitmap[bmp_width*bmpPage + bmp_x +xinc] & bmp_mask[0]);
+			
+			if(remainingBits) // more data to add from the next byte in this column
+				bmp_data |= (pBitmap[bmp_width*(bmpPage+1) + bmp_x+xinc] & bmp_mask[1]) << remainingBits;
+
+
+			// Write the bmp data to the graphics buffer - using current write op. Note,
+			// if the location in the buffer didn't start at bit 0, we shift bmp_data
+			_pixelByteOpsFn[_pix_op](_pBuffer + i * _viewport.width + xinc + x0, 
+									bmp_data << grStartBit, grSetBits);
+
+		}
+		// move down the image and graphics buffers
+		y0 += neededBits;
+		bmp_y += neededBits;
+
+		page_check_bounds_range(_pageState[i], x0, x0+dst_width); // mark dirty range in page desc
+	}
+
+}
+////////////////////////////////////////////////////////////////////////////////////
+// <<< END >>>
 ////////////////////////////////////////////////////////////////////////////////////
 // set_xor()
 //

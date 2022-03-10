@@ -72,7 +72,7 @@ bool QwGrBufferDevice::init_draw_functions(void){
 	if(_idraw.draw_rect_filled == null_vtable->draw_rect_filled)
 		_idraw.draw_rect_filled = _idraw.draw_rect;	
 
-	// if rect_filled isn't implemented, just sub in rect - it' something ...
+	// if circle_filled isn't implemented, just sub in rect - it' something ...
 	if(_idraw.draw_circle_filled == null_vtable->draw_circle_filled)
 		_idraw.draw_circle_filled = _idraw.draw_circle;	
 
@@ -381,4 +381,12 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 		}
 	}
 
+}
+////////////////////////////////////////////////////////////////////////////////////////
+// bitmap()
+//
+void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
+					 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
+	
+	(*_idraw.draw_bitmap)(this, x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
 }

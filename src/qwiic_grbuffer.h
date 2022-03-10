@@ -54,13 +54,17 @@ class _QwIDraw{
 
 	//Circles
 	virtual void draw_circle(uint8_t x0, uint8_t y0, uint8_t radius){}	
-	virtual void draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius){}		
+	virtual void draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius){}	
+
+	virtual void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
+						  	 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )	{}
 };
 
 // Drawing fuction typedefs 
 typedef void (*QwDrawPntFn)(void*, uint8_t, uint8_t);
 typedef void (*QwDrawTwoPntFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t);
 typedef void (*QwDrawCircleFn)(void*, uint8_t, uint8_t, uint8_t);
+typedef void (*QwDrawBitmapFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t *, uint8_t, uint8_t);
 
 // Define the vtable struct for IDraw
 struct _QwIDraw_vtable{
@@ -72,7 +76,7 @@ struct _QwIDraw_vtable{
 	QwDrawTwoPntFn   draw_rect_filled;	
 	QwDrawCircleFn   draw_circle;
 	QwDrawCircleFn   draw_circle_filled;	
-
+	QwDrawBitmapFn   draw_bitmap;		
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +122,8 @@ public:
 	void pixel(uint8_t x, uint8_t y);
 	void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
-
+	void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
+				uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
 	// subclass interface 
 	virtual void display(void)=0; 
 	virtual void erase(void)=0;		

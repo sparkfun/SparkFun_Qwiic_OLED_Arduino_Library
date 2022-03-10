@@ -14,12 +14,33 @@
 
   Distributed as-is; no warranty is given.
 */
-#include <Wire.h>
-#include <SFE_MicroOLED.h> //Click here to get the library: http://librarymanager/All#SparkFun_Micro_OLED
 
-#define PIN_RESET 9
-#define DC_JUMPER 1 // Set to either 0 (SPI, default) or 1 (I2C) based on jumper, matching the value of the DC Jumper
-MicroOLED oled(PIN_RESET, DC_JUMPER);
+#define MICRO
+//#define NARROW
+
+
+#if defined(MICRO)
+#include <qwiic_oledmicro.h> 
+QwOLEDMicro myOLED;
+const char * deviceName = "Micro OLED";
+
+#elif defined(NARROW)
+#include <qwiic_olednarrow.h> 
+QwOLEDNarrow myOLED;
+const char * deviceName = "Narrow OLED";
+
+#else
+#include <qwiic_oledtransp.h>
+QwOLEDTransparent myOLED;
+const char * deviceName = "Transparent OLED";
+#endif
+
+QwI2C i2cBus;
+
+
+int width;
+int height;
+
 
 //A 20 x 17 pixel image of a truck in a box
 //Use http://en.radzio.dxp.pl/bitmap_converter/ to generate output
@@ -66,81 +87,43 @@ uint8_t truck[] = {
     0xFF,
 };
 
-int iconHeight = 17;
+int iconHeight = 16;
 int iconWidth = 19;
 
-bool displayDetected = false;
 
-void setup()
-{
-  Wire.begin();
-  Wire.setClock(400000);
+void setup(){
 
-  Serial.begin(115200);
-  delay(100);
-  Serial.println("Display Icon OLED example");
+    delay(100);   //Give display time to power on
+    Serial.begin(115200);
 
-  // Some unbranded displays seem to need a reset before they can be detected successfully:
-  pinMode(PIN_RESET, OUTPUT);
-  digitalWrite(PIN_RESET, LOW);
-  delay(100);
-  digitalWrite(PIN_RESET, HIGH);
-  delay(100);
+    Serial.println("\n\r-----------------------------------");
 
-  //0x3D is default address on Qwiic board
-  if (isConnected(0x3D) == true || isConnected(0x3C) == true)
-  {
-    Serial.println("Display detected");
-    displayDetected = true;
-  }
-  else
-  {
-    Serial.println("No display detected. Freezing...");
-    while (1)
-      ;
-  }
+    Serial.print("Bitmap test on: ");
+    Serial.println(String(deviceName));
 
-  if (displayDetected)
-  {
-    oled.begin();     // Initialize the OLED
-    oled.clear(PAGE); // Clear the display's internal memory
-    oled.clear(ALL);  // Clear the library's display buffer
-    oled.display();   // Display what's in the buffer (splashscreen)
-  }
+
+    i2cBus.init();
+    myOLED.set_comm_bus(i2cBus, myOLED.default_address);
+    if(!myOLED.init()){
+
+        Serial.println("Init Failed");
+        while(1);
+    }
+
+    Serial.println("- Init Success");
+
+    width = myOLED.get_width();
+    height = myOLED.get_height();
+
+    myOLED.bitmap(8, 8, iconWidth, iconHeight, truck, iconWidth, iconHeight);
+    myOLED.line(8,1,8+iconWidth, 1);
+    myOLED.line(35,8, 35, 8+iconHeight);
+    myOLED.display();
+  
 }
 
-int iconX = 0;
-int iconXChangeAmount = 1;
-int iconY = 0;
-int iconYChangeAmount = 1;
-
-void loop()
-{
-  if (displayDetected)
-  {
-    oled.drawIcon(iconX, iconY, iconWidth, iconHeight, truck, sizeof(truck), true);
-    oled.display();
-
-    //Move the icon
-    iconX += iconXChangeAmount;
-    iconY += iconYChangeAmount;
-
-    if (iconX + iconWidth >= 64)
-      iconXChangeAmount *= -1; //Change direction
-    if (iconX == 0)
-      iconXChangeAmount *= -1; //Change direction
-
-    if (iconY + iconHeight >= 48)
-      iconYChangeAmount *= -1; //Change direction
-    if (iconY == 0)
-      iconYChangeAmount *= -1; //Change direction
-  }
+void loop(){
+  
+    delay(5000);
 }
 
-bool isConnected(uint8_t deviceAddress)
-{
-  Wire.beginTransmission(deviceAddress);
-  if (Wire.endTransmission() == 0)
-    return true;
-  return false;
-}

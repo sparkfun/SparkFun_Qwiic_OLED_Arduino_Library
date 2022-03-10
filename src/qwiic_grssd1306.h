@@ -136,6 +136,10 @@ protected:
 	void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
 
+	// >> Fast Bitmap <<
+	void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
+					 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
+	
 	///////////////////////////////////////////////////////////////////////////
 	// configuration methods for sub-classes. Settings unique to a device 
 	void set_comm_pins(uint8_t);
