@@ -524,12 +524,12 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 
 
 
-	printf("locations: %d, %d, %d, %d\n", x0, y0, dst_width, dst_height);
-	printf("ICON - pages to write to: %d - %d\n", page0, page1);
+	//printf("locations: %d, %d, %d, %d\n", x0, y0, dst_width, dst_height);
+	//printf("ICON - pages to write to: %d - %d\n", page0, page1);
 	// Loop over the memory pages in the graphics buffer
 	for(int i=page0; i <= page1; i++){
 
-		printf("\nStart of loop: y0: %d\n", y0);
+		//printf("\nStart of loop: y0: %d\n", y0);
 		// First, get the number of destination bits in the current page
 		grStartBit = mod_byte(y0);	//start bit
 		
@@ -542,7 +542,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 		// how many bits of data do we need to transfer from the bitmap?
 		neededBits = endBit - grStartBit + 1;
 		
-		printf("DEST: Page: %d - start %d, end %d, needed: %d, mask: %x\n", i, grStartBit,endBit, neededBits, grSetBits );
+		//printf("DEST: Page: %d - start %d, end %d, needed: %d, mask: %x\n", i, grStartBit,endBit, neededBits, grSetBits );
 		// Okay, we have how much data to transfer to the current page. Now build the data
 		// from the bitmap.
 
@@ -563,18 +563,17 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 
 		// What row in the source bitmap
 		bmpPage = bmp_y/kByteNBits;
-		printf("BMP: Page: %d - start %d, end %d, remain: %d, mask 0: %x\n", 
-				bmpPage, startBit,endBit, remainingBits, bmp_mask[0] );
+		//printf("BMP: Page: %d - start %d, end %d, remain: %d, mask 0: %x\n", 
+		//		bmpPage, startBit,endBit, remainingBits, bmp_mask[0] );
 		// we have the mask for the bmp - loop over the width of the copy region, pulling out
 		// bmp data and writing it to the graphics buffer
 		for(xinc = 0; xinc < dst_width; xinc++  ){
 
 			// get data out of current image location and shift if needed
-			bmp_data = (pBitmap[bmp_width*bmpPage + bmp_x +xinc] & bmp_mask[0]);
+			bmp_data = (pBitmap[bmp_width*bmpPage + bmp_x +xinc] & bmp_mask[0]) >> startBit;
 			
 			if(remainingBits) // more data to add from the next byte in this column
-				bmp_data |= (pBitmap[bmp_width*(bmpPage+1) + bmp_x+xinc] & bmp_mask[1]) << remainingBits;
-
+				bmp_data |= (pBitmap[bmp_width*(bmpPage+1) + bmp_x+xinc] & bmp_mask[1]) << (kByteNBits - remainingBits);
 
 			// Write the bmp data to the graphics buffer - using current write op. Note,
 			// if the location in the buffer didn't start at bit 0, we shift bmp_data
