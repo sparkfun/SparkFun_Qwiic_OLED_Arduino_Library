@@ -25,7 +25,7 @@ The following demos work on validated hardware (see below)
 * Filled rectangles (fast)
 * Circles
 * Filled Circles
-* Bitmap images
+* Bitmap images (fast - 5x improvement on demo test)
 ### To Be Implemented
 * Fonts
 * Arduino Objects - right now mostly C++
