@@ -522,10 +522,10 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 	page1 = y1/kByteNBits;
 
 	// The Plan:
-	//   - Walk down the graphcis buffer range (y) one page at a time
+	//   - Walk down the graphics buffer range (y) one page at a time
 	//   - For each page 
-	//       	- Determine needed number of bits
-	//   		- Determine what bits to pull from the bit map
+	//       	- Determine needed number of bits for the destination
+	//   		- Determine what bits to pull from the bitmap
 	//				- Create a mask to pull out bits - from one or two bytes
 	//	 		- Loop over the x dimension
 	//				- pull bits from bitmap, build byte of data of bitmap bits, in 
