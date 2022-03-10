@@ -9,6 +9,8 @@ Currently in Development - Alpha
 The following demos work on validated hardware (see below)
 * Example 1 - Hello
 * Example 4 - Cube
+* Example 6 - Draw Icon
+
 ## Features
 ### Implemented
 * Fast data transfers/updates to OLED device 
@@ -23,9 +25,9 @@ The following demos work on validated hardware (see below)
 * Filled rectangles (fast)
 * Circles
 * Filled Circles
+* Bitmap images
 ### To Be Implemented
 * Fonts
-* Bitmap images
 * Arduino Objects - right now mostly C++
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
