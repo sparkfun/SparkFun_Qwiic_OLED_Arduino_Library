@@ -185,6 +185,8 @@ typedef QwResourceMngr_& QwResourceMngr;
 		static QwFontDesc fnt_##_id_##_ = { { _width_, _height_, _start_, _num_, _map_, _data_}, _id_, 0}; \
 		static bool rc_##_id_##_ = QwResourceMngr().add_font(&fnt_##_id_##_);
 
-#define QwResource_AddBitmap(_id_, _width_, _height_, _data_) \
-		static QwBitmapDesc bmp_##_id_##_ = { { _width_, _height_,  _data_}, _id_, 0}; \
-		static bool rc_##_id_##_ = QwResourceMngr().add_bitmap(&bmp_##_id_##_);
+#define QwResource_AddBitmap(_id_, _name_, _width_, _height_, _data_) \
+		static QwBitmapDesc bmp_##_id_##_desc = { { _width_, _height_,  _data_}, _id_, 0}; \
+		static QwBitmap * qwbmp_##_name_ = &bmp_##_id_##_desc.bitmap; \
+		static bool rc_##_id_##_ = QwResourceMngr().add_bitmap(&bmp_##_id_##_desc);
+

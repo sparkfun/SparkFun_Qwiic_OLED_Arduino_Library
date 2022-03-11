@@ -36,7 +36,7 @@ const char * deviceName = "Transparent OLED";
 #endif
 
 
-// RESOURCE manager.
+// Let's draw a truck
 #include "res/bmp_truck.h"
 
 QwI2C i2cBus;
@@ -47,8 +47,6 @@ int height;
 
 uint32_t draw_total_time;
 uint32_t n_draws;
-
-QwBitmap *bmpTruck;
 
 void setup(){
 
@@ -79,8 +77,6 @@ void setup(){
 
     // set a template for our framerate display
     Serial.println("- Frame Rate"); 
-    bmpTruck = QwResourceMngr().get_bitmap(BMP_TRUCK);
-  
 }
 
 int iconX = 8;
@@ -93,18 +89,18 @@ void loop(){
     // Calculate draw time...
     uint32_t milStart = millis();
     //myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
-    myOLED.bitmap(iconX, iconY, bmpTruck);
+    myOLED.bitmap(iconX, iconY, qwbmp_truck);
     myOLED.display();
     //Move the icon
     iconX += iconXChangeAmount;
     iconY += iconYChangeAmount;
 
-    if (iconX + bmpTruck->width >= width)
+    if (iconX + qwbmp_truck->width >= width)
       iconXChangeAmount *= -1; //Change direction
     if (iconX == 0)
       iconXChangeAmount *= -1; //Change direction
 
-    if (iconY + bmpTruck->height >= height)
+    if (iconY + qwbmp_truck->height >= height)
       iconYChangeAmount *= -1; //Change direction
     if (iconY == 0)
       iconYChangeAmount *= -1; //Change direction

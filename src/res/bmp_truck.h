@@ -88,5 +88,5 @@ static const uint8_t bmp_truck_data[] = {
 
 #define BMP_TRUCK    MAKE_BITMAP_ID(0x01)
 
-QwResource_AddBitmap(BMP_TRUCK, BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT, bmp_truck_data);
+QwResource_AddBitmap(BMP_TRUCK, truck, BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT, bmp_truck_data);
 
