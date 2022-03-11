@@ -25,18 +25,18 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #pragma once 
 
 // include the resource manager
-#include "qwiic_grresman.h"
+#include "qwiic_resmngr.h"
 
 // Standard ASCII 5x7 font
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const uint8_t font5x7[] = {
+	static const uint8_t font5x7_data[] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const uint8_t font5x7[] PROGMEM = {
+	static const uint8_t font5x7_data[] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const uint8_t font5x7[] PROGMEM = {
+	static const uint8_t font5x7_data[] PROGMEM = {
 #endif
 	0x00, 0x00, 0x00, 0x00, 0x00,
 	0x3E, 0x5B, 0x4F, 0x5B, 0x3E,
@@ -297,21 +297,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 
 // Define our font id
 
-#define FONT_5X7    0x8002
+#define FONT_5X7    MAKE_FONT_ID(0x02)
 
-static QwFontDesc fnt_5x7 = {
-	{ 5,      	// width
-	 8,      	// height
-	 0,		// start character
-	 255,		// number of characters
-	 1275,		// map width
-	 font5x7  // the map data
-	}, 
-	FONT_5X7,   // resource id.
-	0     // internal
-};
-
-
-// Add to the resource manager
-static bool rc_5x7 = QwResourceMan().add_font(&fnt_5x7);
-
+// Register this font with the resource manager (ID, width, height, start char, num char, *data)
+QwResource_AddFont(FONT_5X7, 5, 8, 0, 255, 1275, font5x7_data);

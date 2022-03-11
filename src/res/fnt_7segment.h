@@ -26,17 +26,17 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #pragma once 
 
 // include the resource manager
-#include "qwiic_grresman.h"
+#include "qwiic_resmngr.h"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const uint8_t sevensegment_data [] = {
+	static const uint8_t segment7_data [] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const uint8_t sevensegment_data [] PROGMEM = {
+	static const uint8_t segment7_data [] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const uint8_t sevensegment_data [] PROGMEM = {
+	static const uint8_t segment7_data [] PROGMEM = {
 #endif
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	
 	0x00, 0x00, 0x00, 0x00, 0x78, 0xFC, 0x02, 0x03, 0x03, 0x03, 0x03, 0x02, 0xFC, 0x78, 0x00, 0x00,
@@ -58,28 +58,11 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 
 };
 
+// Define our font id - 
 
+#define FONT_7SEGMENT    MAKE_FONT_ID(0x01)
 
+// Register this font with the resource manager (ID, width, height, start char, num char, *data)
 
-// Define our font id
-
-#define FONT_SEVENSEGMENT    0x8001
-
-// Define our font desciptor for this font;
-
-static QwFontDesc fnt_7segment = {
-	{10,      	// width
-	 16,      	// height
-	 46,		// start character
-	 13,		// number of characters
-	 130,		// map width
-	 sevensegment_data  // the map data
-	}, 
-	FONT_SEVENSEGMENT,   // resource id.
-	0     // internal
-};
-
-
-// Add to the resource manager
-static bool rc_7segment = QwResourceMan().add_font(&fnt_7segment);
+QwResource_AddFont(FONT_7SEGMENT, 10, 16, 46, 13, 130, segment7_data);
 

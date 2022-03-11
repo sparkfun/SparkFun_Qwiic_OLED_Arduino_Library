@@ -6,7 +6,7 @@
 #include "qwiic_grssd1306.h"
 
 // resource manager
-#include "res/qwiic_grresman.h"
+#include "res/qwiic_resmngr.h"
 
 // Fonts
 #include "res/fnt_7segment.h"
@@ -259,8 +259,7 @@ bool QwGrSSD1306::init(void){
 	_isInit = true; // we're ready to rock
 
 
-	int nfonts = QwResourceMan().n_fonts();
-	printf("Fonts loaded: %d\n", nfonts);
+	printf("Fonts loaded: %d\n", QwResourceMngr().n_fonts());
 
 	return true;
 
@@ -608,9 +607,9 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 ////////////////////////////////////////////////////////////////////////////////////
 // Experimental 
 ////////////////////////////////////////////////////////////////////////////////////
-void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t id_bmp){
+void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, gwResourceID_t id_bmp){
 
-	QwBitmap * pBMP = QwResourceMan().get_bitmap(id_bmp);
+	QwBitmap * pBMP = QwResourceMngr().get_bitmap(id_bmp);
 
 	if(!pBMP){
 		printf("BITMAP BY ID - FAILED TO LOAD");

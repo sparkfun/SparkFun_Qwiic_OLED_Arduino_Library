@@ -19,17 +19,17 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
 
 #pragma once
 
-#include "qwiic_grresman.h"
+#include "qwiic_resmngr.h"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-    static const uint8_t font31x48 [] = {
+    static const uint8_t font31x48_data [] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-    static const uint8_t font31x48 [] PROGMEM = {
+    static const uint8_t font31x48_data [] PROGMEM = {
 #else
 	#include <pgmspace.h>
-    static const uint8_t font31x48 [] PROGMEM = {
+    static const uint8_t font31x48_data [] PROGMEM = {
 #endif
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xF8, 0xF8, 0xF8, 0xF8,
     0xF8, 0xF8, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -709,21 +709,8 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
 };
 // Define our font id
 
-#define FONT_31X48    0x8004
+#define FONT_31X48   MAKE_FONT_ID(0x04)
 
-static QwFontDesc fnt_31x48 = {
-    { 31,        // width
-     48,        // height
-     65,        // start character
-     58,        // number of characters
-     62,       // map width
-     font31x48  // the map data
-    }, 
-    FONT_31X48,   // resource id.
-    0     // internal
-};
-
-
-// Add to the resource manager
-static bool rc_31x48 = QwResourceMan().add_font(&fnt_31x48);
+// Register this font with the resource manager (ID, width, height, start char, num char, *data)
+QwResource_AddFont(FONT_31X48, 31, 48, 65, 58, 62, font31x48_data);
 

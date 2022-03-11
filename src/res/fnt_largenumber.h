@@ -24,18 +24,18 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 ******************************************************************************/
 #pragma once
 
-#include "qwiic_grresman.h"
+#include "qwiic_resmngr.h"
 
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const uint8_t fontlargenum[] = {
+	static const uint8_t fontlargenum_data[] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const uint8_t fontlargenum[] PROGMEM = {
+	static const uint8_t fontlargenum_data[] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const uint8_t fontlargenum[] PROGMEM = {
+	static const uint8_t fontlargenum_data[] PROGMEM = {
 #endif
 	0x00, 0xC0, 0xF8, 0x7C, 0x3E, 0x3E, 0xFC, 0xF8, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xE0,
 	0x78, 0xFE, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x7C, 0x3C, 0x3E, 0x3E, 0xFE, 0xFC,
@@ -91,21 +91,8 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 
 // Define our font id
 
-#define FONT_LARGE_NUM    0x8005
+#define FONT_LARGE_NUM    MAKE_FONT_ID(0x05)
 
-static QwFontDesc fnt_largenum = {
-    { 12,        // width
-     48,        // height
-     48,        // start character
-     11,        // number of characters
-     132,       // map width
-     fontlargenum  // the map data
-    }, 
-    FONT_LARGE_NUM,   // resource id.
-    0     // internal
-};
-
-
-// Add to the resource manager
-static bool rc_largenum = QwResourceMan().add_font(&fnt_largenum);
+// Register this font with the resource manager (ID, width, height, start char, num char, *data)
+QwResource_AddFont(FONT_LARGE_NUM, 12, 48, 48, 11, 132, fontlargenum_data);
 

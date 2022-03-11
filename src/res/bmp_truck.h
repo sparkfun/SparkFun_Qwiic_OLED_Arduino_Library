@@ -25,7 +25,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #pragma once 
 
 // include the resource manager
-#include "qwiic_grresman.h"
+#include "qwiic_resmngr.h"
 
 /*
 #if defined(ARDUINO_ARCH_MBED)
@@ -39,7 +39,11 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 	static const uint8_t bmp_truck[] PROGMEM = {
 #endif
 */
-static const uint8_t bmp_truck[] = {
+
+#define BMP_TRUCK_WIDTH  19
+#define BMP_TRUCK_HEIGHT 16
+
+static const uint8_t bmp_truck_data[] = {
     0xFF,
     0x01,
     0xC1,
@@ -82,18 +86,7 @@ static const uint8_t bmp_truck[] = {
 	
 // Define our resource id
 
-#define BMP_TRUCK    0x0801
+#define BMP_TRUCK    MAKE_BITMAP_ID(0x01)
 
-static QwBitmapDesc bmp_truck_desc = {
-	{ 19,      	// width
-	  16,      	// height
-	 bmp_truck  // the bitmap data
-	}, 
-	BMP_TRUCK,   // resource id.
-	0     // internal
-};
-
-
-// Add to the resource manager
-static bool rc_bmp_truck = QwResourceMan().add_bitmap(&bmp_truck_desc);
+QwResource_AddBitmap(BMP_TRUCK, BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT, bmp_truck_data);
 

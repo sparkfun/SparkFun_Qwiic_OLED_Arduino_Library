@@ -10,6 +10,18 @@
 
 #include <stdint.h>
 
+
+// Resource ID Masks
+#define FONT_ID_MASK   0x8000U
+#define BITMAP_ID_MASK 0xA000U
+
+#define isa_font(_id_)  ( _id_ & FONT_ID_MASK ? true : false)
+#define isa_bitmap(_id_)  ( _id_ & BITMAP_ID_MASK ? true : false)
+#define MAKE_FONT_ID(_id_) (_id_ | FONT_ID_MASK)
+#define MAKE_BITMAP_ID(_id_) (_id_ | BITMAP_ID_MASK)
+
+typedef uint16_t gwResourceID_t;
+
 // Define a structure to hold a font definition
 
 typedef struct _qwfont{
@@ -22,9 +34,9 @@ typedef struct _qwfont{
 }QwFont;
 
 typedef struct _qwfont_desc{
-	QwFont    			   font;
-	uint16_t     	  	   id_resource;	
-	struct _qwfont_desc  * next;
+	QwFont    			    font;
+	gwResourceID_t   	  	id_resource;	
+	struct _qwfont_desc   * next;
 }QwFontDesc;
 
 typedef struct _qwbitmap{
@@ -35,7 +47,7 @@ typedef struct _qwbitmap{
 
 typedef struct _qwbitmap_desc{
 	QwBitmap       		    bitmap;
-	uint16_t     	        id_resource;	
+	gwResourceID_t     	    id_resource;	
 	struct _qwbitmap_desc * next;
 }QwBitmapDesc;
 
@@ -46,21 +58,25 @@ typedef struct _qwbitmap_desc{
 //
 //  Making a singleton - this has no state. 
 //
-class QwResourceMan_ {
+class QwResourceMngr_ {
 
 public:
 	// Singleton things
-    static QwResourceMan_& getInstance(void){
+    static QwResourceMngr_& getInstance(void){
 
-        static QwResourceMan_ instance;
+        static QwResourceMngr_ instance;
         return instance;
     }
 
     //---------------------------------------------------------
     bool add_font(QwFontDesc* theFont){
 
-    	if(!theFont)
+    	if(!theFont || !isa_font(theFont->id_resource))
     		return false;
+
+		// already registered?
+    	if(get_font(theFont->id_resource))
+    		return true;
 
     	theFont->next = nullptr;
 
@@ -78,7 +94,10 @@ public:
     	return true;
     }
     //---------------------------------------------------------
-    QwFont * get_font(uint16_t idFont){
+    QwFont * get_font(gwResourceID_t idFont){
+
+    	if(!isa_font(idFont))
+    		return nullptr;
 
     	QwFontDesc *pCurrent = _pFonts;
     	while(pCurrent != nullptr){
@@ -96,8 +115,12 @@ public:
     //---------------------------------------------------------
 	bool add_bitmap(QwBitmapDesc* theBitmap){
 
-    	if(!theBitmap)
+    	if(!theBitmap || !isa_bitmap(theBitmap->id_resource))
     		return false;
+
+    	// already registered?
+    	if(get_bitmap(theBitmap->id_resource))
+    		return true;
 
     	theBitmap->next = nullptr;
 
@@ -114,7 +137,10 @@ public:
     	return true;
     }
     //---------------------------------------------------------
-    QwBitmap * get_bitmap(uint16_t idBitmap){
+    QwBitmap * get_bitmap(gwResourceID_t idBitmap){
+
+    	if(!isa_bitmap(idBitmap))
+    		return nullptr;
 
     	QwBitmapDesc *pCurrent = _pBitmaps;
 
@@ -133,12 +159,12 @@ public:
     //---------------------------------------------------------    
  	// copy and assign constructors - delete them to prevent extra copys being 	
     // made -- this is a singleton object.
-    QwResourceMan_(QwResourceMan_ const&) = delete;
-    void operator=(QwResourceMan_ const&) = delete;
+    QwResourceMngr_(QwResourceMngr_ const&) = delete;
+    void operator=(QwResourceMngr_ const&) = delete;
 
 
 private:
-	QwResourceMan_(): _pFonts{nullptr}, _pBitmaps{nullptr}, _n_fonts{0}, _n_bmp{0}{}
+	QwResourceMngr_(): _pFonts{nullptr}, _pBitmaps{nullptr}, _n_fonts{0}, _n_bmp{0}{}
 
 	QwFontDesc     * _pFonts;
 	QwBitmapDesc   * _pBitmaps;
@@ -148,7 +174,17 @@ private:
 
 };
 
-typedef QwResourceMan_& QwResourceMan;
+typedef QwResourceMngr_& QwResourceMngr;
 
 // Accessor for the signleton
-#define QwResourceMan()  QwResourceMan_::getInstance()
+#define QwResourceMngr()  QwResourceMngr_::getInstance()
+
+// Define a macro that makes registration of resources easy
+
+#define QwResource_AddFont(_id_, _width_, _height_, _start_, _num_, _map_, _data_) \
+		static QwFontDesc fnt_##_id_##_ = { { _width_, _height_, _start_, _num_, _map_, _data_}, _id_, 0}; \
+		static bool rc_##_id_##_ = QwResourceMngr().add_font(&fnt_##_id_##_);
+
+#define QwResource_AddBitmap(_id_, _width_, _height_, _data_) \
+		static QwBitmapDesc fnt_##_id_##_ = { { _width_, _height_,  _data_}, _id_, 0}; \
+		static bool rc_##_id_##_ = QwResourceMngr().add_bitmap(&fnt_##_id_##_);
