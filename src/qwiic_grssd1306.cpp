@@ -5,6 +5,16 @@
 
 #include "qwiic_grssd1306.h"
 
+// resource manager
+#include "res/qwiic_grresman.h"
+
+// Fonts
+#include "res/fnt_7segment.h"
+#include "res/fnt_5x7.h"
+#include "res/fnt_8x16.h"
+#include "res/fnt_31x48.h"
+#include "res/fnt_largenumber.h"
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Commands
@@ -247,6 +257,10 @@ bool QwGrSSD1306::init(void){
 	init_buffers();
 
 	_isInit = true; // we're ready to rock
+
+
+	int nfonts = QwResourceMan().n_fonts();
+	printf("Fonts loaded: %d\n", nfonts);
 
 	return true;
 
@@ -697,7 +711,6 @@ void QwGrSSD1306::display(){
 		// this page is no longer dirty - mark it  clean
 		page_set_clean(_pageState[i]);			
 	}
-
 	_pendingErase=false; // no longer pending 
 
 }
