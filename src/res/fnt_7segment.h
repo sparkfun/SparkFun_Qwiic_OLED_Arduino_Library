@@ -22,21 +22,22 @@ July 27, 2015
 https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 
 ******************************************************************************/
-#ifndef FONT7SEGMENT_H
-#define FONT7SEGMENT_H
+
+#pragma once 
+
+// include the resource manager
+#include "qwiic_grresman.h"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const unsigned char sevensegment [] = {
+	static const uint8_t sevensegment_data [] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const unsigned char sevensegment [] PROGMEM = {
+	static const uint8_t sevensegment_data [] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const unsigned char sevensegment [] PROGMEM = {
+	static const uint8_t sevensegment_data [] PROGMEM = {
 #endif
-	// first row defines - FONTWIDTH, FONTHEIGHT, ASCII START CHAR, TOTAL CHARACTERS, FONT MAP WIDTH HIGH, FONT MAP WIDTH LOW (2,56 meaning 256)
-	10,16,46,13,1,30,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	
 	0x00, 0x00, 0x00, 0x00, 0x78, 0xFC, 0x02, 0x03, 0x03, 0x03, 0x03, 0x02, 0xFC, 0x78, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x7E, 0x00, 0x00, 0x02, 0x83, 0x83, 0x83, 0x83, 0x02, 
@@ -54,5 +55,31 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 	0x00, 0x00, 0x00, 0x00, 0xFF, 0x7E, 0x1C, 0x3E, 0x41, 0xC1, 0xC1, 0xC1, 0xC1, 0x41, 0x3E, 0x1C,
 	0x00, 0x00, 0x41, 0xC1, 0xC1, 0xC1, 0xC1, 0x41, 0x3E, 0x1C, 0x00, 0x00, 0x00, 0X00, 0x18, 0x3C,
 	0x3C, 0x18, 0x00, 0x00
+
 };
-#endif
+
+
+
+
+// Define our font id
+
+#define FONT_SEVENSEGMENT    0x8001
+
+// Define our font desciptor for this font;
+
+static QwFontDesc fnt_7segment = {
+	{10,      	// width
+	 16,      	// height
+	 46,		// start character
+	 13,		// number of characters
+	 130,		// map width
+	 sevensegment_data  // the map data
+	}, 
+	FONT_SEVENSEGMENT,   // resource id.
+	0     // internal
+};
+
+
+// Add to the resource manager
+static bool rc_7segment = QwResourceMan().add_font(&fnt_7segment);
+

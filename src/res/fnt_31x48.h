@@ -17,21 +17,20 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
 
 ******************************************************************************/
 
-#ifndef FONTLARGELETTER31X48_H
-#define FONTLARGELETTER31X48_H
+#pragma once
+
+#include "qwiic_grresman.h"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-    static const unsigned char fontlargeletter31x48 [] = {
+    static const uint8_t font31x48 [] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-    static const unsigned char fontlargeletter31x48 [] PROGMEM = {
+    static const uint8_t font31x48 [] PROGMEM = {
 #else
 	#include <pgmspace.h>
-    static const unsigned char fontlargeletter31x48 [] PROGMEM = {
+    static const uint8_t font31x48 [] PROGMEM = {
 #endif
-    // first row defines - FONTWIDTH, FONTHEIGHT, ASCII START CHAR, TOTAL CHARACTERS, FONT MAP WIDTH HIGH, FONT MAP WIDTH LOW (2,56 meaning 256)
-    31,48,65,58,0,62,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xF8, 0xF8, 0xF8, 0xF8,
     0xF8, 0xF8, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0xF8, 0xF8, 0xF8, 0xF8, 0xF8, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78,
@@ -708,4 +707,23 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 
 };
-#endif
+// Define our font id
+
+#define FONT_31X48    0x8004
+
+static QwFontDesc fnt_31x48 = {
+    { 31,        // width
+     48,        // height
+     65,        // start character
+     58,        // number of characters
+     62,       // map width
+     font31x48  // the map data
+    }, 
+    FONT_31X48,   // resource id.
+    0     // internal
+};
+
+
+// Add to the resource manager
+static bool rc_31x48 = QwResourceMan().add_font(&fnt_31x48);
+

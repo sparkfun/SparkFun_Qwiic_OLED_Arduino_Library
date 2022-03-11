@@ -21,21 +21,22 @@ Emil Varughese @ Edwin Robotics Pvt. Ltd.
 July 27, 2015
 https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 ******************************************************************************/
-#ifndef FONT8X16_H
-#define FONT8X16_H
+
+#pragma once 
+
+// include the resource manager
+#include "qwiic_grresman.h"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const unsigned char font8x16[] = {
+	static const uint8_t font8x16[] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const unsigned char font8x16[] PROGMEM = {
+	static const uint8_t font8x16[] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const unsigned char font8x16[] PROGMEM = {
+	static const uint8_t font8x16[] PROGMEM = {
 #endif
-	// first row defines - FONTWIDTH, FONTHEIGHT, ASCII START CHAR, TOTAL CHARACTERS, FONT MAP WIDTH HIGH, FONT MAP WIDTH LOW (2,56 meaning 256)
-	8,16,32,96,2,56,		
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFE, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x0E, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0xD0, 0xBE, 0x90, 0xD0, 0xBE, 0x90, 0x00,
 	0x00, 0x1C, 0x62, 0xFF, 0xC2, 0x80, 0x00, 0x00, 0x0C, 0x12, 0x92, 0x4C, 0xB0, 0x88, 0x06, 0x00,
@@ -133,5 +134,24 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 	0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x1F, 0x00, 0x00, 0x00, 0x00,
 	0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-#endif
+
+// Define our font id
+
+#define FONT_8X16    0x8002
+
+static QwFontDesc fnt_8x16 = {
+	{ 8,      	// width
+	 16,      	// height
+	 32,		// start character
+	 96,		// number of characters
+	 256,		// map width
+	 font8x16  // the map data
+	}, 
+	FONT_8X16,   // resource id.
+	0     // internal
+};
+
+
+// Add to the resource manager
+static bool rc_8x16 = QwResourceMan().add_font(&fnt_8x16);
 

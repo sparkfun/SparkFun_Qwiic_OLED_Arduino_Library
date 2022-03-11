@@ -22,21 +22,21 @@ July 27, 2015
 https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 
 ******************************************************************************/
-#ifndef FONTLARGENUMBER_H
-#define FONTLARGENUMBER_H
+#pragma once
+
+#include "qwiic_grresman.h"
+
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
-	static const unsigned char fontlargenumber[] = {
+	static const uint8_t fontlargenum[] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
-	static const unsigned char fontlargenumber[] PROGMEM = {
+	static const uint8_t fontlargenum[] PROGMEM = {
 #else
 	#include <pgmspace.h>
-	static const unsigned char fontlargenumber[] PROGMEM = {
+	static const uint8_t fontlargenum[] PROGMEM = {
 #endif
-	// first row defines - FONTWIDTH, FONTHEIGHT, ASCII START CHAR, TOTAL CHARACTERS, FONT MAP WIDTH HIGH, FONT MAP WIDTH LOW (2,56 meaning 256)
-	12,48,48,11,1,32,
 	0x00, 0xC0, 0xF8, 0x7C, 0x3E, 0x3E, 0xFC, 0xF8, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xE0,
 	0x78, 0xFE, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x7C, 0x3C, 0x3E, 0x3E, 0xFE, 0xFC,
 	0xE0, 0x00, 0x00, 0x00, 0x00, 0x7C, 0x3E, 0x3E, 0x3E, 0xFE, 0xF8, 0xC0, 0x00, 0x00, 0x00, 0x00,
@@ -88,4 +88,24 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 	0x00, 0x00, 0x3E, 0x7C, 0x7C, 0x7E, 0x3F, 0x0F, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
-#endif
+
+// Define our font id
+
+#define FONT_LARGE_NUM    0x8005
+
+static QwFontDesc fnt_largenum = {
+    { 12,        // width
+     48,        // height
+     48,        // start character
+     11,        // number of characters
+     132,       // map width
+     fontlargenum  // the map data
+    }, 
+    FONT_LARGE_NUM,   // resource id.
+    0     // internal
+};
+
+
+// Add to the resource manager
+static bool rc_largenum = QwResourceMan().add_font(&fnt_largenum);
+
