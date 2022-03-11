@@ -45,57 +45,10 @@ QwI2C i2cBus;
 int width;
 int height;
 
-
-//A 20 x 17 pixel image of a truck in a box
-//Use http://en.radzio.dxp.pl/bitmap_converter/ to generate output
-//Make sure the bitmap is n*8 pixels tall (pad white pixels to lower area as needed)
-//Otherwise the bitmap bitmap_converter will compress some of the bytes together
-uint8_t truck[] = {
-    0xFF,
-    0x01,
-    0xC1,
-    0x41,
-    0x41,
-    0x41,
-    0x71,
-    0x11,
-    0x11,
-    0x11,
-    0x11,
-    0x11,
-    0x71,
-    0x41,
-    0x41,
-    0xC1,
-    0x81,
-    0x01,
-    0xFF,
-    0xFF,
-    0x80,
-    0x83,
-    0x82,
-    0x86,
-    0x8F,
-    0x8F,
-    0x86,
-    0x82,
-    0x82,
-    0x82,
-    0x86,
-    0x8F,
-    0x8F,
-    0x86,
-    0x83,
-    0x81,
-    0x80,
-    0xFF,
-};
-
-int iconHeight = 16;
-int iconWidth = 19;
-
 uint32_t draw_total_time;
 uint32_t n_draws;
+
+QwBitmap *bmpTruck;
 
 void setup(){
 
@@ -126,6 +79,7 @@ void setup(){
 
     // set a template for our framerate display
     Serial.println("- Frame Rate"); 
+    bmpTruck = QwResourceMngr().get_bitmap(BMP_TRUCK);
   
 }
 
@@ -139,18 +93,18 @@ void loop(){
     // Calculate draw time...
     uint32_t milStart = millis();
     //myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
-    myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, BMP_TRUCK);      
+    myOLED.bitmap(iconX, iconY, bmpTruck);
     myOLED.display();
     //Move the icon
     iconX += iconXChangeAmount;
     iconY += iconYChangeAmount;
 
-    if (iconX + iconWidth >= width)
+    if (iconX + bmpTruck->width >= width)
       iconXChangeAmount *= -1; //Change direction
     if (iconX == 0)
       iconXChangeAmount *= -1; //Change direction
 
-    if (iconY + iconHeight >= height)
+    if (iconY + bmpTruck->height >= height)
       iconYChangeAmount *= -1; //Change direction
     if (iconY == 0)
       iconYChangeAmount *= -1; //Change direction
