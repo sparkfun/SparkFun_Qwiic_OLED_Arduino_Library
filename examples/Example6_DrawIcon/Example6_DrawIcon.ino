@@ -15,7 +15,7 @@
   Distributed as-is; no warranty is given.
 */
 
-#define MICRO
+//#define MICRO
 //#define NARROW
 
 
@@ -34,6 +34,10 @@ const char * deviceName = "Narrow OLED";
 QwOLEDTransparent myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
+
+
+// RESOURCE manager.
+#include "res/bmp_truck.h"
 
 QwI2C i2cBus;
 
@@ -134,7 +138,8 @@ void loop(){
   
     // Calculate draw time...
     uint32_t milStart = millis();
-    myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
+    //myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
+    myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, BMP_TRUCK);      
     myOLED.display();
     //Move the icon
     iconX += iconXChangeAmount;

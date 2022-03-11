@@ -111,6 +111,9 @@ public:
 	// default address of the device - expect the sub to fill in.
 	uint8_t default_address;
 
+	// experiment 
+	void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t id_bmp);
+
 protected:
 
 	// Subclasses of this class define the specifics of the device, including size.
