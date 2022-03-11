@@ -59,12 +59,12 @@ bool QwGrBufferDevice::init_draw_functions(void){
 		return false;
 	}
 
-	// If the horz line function wasn't implemented (function pointer == null function) = set it toline
+	// If the horz line function wasn't implemented (function pointer == null function) = set it to line
 
 	if(_idraw.draw_line_horz == null_vtable->draw_line_horz)
 		_idraw.draw_line_horz = _idraw.draw_line;
 
-	// If the horz line function wasn't implemented (function pointer == null function) = set it toline
+	// If the horz line function wasn't implemented (function pointer == null function) = set it to line
 	if(_idraw.draw_line_vert == null_vtable->draw_line_vert)
 		_idraw.draw_line_vert = _idraw.draw_line;
 
@@ -72,7 +72,7 @@ bool QwGrBufferDevice::init_draw_functions(void){
 	if(_idraw.draw_rect_filled == null_vtable->draw_rect_filled)
 		_idraw.draw_rect_filled = _idraw.draw_rect;	
 
-	// if circle_filled isn't implemented, just sub in rect - it' something ...
+	// if circle_filled isn't implemented, just sub in circle - it' something ...
 	if(_idraw.draw_circle_filled == null_vtable->draw_circle_filled)
 		_idraw.draw_circle_filled = _idraw.draw_circle;	
 
@@ -232,6 +232,9 @@ void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
 
 }
+////////////////////////////////////////////////////////////////////////////////////////
+// rectangle_fill()
+//
 void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 
 
