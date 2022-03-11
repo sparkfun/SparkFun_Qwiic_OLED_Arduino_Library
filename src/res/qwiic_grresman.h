@@ -30,7 +30,7 @@ typedef struct _qwfont_desc{
 typedef struct _qwbitmap{
 	uint8_t	  	      width;
 	uint8_t           height;
-	const unsigned char * data;
+	const uint8_t * data;
 }QwBitmap;
 
 typedef struct _qwbitmap_desc{
