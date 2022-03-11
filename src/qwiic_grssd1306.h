@@ -114,6 +114,7 @@ public:
 
 	// experiment 
 	void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, gwResourceID_t id_bmp);
+	void bitmap(uint8_t x0, uint8_t y0, QwBitmap *bitmap);	
 
 protected:
 

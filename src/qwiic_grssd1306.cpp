@@ -618,7 +618,14 @@ void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, gwResou
 
 	draw_bitmap(x0, y0, x1, y1, (uint8_t*)pBMP->data, pBMP->width, pBMP->height);
 }
+void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, QwBitmap *pBMP){
 
+	if(!pBMP)
+		return;
+
+	draw_bitmap(x0, y0, pBMP->width, pBMP->height, (uint8_t*)pBMP->data, pBMP->width, pBMP->height);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 // set_xor()
