@@ -39,18 +39,6 @@ typedef struct _qwfont_desc{
 	struct _qwfont_desc   * next;
 }QwFontDesc;
 
-typedef struct _qwbitmap{
-	uint8_t	  	      width;
-	uint8_t           height;
-	const uint8_t * data;
-}QwBitmap;
-
-typedef struct _qwbitmap_desc{
-	QwBitmap       		    bitmap;
-	gwResourceID_t     	    id_resource;	
-	struct _qwbitmap_desc * next;
-}QwBitmapDesc;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // A simple resource manager for fonts and bitmaps. Makes managing these things
@@ -112,50 +100,6 @@ public:
     //---------------------------------------------------------
     uint8_t n_fonts(void){ return _n_fonts;}
 
-    //---------------------------------------------------------
-	bool add_bitmap(QwBitmapDesc* theBitmap){
-
-    	if(!theBitmap || !isa_bitmap(theBitmap->id_resource))
-    		return false;
-
-    	// already registered?
-    	if(get_bitmap(theBitmap->id_resource))
-    		return true;
-
-    	theBitmap->next = nullptr;
-
-    	if(!_pBitmaps)
-    		_pBitmaps = theBitmap;
-    	else {
-	    	QwBitmapDesc *pLast = _pBitmaps;    		
-	    	while(pLast->next != nullptr)
-	    		pLast = pLast->next;
-
-	    	pLast->next = theBitmap;
-    	}
-    	_n_bmp++;
-    	return true;
-    }
-    //---------------------------------------------------------
-    QwBitmap * get_bitmap(gwResourceID_t idBitmap){
-
-    	if(!isa_bitmap(idBitmap))
-    		return nullptr;
-
-    	QwBitmapDesc *pCurrent = _pBitmaps;
-
-    	while(pCurrent != nullptr){
-
-    		if(pCurrent->id_resource == idBitmap)
-    			return &pCurrent->bitmap;
-    		pCurrent = pCurrent->next;
-    	}
-
-    	return nullptr;
-    }
-    //---------------------------------------------------------    
-    uint8_t n_bitmaps(){return _n_bmp;}
-
     //---------------------------------------------------------    
  	// copy and assign constructors - delete them to prevent extra copys being 	
     // made -- this is a singleton object.
@@ -164,29 +108,114 @@ public:
 
 
 private:
-	QwResourceMngr_(): _pFonts{nullptr}, _pBitmaps{nullptr}, _n_fonts{0}, _n_bmp{0}{}
+	QwResourceMngr_(): _pFonts{nullptr}, _n_fonts{0}{}
 
 	QwFontDesc     * _pFonts;
-	QwBitmapDesc   * _pBitmaps;
 
 	uint8_t      _n_fonts;
-	uint8_t      _n_bmp;
-
 };
 
 typedef QwResourceMngr_& QwResourceMngr;
 
 // Accessor for the signleton
 #define QwResourceMngr()  QwResourceMngr_::getInstance()
+#define RESMANAGER QwResourceMngr_::getInstance()
 
 // Define a macro that makes registration of resources easy
 
 #define QwResource_AddFont(_id_, _width_, _height_, _start_, _num_, _map_, _data_) \
-		static QwFontDesc fnt_##_id_##_ = { { _width_, _height_, _start_, _num_, _map_, _data_}, _id_, 0}; \
-		static bool rc_##_id_##_ = QwResourceMngr().add_font(&fnt_##_id_##_);
+static QwFontDesc fnt_##_id_##_ = { { _width_, _height_, _start_, _num_, _map_, _data_}, _id_, 0}; \
+static bool rc_##_id_##_ = RESMANAGER.add_font(&fnt_##_id_##_);
 
-#define QwResource_AddBitmap(_id_, _name_, _width_, _height_, _data_) \
-		static QwBitmapDesc bmp_##_id_##_desc = { { _width_, _height_,  _data_}, _id_, 0}; \
-		static QwBitmap * qwbmp_##_name_ = &bmp_##_id_##_desc.bitmap; \
-		static bool rc_##_id_##_ = QwResourceMngr().add_bitmap(&bmp_##_id_##_desc);
 
+////////////////////////////////////////////////////////////////////////
+// Experimental - Template singletons for managing resources
+////////////////////////////////////////////////////////////////////////		
+//
+// The common use/storage of bitmap and font data is creating a static 
+// array and placing it in a header file. 
+//
+// This pattern is fine for simple uses, where the bitmap is only included
+// in a single file. BUT if the bitmap header is included in multiple files,
+// multiple copies of the bitmap are created.
+//
+// You could just make the bitmap array a const - but then multiple includes
+// will lead to symbol collision at link time - confusing the user.
+//
+// These simple classes help place the bitmap data in a singleton class AND
+// only create on copy/instance of the bitmap data no matter how many times a
+// resource header file is included.
+//
+// The Plan:
+//     	- Define a base resource class
+//			- attributes as public instance vars
+//			- Define a constructor that init's the instance vars
+//			- Resource data access via virtual accessor - make it const
+//			
+//		- Create a template that subclasses the resource class, and defines a singleton 
+//			- It ensures only once of these classes is ever created.
+//
+//		- In a seperate header file - one for each resource, define the resource
+//			- For example - for a bitmap - the data array, #defines for width and height
+//			- The data array is declard as const static
+//
+//		- In another header file - create a subclass of our singleton 
+//			ex:
+//            class QwBMPTruck final : public bitmapSingleton<QwBMPTruck> {
+//
+//			- Override the base class data accessor method
+//			- In the body of this method, include the resource defined header file
+//				- This defines the resource data as a static in this method. So only one copy is made
+//					ex:
+//						const uint8_t * bitmap(void){
+//					#include "bmp_truck.h"
+//							return bmp_truck_data;
+//					 	}
+//
+//			- After this resource access method, define the constructor of this class
+//				- This is done after so it can use the attribute #defines of the included resource def header
+//				- Have the constructor call it's superclass constructor, passing in resource attributes
+//					ex:
+//						QwBMPTruck(): bitmapSingleton<QwBMPTruck>(BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT){}
+//
+//			- Lastly, define a macro that makes the syntax of access easy. This macro calls the instance
+//			   	method of the singleton, getting access to the object that contains the data of the resource
+//				ex:
+//					#define QW_BMP_TRUCK QwBMPTruck::instance()
+//				
+//				To the user, they just have a bitmap, referenced as QW_BMP_TRUCK and can do the following
+//					ex:
+//						uint8_t width = QW_BMP_TRUCK.width;
+//						uint8_t height = QW_BMP_TRUCK.height;
+//
+//				And internal methods get the data of this bitmap object using the bitmap() method
+//					ex:
+//						const uint8_t * pData = QW_BMP_TRUCK.bitmap();
+//
+
+
+class QwBitmap{
+
+public:
+	uint8_t	  	      width;
+	uint8_t           height;
+    virtual const uint8_t * bitmap(void){return nullptr;};	
+
+protected:
+	QwBitmap(uint8_t w, uint8_t h): width{w}, height{h}{}
+};
+template<typename T>
+class bitmapSingleton : public QwBitmap {
+public:
+    static T& instance(void){
+        static T instance;
+        return instance;
+    }
+
+    bitmapSingleton(const bitmapSingleton&) = delete;
+    bitmapSingleton& operator= (const bitmapSingleton) = delete;
+
+protected:
+    bitmapSingleton() {}
+    using QwBitmap::QwBitmap;
+};		

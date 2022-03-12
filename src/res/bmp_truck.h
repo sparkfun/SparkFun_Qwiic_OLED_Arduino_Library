@@ -24,9 +24,6 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 ******************************************************************************/
 #pragma once 
 
-// include the resource manager
-#include "qwiic_resmngr.h"
-
 /*
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
@@ -83,10 +80,3 @@ static const uint8_t bmp_truck_data[] = {
     0x80,
     0xFF,
 };
-	
-// Define our resource id
-
-#define BMP_TRUCK    MAKE_BITMAP_ID(0x01)
-
-QwResource_AddBitmap(BMP_TRUCK, truck, BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT, bmp_truck_data);
-
