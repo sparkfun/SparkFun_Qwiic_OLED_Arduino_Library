@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "qwiic_grbuffer.h"
 
 
@@ -393,3 +394,47 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 	
 	(*_idraw.draw_bitmap)(this, x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+// text()
+void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, char * text){
+
+	if(!text, x0 >= _viewport.width || y0 >= _viewport.height )
+		return;
+
+	(_idraw.draw_text)(this, x0, y0, text);
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
+
+	if(!_currFont || !text || !strlen(text) ) // no font
+		return;
+
+	// initial test - just a single row
+	if(_currFont->height != 8)
+		return;
+
+	const uint8_t *pFont = _currFont->data();
+
+	uint8_t currChar;
+	uint8_t i, j;
+
+	while(text++){
+		for(i = 0; i < _currFont->width + 1; i++) {
+
+			if (i == _currFont->width) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
+				currChar = 0;
+			else
+				currChar = pgm_read_byte(( (*text - _currFont->start) * _currFont->width) + i);
+
+			for (j = 0; j < 8; j++){
+				if (currChar & 0x1)
+					(*_idraw.draw_pixel)(this, x0+i, y0+j);
+
+				currChar >>= 1;
+			}
+		}
+		x0 += _currFont->width;
+	}
+}
+

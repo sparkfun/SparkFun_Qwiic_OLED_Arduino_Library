@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 
+#include "res/qwiic_resdef.h"
+
 
 // Some rouintes need a int swap function. Many ways to do this- all the cool kids
 // use bitwise ops  - namely the xor. 
@@ -58,6 +60,8 @@ class _QwIDraw{
 
 	virtual void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 						  	 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )	{}
+
+	virtual void draw_text(uint8_t x0, uint8_t y0, char * text){}	
 };
 
 // Drawing fuction typedefs 
@@ -65,6 +69,7 @@ typedef void (*QwDrawPntFn)(void*, uint8_t, uint8_t);
 typedef void (*QwDrawTwoPntFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t);
 typedef void (*QwDrawCircleFn)(void*, uint8_t, uint8_t, uint8_t);
 typedef void (*QwDrawBitmapFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t *, uint8_t, uint8_t);
+typedef void (*QwDrawTextFn)(void*, uint8_t, uint8_t, char*);
 
 // Define the vtable struct for IDraw
 struct _QwIDraw_vtable{
@@ -77,6 +82,7 @@ struct _QwIDraw_vtable{
 	QwDrawCircleFn   draw_circle;
 	QwDrawCircleFn   draw_circle_filled;	
 	QwDrawBitmapFn   draw_bitmap;		
+	QwDrawTextFn     draw_text;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +94,7 @@ class QwGrBufferDevice : protected _QwIDraw
 
 public:
 	// Constructors
-	QwGrBufferDevice(){};
+	QwGrBufferDevice(): _currFont{nullptr}{};
 	QwGrBufferDevice(uint8_t width, uint8_t height) : QwGrBufferDevice(0, 0, width, height){};
 	QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
 		set_viewport(x0, y0, width, height);
@@ -110,10 +116,13 @@ public:
 	uint16_t get_height(void){ return _viewport.height;};
 
 
-	// Interface methods that a sublcass fills in.
-
 	// Lifecycle
 	virtual bool init(void);
+
+	// current font method
+	void set_font(QwFont& font){
+		_currFont = &font;
+	}
 
 	// Public Interface - Graphics interface TODO add color? 
 	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
@@ -122,8 +131,12 @@ public:
 	void pixel(uint8_t x, uint8_t y);
 	void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
+
 	void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 				uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
+
+	void text(uint8_t x0, uint8_t y0, char * text);
+
 	// subclass interface 
 	virtual void display(void)=0; 
 	virtual void erase(void)=0;		
@@ -150,8 +163,13 @@ protected:
 
 	virtual void draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius);		
 
+	virtual void draw_text(uint8_t x0, uint8_t y0, char * text);
+
 	// Our drawing interface - open to sub-classes ...
 	_QwIDraw_vtable  _idraw;
+
+	// Current Font
+	QwFont  *_currFont;
 
 private:
 
