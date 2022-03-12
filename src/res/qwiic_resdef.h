@@ -10,126 +10,8 @@
 
 #include <stdint.h>
 
-
-// Resource ID Masks
-#define FONT_ID_MASK   0x8000U
-#define BITMAP_ID_MASK 0xA000U
-
-#define isa_font(_id_)  ( _id_ & FONT_ID_MASK ? true : false)
-#define isa_bitmap(_id_)  ( _id_ & BITMAP_ID_MASK ? true : false)
-#define MAKE_FONT_ID(_id_) (_id_ | FONT_ID_MASK)
-#define MAKE_BITMAP_ID(_id_) (_id_ | BITMAP_ID_MASK)
-
-typedef uint16_t gwResourceID_t;
-
-// Define a structure to hold a font definition
-
-typedef struct _qwfont{
-	uint8_t	  	      font_width;
-	uint8_t           font_height;
-	uint8_t           start_char;
-	uint8_t     	  n_chars;
-	uint16_t    	  map_width;
-	const uint8_t   * data;
-}QwFont;
-
-typedef struct _qwfont_desc{
-	QwFont    			    font;
-	gwResourceID_t   	  	id_resource;	
-	struct _qwfont_desc   * next;
-}QwFontDesc;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// A simple resource manager for fonts and bitmaps. Makes managing these things
-// easlier that just including random byte arrays.
-//
-//  Making a singleton - this has no state. 
-//
-class QwResourceMngr_ {
-
-public:
-	// Singleton things
-    static QwResourceMngr_& getInstance(void){
-
-        static QwResourceMngr_ instance;
-        return instance;
-    }
-
-    //---------------------------------------------------------
-    bool add_font(QwFontDesc* theFont){
-
-    	if(!theFont || !isa_font(theFont->id_resource))
-    		return false;
-
-		// already registered?
-    	if(get_font(theFont->id_resource))
-    		return true;
-
-    	theFont->next = nullptr;
-
-    	if(!_pFonts)
-    		_pFonts = theFont;
-    	else {
-	    	QwFontDesc *pLast = _pFonts;    		
-	    	while(pLast->next != nullptr)
-	    		pLast = pLast->next;
-
-	    	pLast->next = theFont;
-    	}
-    	_n_fonts++;
-
-    	return true;
-    }
-    //---------------------------------------------------------
-    QwFont * get_font(gwResourceID_t idFont){
-
-    	if(!isa_font(idFont))
-    		return nullptr;
-
-    	QwFontDesc *pCurrent = _pFonts;
-    	while(pCurrent != nullptr){
-
-    		if(pCurrent->id_resource == idFont)
-    			return &pCurrent->font;
-    		pCurrent = pCurrent->next;
-    	}
-
-    	return nullptr;
-    }
-    //---------------------------------------------------------
-    uint8_t n_fonts(void){ return _n_fonts;}
-
-    //---------------------------------------------------------    
- 	// copy and assign constructors - delete them to prevent extra copys being 	
-    // made -- this is a singleton object.
-    QwResourceMngr_(QwResourceMngr_ const&) = delete;
-    void operator=(QwResourceMngr_ const&) = delete;
-
-
-private:
-	QwResourceMngr_(): _pFonts{nullptr}, _n_fonts{0}{}
-
-	QwFontDesc     * _pFonts;
-
-	uint8_t      _n_fonts;
-};
-
-typedef QwResourceMngr_& QwResourceMngr;
-
-// Accessor for the signleton
-#define QwResourceMngr()  QwResourceMngr_::getInstance()
-#define RESMANAGER QwResourceMngr_::getInstance()
-
-// Define a macro that makes registration of resources easy
-
-#define QwResource_AddFont(_id_, _width_, _height_, _start_, _num_, _map_, _data_) \
-static QwFontDesc fnt_##_id_##_ = { { _width_, _height_, _start_, _num_, _map_, _data_}, _id_, 0}; \
-static bool rc_##_id_##_ = RESMANAGER.add_font(&fnt_##_id_##_);
-
-
 ////////////////////////////////////////////////////////////////////////
-// Experimental - Template singletons for managing resources
+// Notes  Template singletons for managing resources
 ////////////////////////////////////////////////////////////////////////		
 //
 // The common use/storage of bitmap and font data is creating a static 
@@ -193,6 +75,7 @@ static bool rc_##_id_##_ = RESMANAGER.add_font(&fnt_##_id_##_);
 //						const uint8_t * pData = QW_BMP_TRUCK.bitmap();
 //
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Simple Bitmap class definition
 
 class QwBitmap{
@@ -220,10 +103,13 @@ public:
 
 protected:
     bmpSingleton() {}
-    using QwBitmap::QwBitmap;
+    using QwBitmap::QwBitmap; // inherit contructor
 };		
 
-class _QwFont{
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Font things - class to hold font attributes
+
+class QwFont{
 
 public:
 	uint8_t	  	      width;
@@ -235,12 +121,14 @@ public:
 	virtual const uint8_t * data(void){return nullptr;};
 
 protected:
-	_QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w):
-			width{w}, height{h}, start_char{st_chr}, n_chars{n_chr}, map_width{m_w}{}
+	QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w):
+			width{w}, height{h}, start_char{st_chr}, n_chars{n_chr}, map_width{m_w}{printf("IN FONT CONSTUCTOR\n");}
 };
+
+
 // Template that creates a singleton for bitmaps.
 template<typename T>
-class fontSingleton : public _QwFont {
+class fontSingleton : public QwFont {
 public:
     static T& instance(void){
         static T instance;
@@ -252,5 +140,5 @@ public:
 
 protected:
     fontSingleton() {}
-    using _QwFont::_QwFont;
+    using QwFont::QwFont; // inherit constructor
 };		

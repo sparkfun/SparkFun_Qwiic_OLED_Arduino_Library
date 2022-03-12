@@ -3,14 +3,14 @@
 #pragma once
 
 
-#include "qwiic_resmngr.h"
+#include "qwiic_resdef.h"
 
 class QwBMPTruck final : public bmpSingleton<QwBMPTruck> {
 
 public:
 	const uint8_t * data(void){
 
-#include "bmp_truck.h"
+#include "_bmp_truck.h"
 
 		return bmp_truck_data;
 	}

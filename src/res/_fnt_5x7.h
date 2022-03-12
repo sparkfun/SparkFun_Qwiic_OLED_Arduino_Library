@@ -24,8 +24,12 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 ******************************************************************************/
 #pragma once 
 
-// include the resource manager
-#include "qwiic_resmngr.h"
+// Define the font attributes
+#define FONT_5X7_WIDTH        7
+#define FONT_5X7_HEIGHT       8
+#define FONT_5X7_START        0
+#define FONT_5X7_NCHAR        255
+#define FONT_5X7_MAP_WIDTH    1275
 
 // Standard ASCII 5x7 font
 #if defined(ARDUINO_ARCH_MBED)
@@ -295,9 +299,3 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 	0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-// Define our font id
-
-#define FONT_5X7    MAKE_FONT_ID(0x02)
-
-// Register this font with the resource manager (ID, width, height, start char, num char, *data)
-QwResource_AddFont(FONT_5X7, 5, 8, 0, 255, 1275, font5x7_data);
