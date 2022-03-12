@@ -13,9 +13,11 @@
 #include "res/fnt_7segment.h"
 #include "res/fnt_5x7.h"
 #include "res/fnt_8x16.h"
-#include "res/fnt_31x48.h"
+
 #include "res/fnt_largenumber.h"
 
+// Fonts - new
+#include "res/qw_fnt_31x48.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Commands
@@ -612,7 +614,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 
 
-	draw_bitmap(x0, y0, theBMP.width, theBMP.height, (uint8_t*)theBMP.bitmap(), theBMP.width, theBMP.height);
+	draw_bitmap(x0, y0, theBMP.width, theBMP.height, (uint8_t*)theBMP.data(), theBMP.width, theBMP.height);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////
