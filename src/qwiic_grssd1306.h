@@ -10,7 +10,7 @@
 
 #include "qwiic_grbuffer.h"
 #include "qwiic_i2c.h"
-#include "res/qwiic_resmngr.h"
+#include "res/qwiic_resdef.h"
 
 
 
@@ -112,8 +112,7 @@ public:
 	// default address of the device - expect the sub to fill in.
 	uint8_t default_address;
 
-	// experiment 
-	void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, gwResourceID_t id_bmp);
+	// Bitmap draw - using a bitmap object
 	void bitmap(uint8_t x0, uint8_t y0, QwBitmap& bitmap);		
 
 protected:

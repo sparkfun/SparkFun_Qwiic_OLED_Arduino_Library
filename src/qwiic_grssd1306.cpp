@@ -5,20 +5,15 @@
 
 #include "qwiic_grssd1306.h"
 
-// resource manager
-#include "res/qwiic_resmngr.h"
 
-// Fonts
-
-#include "res/fnt_7segment.h"
-#include "res/fnt_5x7.h"
-#include "res/fnt_8x16.h"
-
-#include "res/fnt_largenumber.h"
-
-// Fonts - new
+/////////////////TESTING  REMOVE for PRODUCTION///////////////
+// Fonts - test includes
 #include "res/qw_fnt_31x48.h"
-
+#include "res/qw_fnt_5x7.h"
+#include "res/qw_fnt_8x16.h"
+#include "res/qw_fnt_7segment.h"
+#include "res/qw_fnt_largenum.h"
+/////////////////TESTING  REMOVE for PRODUCTION///////////////
 /////////////////////////////////////////////////////////////////////////////
 // Commands
 // 
@@ -260,9 +255,6 @@ bool QwGrSSD1306::init(void){
 	init_buffers();
 
 	_isInit = true; // we're ready to rock
-
-
-	printf("Fonts loaded: %d\n", QwResourceMngr().n_fonts());
 
 	return true;
 
