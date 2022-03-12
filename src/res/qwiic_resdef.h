@@ -114,7 +114,7 @@ class QwFont{
 public:
 	uint8_t	  	      width;
 	uint8_t           height;
-	uint8_t           start_char;
+	uint8_t           start;
 	uint8_t     	  n_chars;
 	uint16_t    	  map_width;
 
@@ -122,7 +122,7 @@ public:
 
 protected:
 	QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w):
-			width{w}, height{h}, start_char{st_chr}, n_chars{n_chr}, map_width{m_w}{printf("IN FONT CONSTUCTOR\n");}
+			width{w}, height{h}, start{st_chr}, n_chars{n_chr}, map_width{m_w}{}
 };
 
 
