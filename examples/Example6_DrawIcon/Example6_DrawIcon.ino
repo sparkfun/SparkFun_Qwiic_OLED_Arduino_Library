@@ -37,6 +37,7 @@ const char * deviceName = "Transparent OLED";
 
 // Let's draw a truck
 #include "res/qw_bmp_truck.h"
+//#include "res/qw_bmp_sparkfun.h"
 
 QwI2C i2cBus;
 
@@ -94,13 +95,12 @@ void loop(){
     iconX += iconXChangeAmount;
     iconY += iconYChangeAmount;
 
-//    if (iconX + qwbmp_truck->width >= width)
     if (iconX + QW_BMP_TRUCK.width >= width)    
       iconXChangeAmount *= -1; //Change direction
     if (iconX == 0)
       iconXChangeAmount *= -1; //Change direction
 
-//    if (iconY + qwbmp_truck->height >= height)
+
     if (iconY + QW_BMP_TRUCK.height >= height)    
       iconYChangeAmount *= -1; //Change direction
     if (iconY == 0)
