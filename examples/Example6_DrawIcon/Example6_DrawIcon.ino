@@ -35,9 +35,8 @@ QwOLEDTransparent myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
 
-
 // Let's draw a truck
-#include "res/bmp_truck.h"
+#include "res/qw_bmp_truck.h"
 
 QwI2C i2cBus;
 
@@ -88,19 +87,21 @@ void loop(){
   
     // Calculate draw time...
     uint32_t milStart = millis();
-    //myOLED.bitmap(iconX, iconY, iconWidth, iconHeight, truck, iconWidth, iconHeight);  
-    myOLED.bitmap(iconX, iconY, qwbmp_truck);
+
+    myOLED.bitmap(iconX, iconY, QW_BMP_TRUCK);
     myOLED.display();
     //Move the icon
     iconX += iconXChangeAmount;
     iconY += iconYChangeAmount;
 
-    if (iconX + qwbmp_truck->width >= width)
+//    if (iconX + qwbmp_truck->width >= width)
+    if (iconX + QW_BMP_TRUCK.width >= width)    
       iconXChangeAmount *= -1; //Change direction
     if (iconX == 0)
       iconXChangeAmount *= -1; //Change direction
 
-    if (iconY + qwbmp_truck->height >= height)
+//    if (iconY + qwbmp_truck->height >= height)
+    if (iconY + QW_BMP_TRUCK.height >= height)    
       iconYChangeAmount *= -1; //Change direction
     if (iconY == 0)
       iconYChangeAmount *= -1; //Change direction
