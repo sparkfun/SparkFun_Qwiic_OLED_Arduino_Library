@@ -9,6 +9,7 @@
 #include "res/qwiic_resmngr.h"
 
 // Fonts
+
 #include "res/fnt_7segment.h"
 #include "res/fnt_5x7.h"
 #include "res/fnt_8x16.h"
@@ -607,23 +608,11 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 ////////////////////////////////////////////////////////////////////////////////////
 // Experimental 
 ////////////////////////////////////////////////////////////////////////////////////
-void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, gwResourceID_t id_bmp){
 
-	QwBitmap * pBMP = QwResourceMngr().get_bitmap(id_bmp);
+void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 
-	if(!pBMP){
-		printf("BITMAP BY ID - FAILED TO LOAD");
-		return;
-	}
 
-	draw_bitmap(x0, y0, x1, y1, (uint8_t*)pBMP->data, pBMP->width, pBMP->height);
-}
-void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, QwBitmap *pBMP){
-
-	if(!pBMP)
-		return;
-
-	draw_bitmap(x0, y0, pBMP->width, pBMP->height, (uint8_t*)pBMP->data, pBMP->width, pBMP->height);
+	draw_bitmap(x0, y0, theBMP.width, theBMP.height, (uint8_t*)theBMP.bitmap(), theBMP.width, theBMP.height);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////
