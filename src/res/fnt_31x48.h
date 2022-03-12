@@ -19,7 +19,13 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
 
 #pragma once
 
-#include "qwiic_resmngr.h"
+
+// Define the font attributes
+#define FONT_31X48_WIDTH        31
+#define FONT_31X48_HEIGHT       48
+#define FONT_31X48_START        65
+#define FONT_31X48_NCHAR        58
+#define FONT_31X48_MAP_WIDTH    62
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
@@ -707,10 +713,6 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 
 };
-// Define our font id
 
-#define FONT_31X48   MAKE_FONT_ID(0x04)
 
-// Register this font with the resource manager (ID, width, height, start char, num char, *data)
-QwResource_AddFont(FONT_31X48, 31, 48, 65, 58, 62, font31x48_data);
 

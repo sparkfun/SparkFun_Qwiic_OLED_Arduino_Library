@@ -5,17 +5,17 @@
 
 #include "qwiic_resmngr.h"
 
-class QwBMPTruck final : public bitmapSingleton<QwBMPTruck> {
+class QwBMPTruck final : public bmpSingleton<QwBMPTruck> {
 
 public:
-	const uint8_t * bitmap(void){
+	const uint8_t * data(void){
 
 #include "bmp_truck.h"
 
 		return bmp_truck_data;
 	}
 
-	QwBMPTruck(): bitmapSingleton<QwBMPTruck>(BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT){}
+	QwBMPTruck(): bmpSingleton<QwBMPTruck>(BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT){}
 
 };
 

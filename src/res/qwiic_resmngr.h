@@ -193,29 +193,64 @@ static bool rc_##_id_##_ = RESMANAGER.add_font(&fnt_##_id_##_);
 //						const uint8_t * pData = QW_BMP_TRUCK.bitmap();
 //
 
+// Simple Bitmap class definition
 
 class QwBitmap{
 
 public:
 	uint8_t	  	      width;
 	uint8_t           height;
-    virtual const uint8_t * bitmap(void){return nullptr;};	
+    virtual const uint8_t * data(void){return nullptr;};	
 
 protected:
 	QwBitmap(uint8_t w, uint8_t h): width{w}, height{h}{}
 };
+
+// Template that creates a singleton for bitmaps.
 template<typename T>
-class bitmapSingleton : public QwBitmap {
+class bmpSingleton : public QwBitmap {
 public:
     static T& instance(void){
         static T instance;
         return instance;
     }
 
-    bitmapSingleton(const bitmapSingleton&) = delete;
-    bitmapSingleton& operator= (const bitmapSingleton) = delete;
+    bmpSingleton(const bmpSingleton&) = delete;
+    bmpSingleton& operator= (const bmpSingleton) = delete;
 
 protected:
-    bitmapSingleton() {}
+    bmpSingleton() {}
     using QwBitmap::QwBitmap;
+};		
+
+class _QwFont{
+
+public:
+	uint8_t	  	      width;
+	uint8_t           height;
+	uint8_t           start_char;
+	uint8_t     	  n_chars;
+	uint16_t    	  map_width;
+
+	virtual const uint8_t * data(void){return nullptr;};
+
+protected:
+	_QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w):
+			width{w}, height{h}, start_char{st_chr}, n_chars{n_chr}, map_width{m_w}{}
+};
+// Template that creates a singleton for bitmaps.
+template<typename T>
+class fontSingleton : public _QwFont {
+public:
+    static T& instance(void){
+        static T instance;
+        return instance;
+    }
+
+    fontSingleton(const fontSingleton&) = delete;
+    fontSingleton& operator= (const fontSingleton) = delete;
+
+protected:
+    fontSingleton() {}
+    using _QwFont::_QwFont;
 };		
