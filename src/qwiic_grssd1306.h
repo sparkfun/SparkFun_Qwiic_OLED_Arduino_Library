@@ -34,7 +34,13 @@ typedef enum gr_op_funcs {
 	GrOpPixXOR   = 2,
 } grOpFunction_t;
 
+// Flags for scrolling
 
+#define SCROLL_VERTICAL 	0x01
+#define SCROLL_RIGHT    	0x02
+#define SCROLL_LEFT     	0x04
+#define SCROLL_VERT_RIGHT   SCROLL_VERTICAL|SCROLL_RIGHT
+#define SCROLL_VERT_LEFT    SCROLL_VERTICAL|SCROLL_LEFT
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
 //
@@ -112,8 +118,14 @@ public:
 	// default address of the device - expect the sub to fill in.
 	uint8_t default_address;
 
-	// Bitmap draw - using a bitmap object
-	void bitmap(uint8_t x0, uint8_t y0, QwBitmap& bitmap);		
+	
+	// screen control
+	void flip_vert(bool);
+	void flip_horz(bool);	
+
+	// screen scrolling
+	void scroll_stop(void);
+	void scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval);
 
 protected:
 
@@ -158,6 +170,7 @@ private:
 	// device communication methods
 	void send_dev_command(uint8_t command);
 	void send_dev_command(uint8_t command, uint8_t value);	
+	void send_dev_command(uint8_t *commands, uint8_t n);		
 	void send_dev_data(uint8_t *pData, uint8_t nData);
 
 	// instance vars

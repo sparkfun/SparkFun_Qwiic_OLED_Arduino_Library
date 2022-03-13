@@ -5,15 +5,6 @@
 
 #include "qwiic_grssd1306.h"
 
-
-/////////////////TESTING  REMOVE for PRODUCTION///////////////
-// Fonts - test includes
-#include "res/qw_fnt_31x48.h"
-#include "res/qw_fnt_5x7.h"
-#include "res/qw_fnt_8x16.h"
-#include "res/qw_fnt_7segment.h"
-#include "res/qw_fnt_largenum.h"
-/////////////////TESTING  REMOVE for PRODUCTION///////////////
 /////////////////////////////////////////////////////////////////////////////
 // Commands
 // 
@@ -48,7 +39,7 @@
 #define kCmdSwitchCapVCC 				0x02
 #define kCmdPageAddress    				0x22
 #define kCmdColumnAddress  				0x21
-#define kCmdActivatesScroll 			0x2F
+#define kCmdActivateScroll 				0x2F
 #define kCmdDeactivateScroll 			0x2E
 #define kCmdSetVerticalScrollArea 		0xA3
 #define kCmdRightHorizontalScroll 		0x26
@@ -329,6 +320,57 @@ void QwGrSSD1306::init_buffers(void){
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////
+// Screen Control
+////////////////////////////////////////////////////////////////////////////////////
+void QwGrSSD1306::flip_vert(bool bFlip){
+
+	send_dev_command( (bFlip ? kCmdComScanInc : kCmdComScanDec));
+
+}
+void QwGrSSD1306::flip_horz(bool bFlip){
+
+	send_dev_command( kCmdSegRemap | (bFlip ? 0x0 : 0x1));
+
+}
+
+void QwGrSSD1306::scroll_stop(void){
+	send_dev_command(kCmdDeactivateScroll);
+}
+
+void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval){
+
+	if(stop < start)
+		return;
+
+	uint8_t n_commands = 9; 
+	uint8_t commands[9] = { kCmdDeactivateScroll,
+							kCmdRightHorizontalScroll, // default
+							0,
+							start, 
+							interval,
+							stop,
+							scroll_type & SCROLL_VERTICAL,
+							0xFF,
+							kCmdActivateScroll};
+
+	// fill in the blanks - type
+	if(scroll_type == SCROLL_LEFT)
+		commands[1] = kCmdLeftHorizontalScroll;
+	else if(scroll_type == SCROLL_VERT_RIGHT)
+		commands[1] = kCmdVerticalRightHorzScroll;
+	else if(scroll_type == SCROLL_VERT_LEFT)
+		commands[1] = kCmdVerticalLeftHorzScroll;
+
+	// If this is a vertical scroll
+	if(!commands[6]){
+		// pull out a commands
+		n_commands--;
+		commands[7]=kCmdActivateScroll;
+	}
+	send_dev_command(commands, n_commands);
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 // Drawing Methods
 ////////////////////////////////////////////////////////////////////////////////////
 // erase()
@@ -583,16 +625,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 	}
 
 }
-////////////////////////////////////////////////////////////////////////////////////
-// Experimental 
-////////////////////////////////////////////////////////////////////////////////////
 
-void QwGrSSD1306::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
-
-
-	draw_bitmap(x0, y0, theBMP.width, theBMP.height, (uint8_t*)theBMP.data(), theBMP.width, theBMP.height);
-
-}
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 // set_xor()
@@ -720,11 +753,24 @@ void QwGrSSD1306::send_dev_command(uint8_t command){
 //
 // send a single command and value to the device via the current bus object. 
 
+void QwGrSSD1306::send_dev_command(uint8_t *commands, uint8_t n_commands){
+
+	if(!commands || n_commands == 0 )
+		return;
+
+	_i2cBus->writeRegisterRegion(_i2c_address, kDeviceSendCommand, commands, n_commands);
+
+}
+////////////////////////////////////////////////////////////////////////////////////
+// sendDeviceCommand()
+//
+// send a single command and value to the device via the current bus object. 
+//
 void QwGrSSD1306::send_dev_command(uint8_t command, uint8_t value){
 
 	uint8_t buffer[] = {command, value};
 
-	_i2cBus->writeRegisterRegion(_i2c_address, kDeviceSendCommand, buffer, 2);
+	send_dev_command(buffer, 2);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////
