@@ -322,51 +322,57 @@ void QwGrSSD1306::init_buffers(void){
 ////////////////////////////////////////////////////////////////////////////////////
 // Screen Control
 ////////////////////////////////////////////////////////////////////////////////////
+
 void QwGrSSD1306::flip_vert(bool bFlip){
 
 	send_dev_command( (bFlip ? kCmdComScanInc : kCmdComScanDec));
 
 }
+////////////////////////////////////////////////////////////////////////////////////
+
 void QwGrSSD1306::flip_horz(bool bFlip){
 
 	send_dev_command( kCmdSegRemap | (bFlip ? 0x0 : 0x1));
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////
 void QwGrSSD1306::scroll_stop(void){
 	send_dev_command(kCmdDeactivateScroll);
 }
 
+////////////////////////////////////////////////////////////////////////////////////
 void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval){
 
 	if(stop < start)
 		return;
 
-	uint8_t n_commands = 9; 
-	uint8_t commands[9] = { kCmdDeactivateScroll,
+	uint8_t n_commands = 8; 
+	uint8_t commands[8] = { 
 							kCmdRightHorizontalScroll, // default
 							0,
 							start, 
 							interval,
 							stop,
-							scroll_type & SCROLL_VERTICAL,
+							(uint8_t)(scroll_type & SCROLL_VERTICAL),
 							0xFF,
 							kCmdActivateScroll};
 
 	// fill in the blanks - type
 	if(scroll_type == SCROLL_LEFT)
-		commands[1] = kCmdLeftHorizontalScroll;
+		commands[0] = kCmdLeftHorizontalScroll;
 	else if(scroll_type == SCROLL_VERT_RIGHT)
-		commands[1] = kCmdVerticalRightHorzScroll;
+		commands[0] = kCmdVerticalRightHorzScroll;
 	else if(scroll_type == SCROLL_VERT_LEFT)
-		commands[1] = kCmdVerticalLeftHorzScroll;
+		commands[0] = kCmdVerticalLeftHorzScroll;
 
 	// If this is a vertical scroll
-	if(!commands[6]){
+	if(!commands[5]){
 		// pull out a commands
 		n_commands--;
-		commands[7]=kCmdActivateScroll;
+		commands[6]=kCmdActivateScroll;
 	}
+	scroll_stop();
 	send_dev_command(commands, n_commands);
 }
 

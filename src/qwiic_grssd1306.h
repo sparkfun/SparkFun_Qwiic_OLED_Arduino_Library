@@ -41,6 +41,15 @@ typedef enum gr_op_funcs {
 #define SCROLL_LEFT     	0x04
 #define SCROLL_VERT_RIGHT   SCROLL_VERTICAL|SCROLL_RIGHT
 #define SCROLL_VERT_LEFT    SCROLL_VERTICAL|SCROLL_LEFT
+
+#define SCROLL_INTERVAL_5_FRAMES 0b000
+#define SCROLL_INTERVAL_64_FRAMES 0b001
+#define SCROLL_INTERVAL_128_FRAMES 0b010
+#define SCROLL_INTERVAL_256_FRAMES 0b011
+#define SCROLL_INTERVAL_3_FRAMES 0b100
+#define SCROLL_INTERVAL_4_FRAMES 0b101
+#define SCROLL_INTERVAL_25_FRAMES 0b110
+#define SCROLL_INTERVAL_2_FRAMES 0b111
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
 //
@@ -125,7 +134,7 @@ public:
 
 	// screen scrolling
 	void scroll_stop(void);
-	void scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval);
+	void scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval=SCROLL_INTERVAL_2_FRAMES);
 
 protected:
 

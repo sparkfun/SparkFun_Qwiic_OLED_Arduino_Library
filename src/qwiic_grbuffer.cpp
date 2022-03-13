@@ -456,7 +456,7 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 		// index into the font data - takes into account font size, rows span ... etc
 		charOffset = *text - _currFont->start;
 
-		// is the char location exceed the number of chars in the font?
+		// does the char location exceed the number of chars in the font?
 		if(charOffset >= _currFont->n_chars)
 			continue; // neeeexxxtt!
 
