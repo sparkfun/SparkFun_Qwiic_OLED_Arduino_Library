@@ -414,27 +414,26 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 
 	int slen = strlen(text);
 
-	if(!slen)
+	if(!slen) // empty string?
 		return;
-
-	// get font data
-	const uint8_t *pFont = _currFont->data();
 
 	uint8_t nRows = _currFont->height/kByteNBits;
 	if(!nRows)
 		nRows=1;
 
 	// 5x7 font is special - need to add a margin
-	uint8_t margin5x7 = (nRows == 1 ? 1 : 0);  // For the 5x7 font
+	uint8_t margin5x7 = (nRows == 1);  // For the 5x7 font
 
 	// used in loop
 	uint16_t nRowLen = _currFont->map_width/_currFont->width;  // how long is a 
 	uint16_t rowBytes = _currFont->map_width*nRows;
-	
+
+	// get font data
+	const uint8_t *pFont = _currFont->data();
+
 	// vars for the loops ...
 	uint16_t charOffset, fontIndex;
-	uint8_t rowOffset, currChar;
-	uint8_t i, j, row;
+	uint8_t rowOffset, currChar, i, j, row;
 
 	// walk the string ... note: doing all loop incs here - to handle continue statement below
 
@@ -445,14 +444,15 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 
 		// is the char location exceed the number of chars in the font?
 		if(charOffset >= _currFont->n_chars)
-			continue; // next character!
+			continue; // neeeexxxtt!
 
+		// offset into the font data array - start location
 		fontIndex = (charOffset/nRowLen * rowBytes) + ((charOffset % nRowLen) * _currFont->width);
 
 		// Now walk the rows of this font entry (it can span bytes)
 		for(row = 0; row < nRows; row++ ){
 
-			rowOffset = row*kByteNBits; // y offset for multi row fonts
+			rowOffset = row*kByteNBits; // y offset for multi row fonts - used in pixel draw
 
 			// walk the width of the font
 			for(i = 0; i < _currFont->width + margin5x7; i++) {
@@ -469,9 +469,10 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 					if(currChar & byte_bits[j])
 						(*_idraw.draw_pixel)(this, x0+i, y0 + j + rowOffset );
 				
-			}
-		}
-		 		
-	}
+			} // walk font width
+
+		} // row loop
+		
+	} // string loop
 }
 
