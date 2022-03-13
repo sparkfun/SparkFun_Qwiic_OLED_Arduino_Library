@@ -113,22 +113,6 @@
 #define kDeviceSendData		0x40
 
 
-//////////////////////////////////////////////////////////////////////////////////
-// Utils
-//
-// Bit level tools/helpers
-//
-// Handy const = save some compute used bit shifting 
-static const uint8_t byte_bits[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
-
-// something more readable
-#define kByteNBits 8
-
-// Mod 8 is really just the lower 3 bits of a value. This might be faster than 
-// standard mod operator - maybe
-#define mod_byte(_value_)  (_value_ & 0x07)
-
-
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
 //
