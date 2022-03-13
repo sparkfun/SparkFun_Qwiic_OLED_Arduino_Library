@@ -25,7 +25,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #pragma once 
 
 // Define the font attributes
-#define FONT_5X7_WIDTH        7
+#define FONT_5X7_WIDTH        5
 #define FONT_5X7_HEIGHT       8
 #define FONT_5X7_START        0
 #define FONT_5X7_NCHAR        255
