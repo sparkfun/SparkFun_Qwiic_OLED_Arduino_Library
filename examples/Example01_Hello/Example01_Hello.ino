@@ -46,6 +46,12 @@ QwOLEDTransparent myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
 
+//#include "res/qw_fnt_5x7.h"
+#include "res/qw_fnt_8x16.h"
+//#include "res/qw_fnt_7segment.h"
+//#include "res/qw_fnt_31x48.h"
+//#include "res/qw_fnt_largenum.h"
+
 QwI2C i2cBus;
 
 
@@ -165,6 +171,13 @@ void circle_test(void){
     myOLED.circle_fill(width - width/4 , height/2, height/3);    
 }
 
+void text_hello(void){
+
+    char cow[] = "he2llow3";
+//    char cow[] = "1233";    
+    myOLED.text(10, 10 , cow);
+
+}
 // testing function table
 typedef void (*testFn)(void);
 
@@ -175,7 +188,8 @@ static const testFn testFunctions[] = {
     rect_test,
     rect_test_move,
     rect_fill_test,
-    circle_test
+    circle_test,
+    text_hello
 }; 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +216,14 @@ void setup()
 
     width = myOLED.get_width();
     height = myOLED.get_height();
+
+//    myOLED.set_font(QW_FONT_5X7);    // works
+    myOLED.set_font(QW_FONT_8X16);   // works
+//    myOLED.set_font(QW_FONT_31X48);   // works
+ //   myOLED.set_font(QW_FONT_LARGENUM);   // works    
+
+//    myOLED.set_font(QW_FONT_7SEGMENT);        // works
+
   
 }
 
