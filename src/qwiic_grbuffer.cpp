@@ -361,8 +361,9 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 	int8_t i;
 
 
-	for (i = y0 - radius; i <= y0 + radius; i++)
-		(*_idraw.draw_pixel)(this, x0, i);
+	//for (i = y0 - radius; i <= y0 + radius; i++)
+	//	(*_idraw.draw_pixel)(this, x0, i);
+	(*_idraw.draw_line_vert)(this, x0, y0-radius, x0, y0+radius);
 
 	while (x < y){
 
