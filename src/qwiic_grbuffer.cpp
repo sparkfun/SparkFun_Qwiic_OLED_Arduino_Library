@@ -375,15 +375,12 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 		ddF_x += 2;
 		f += ddF_x;
 
-		for (i = y0 - y; i <= y0 + y; i++){
-			(*_idraw.draw_pixel)(this, x0 + x, i);
-			(*_idraw.draw_pixel)(this, x0 - x, i);
-		}
+		(*_idraw.draw_line_vert)(this, x0+x, y0-y, x0+x, y0+y);
+		(*_idraw.draw_line_vert)(this, x0-x, y0-y, x0-x, y0+y);
 
-		for(i = y0 - x; i <= y0 + x; i++){
-			(*_idraw.draw_pixel)(this, x0 + y, i);
-			(*_idraw.draw_pixel)(this, x0 - y, i);
-		}
+		(*_idraw.draw_line_vert)(this, x0+y, y0-x, x0+y, y0+x);
+		(*_idraw.draw_line_vert)(this, x0-y, y0-x, x0-y, y0+x);
+
 	}
 
 }
@@ -472,7 +469,7 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 			} // walk font width
 
 		} // row loop
-		
+
 	} // string loop
 }
 
