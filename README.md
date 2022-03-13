@@ -26,8 +26,8 @@ The following demos work on validated hardware (see below)
 * Circles
 * Filled Circles
 * Bitmap images (fast - 5x improvement on demo test)
+* Fonts and Text rendering
 ### To Be Implemented
-* Fonts (in progress)
 * Arduino Objects - right now mostly C++
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
