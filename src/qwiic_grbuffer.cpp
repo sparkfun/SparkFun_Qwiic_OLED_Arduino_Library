@@ -12,7 +12,8 @@
 #include <string.h>
 #include "qwiic_grbuffer.h"
 
-
+// Handy helper 
+const uint8_t byte_bits[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 ////////////////////////////////////////////////////////////////////////////////////
 // Support for our drawing interface/vtable inspection
 //
@@ -407,34 +408,70 @@ void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, char * text){
 ////////////////////////////////////////////////////////////////////////////////////////
 void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
 
-	if(!_currFont || !text || !strlen(text) ) // no font
+	// check things
+	if(!_currFont || !text)
 		return;
 
-	// initial test - just a single row
-	if(_currFont->height != 8)
+	int slen = strlen(text);
+
+	if(!slen)
 		return;
 
+	// get font data
 	const uint8_t *pFont = _currFont->data();
 
-	uint8_t currChar;
-	uint8_t i, j;
+	uint8_t nRows = _currFont->height/kByteNBits;
+	if(!nRows)
+		nRows=1;
 
-	while(text++){
-		for(i = 0; i < _currFont->width + 1; i++) {
+	// 5x7 font is special - need to add a margin
+	uint8_t margin5x7 = (nRows == 1 ? 1 : 0);  // For the 5x7 font
 
-			if (i == _currFont->width) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
-				currChar = 0;
-			else
-				currChar = pgm_read_byte(( (*text - _currFont->start) * _currFont->width) + i);
+	// used in loop
+	uint16_t nRowLen = _currFont->map_width/_currFont->width;  // how long is a 
+	uint16_t rowBytes = _currFont->map_width*nRows;
+	
+	// vars for the loops ...
+	uint16_t charOffset, fontIndex;
+	uint8_t rowOffset, currChar;
+	uint8_t i, j, row;
 
-			for (j = 0; j < 8; j++){
-				if (currChar & 0x1)
-					(*_idraw.draw_pixel)(this, x0+i, y0+j);
+	// walk the string ... note: doing all loop incs here - to handle continue statement below
 
-				currChar >>= 1;
+	for(int k=0; k < slen; k++, text++, x0 += _currFont->width + margin5x7){
+
+		// index into the font data - takes into account font size, rows span ... etc
+		charOffset = *text - _currFont->start;
+
+		// is the char location exceed the number of chars in the font?
+		if(charOffset >= _currFont->n_chars)
+			continue; // next character!
+
+		fontIndex = (charOffset/nRowLen * rowBytes) + ((charOffset % nRowLen) * _currFont->width);
+
+		// Now walk the rows of this font entry (it can span bytes)
+		for(row = 0; row < nRows; row++ ){
+
+			rowOffset = row*kByteNBits; // y offset for multi row fonts
+
+			// walk the width of the font
+			for(i = 0; i < _currFont->width + margin5x7; i++) {
+
+				// this is done in a weird way because the 5x7 font has no margin
+				if(margin5x7 &&  i == _currFont->width)
+					continue; // skip to next
+
+				// finally - data! 
+				currChar =  pgm_read_byte( pFont + fontIndex  + i + (row * _currFont->map_width));
+
+				// draw bits
+				for(j = 0; j < kByteNBits; j++)
+					if(currChar & byte_bits[j])
+						(*_idraw.draw_pixel)(this, x0+i, y0 + j + rowOffset );
+				
 			}
 		}
-		x0 += _currFont->width;
+		 		
 	}
 }
 

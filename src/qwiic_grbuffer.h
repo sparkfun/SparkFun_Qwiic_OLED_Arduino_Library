@@ -11,7 +11,6 @@
 #pragma once
 
 #include <stdint.h>
-
 #include "res/qwiic_resdef.h"
 
 
@@ -32,6 +31,20 @@ struct QwRect
 	uint16_t width;
 	uint16_t height;
 };
+//////////////////////////////////////////////////////////////////////////////////
+// Utils
+//
+// Bit level tools/helpers
+//
+// Handy const = save some compute used bit shifting 
+extern const uint8_t byte_bits[8];
+
+// something more readable
+#define kByteNBits 8
+
+// Mod 8 is really just the lower 3 bits of a value. This might be faster than 
+// standard mod operator - maybe
+#define mod_byte(_value_)  (_value_ & 0x07)
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // _QwIDraw
@@ -61,7 +74,7 @@ class _QwIDraw{
 	virtual void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 						  	 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )	{}
 
-	virtual void draw_text(uint8_t x0, uint8_t y0, char * text){}	
+	virtual void draw_text(uint8_t x0, uint8_t y0, char* text){}	
 };
 
 // Drawing fuction typedefs 
