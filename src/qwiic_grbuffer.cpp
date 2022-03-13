@@ -12,6 +12,9 @@
 #include <string.h>
 #include "qwiic_grbuffer.h"
 
+// default font
+#include "res/qw_fnt_5x7.h"
+
 // Handy helper 
 const uint8_t byte_bits[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 ////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +85,11 @@ bool QwGrBufferDevice::init_draw_functions(void){
 }
 ////////////////////////////////////////////////////////////////////////////////////
 bool QwGrBufferDevice::init(void){
+
+	// set our default font
+	_currFont = &QW_FONT_5X7;
+
+	// setup the draw function table
 
 	return init_draw_functions();
 }
@@ -361,8 +369,6 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 	int8_t i;
 
 
-	//for (i = y0 - radius; i <= y0 + radius; i++)
-	//	(*_idraw.draw_pixel)(this, x0, i);
 	(*_idraw.draw_line_vert)(this, x0, y0-radius, x0, y0+radius);
 
 	while (x < y){
@@ -393,7 +399,17 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 	
 	(*_idraw.draw_bitmap)(this, x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
 }
+////////////////////////////////////////////////////////////////////////////////////////
+// bitmap() - use a bitmap object
+//
+void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 
+
+	// just pass to graphics device 
+	(*_idraw.draw_bitmap)(this, x0, y0, theBMP.width, theBMP.height, 
+						 (uint8_t*)theBMP.data(), theBMP.width, theBMP.height);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 // text()
 void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, char * text){
