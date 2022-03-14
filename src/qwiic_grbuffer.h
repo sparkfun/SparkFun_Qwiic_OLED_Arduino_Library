@@ -74,7 +74,7 @@ class _QwIDraw{
 	virtual void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 						  	 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )	{}
 
-	virtual void draw_text(uint8_t x0, uint8_t y0, char* text){}	
+	virtual void draw_text(uint8_t x0, uint8_t y0, const char* text){}	
 };
 
 // Drawing fuction typedefs 
@@ -82,7 +82,7 @@ typedef void (*QwDrawPntFn)(void*, uint8_t, uint8_t);
 typedef void (*QwDrawTwoPntFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t);
 typedef void (*QwDrawCircleFn)(void*, uint8_t, uint8_t, uint8_t);
 typedef void (*QwDrawBitmapFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t *, uint8_t, uint8_t);
-typedef void (*QwDrawTextFn)(void*, uint8_t, uint8_t, char*);
+typedef void (*QwDrawTextFn)(void*, uint8_t, uint8_t, const char*);
 
 // Define the vtable struct for IDraw
 struct _QwIDraw_vtable{
@@ -137,6 +137,10 @@ public:
 		_currFont = &font;
 	}
 
+	QwFont * get_font(void){
+		return _currFont;
+	}
+
 	// Public Interface - Graphics interface TODO add color? 
 	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void circle(uint8_t x0, uint8_t y0, uint8_t radius);
@@ -149,8 +153,8 @@ public:
 				uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
 	// Bitmap draw - using a bitmap object
 	void bitmap(uint8_t x0, uint8_t y0, QwBitmap& bitmap);	
-	
-	void text(uint8_t x0, uint8_t y0, char * text);
+
+	void text(uint8_t x0, uint8_t y0, const char * text);
 
 	// subclass interface 
 	virtual void display(void)=0; 
@@ -178,7 +182,7 @@ protected:
 
 	virtual void draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius);		
 
-	virtual void draw_text(uint8_t x0, uint8_t y0, char * text);
+	virtual void draw_text(uint8_t x0, uint8_t y0, const char * text);
 
 	// Our drawing interface - open to sub-classes ...
 	_QwIDraw_vtable  _idraw;

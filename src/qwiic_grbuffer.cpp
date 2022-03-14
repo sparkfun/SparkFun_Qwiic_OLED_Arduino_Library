@@ -412,7 +412,7 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // text()
-void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, char * text){
+void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, const char * text){
 
 	if(!text, x0 >= _viewport.width || y0 >= _viewport.height )
 		return;
@@ -420,7 +420,7 @@ void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, char * text){
 	(_idraw.draw_text)(this, x0, y0, text);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, char *text){
+void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, const char *text){
 
 	// check things
 	if(!_currFont || !text)
