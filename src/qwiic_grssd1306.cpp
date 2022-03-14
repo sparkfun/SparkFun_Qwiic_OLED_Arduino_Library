@@ -291,6 +291,18 @@ void QwGrSSD1306::set_buffer(uint8_t *pBuffer){
 		_pBuffer = pBuffer;
 }
 ////////////////////////////////////////////////////////////////////////////////////
+void QwGrSSD1306::clear_screen_buffer(void){
+
+	// Clear out the screen buffer on the device
+	uint8_t emptyPage[kPageMax]={0};
+
+	for(int i=0; i < kMaxPageNumber; i++){
+		set_screenbuffer_address(i, 0); 	  				// start of page
+		send_dev_data((uint8_t*)emptyPage, kPageMax);		// clear out page
+	}
+
+}
+////////////////////////////////////////////////////////////////////////////////////
 // init_buffers()
 //
 // Will clear the local graphics buffer, and the devices screen buffer. Also
@@ -311,13 +323,16 @@ void QwGrSSD1306::init_buffers(void){
 	}
 	_pendingErase = false;
 
-	// Now clear out the screen buffer on the device
-	uint8_t emptyPage[kPageMax]={0};
+	// clear out the screen buffer
+	clear_screen_buffer();
+}
 
-	for(i=0; i < kMaxPageNumber; i++){
-		set_screenbuffer_address(i, 0); 	  				// start of page
-		send_dev_data((uint8_t*)emptyPage, kPageMax);		// clear out page
-	}
+void QwGrSSD1306::resend_graphics(void){
+
+
+	for(int i=0; i < _nPages; i++)
+		_pageState[i] = _pageErase[i];
+	display(); // push bits to screen buffer
 }
 ////////////////////////////////////////////////////////////////////////////////////
 // Screen Control
@@ -333,47 +348,91 @@ void QwGrSSD1306::flip_vert(bool bFlip){
 void QwGrSSD1306::flip_horz(bool bFlip){
 
 	send_dev_command( kCmdSegRemap | (bFlip ? 0x0 : 0x1));
+	clear_screen_buffer();
+	resend_graphics();
+}
+////////////////////////////////////////////////////////////////////////////////////
+// invert()
+void QwGrSSD1306::invert(bool bInvert){
+
+	send_dev_command( (bInvert ? kCmdInvertDisplay : kCmdNormalDisplay));
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 void QwGrSSD1306::scroll_stop(void){
+
 	send_dev_command(kCmdDeactivateScroll);
+
+	// After sending a deactivate command, the ram data in the device needs to be 
+	// re-written. 
+	//
+	// First clear out the entire screen buffer. The device uses this off screen area 
+	// to scroll - if you don't erase it, when scroll starts back up, old graphics 
+	// will appear ...
+	//
+	// Second - Send over the graphics again to the display - these are defined as 
+	//          the dirty regions in _pageErase
+
+	clear_screen_buffer();
+	resend_graphics();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval){
 
+
+	// parameter sanity?
 	if(stop < start)
 		return;
 
-	uint8_t n_commands = 8; 
-	uint8_t commands[8] = { 
-							kCmdRightHorizontalScroll, // default
-							0,
-							start, 
-							interval,
-							stop,
-							(uint8_t)(scroll_type & SCROLL_VERTICAL),
-							0xFF,
-							kCmdActivateScroll};
+	// Setup a default command list
+	uint8_t n_commands = 7; 
+	uint8_t commands[7] = { kCmdRightHorizontalScroll, // default scroll right
+							0x00,			// dummy byte
+							start, 			// start page address
+							interval,		// interval between scroll steps - in terms of frame fequency
+							stop,			// end page address 
+							0x00,			// dummy byte for non vert, for vert it's scroll offset
+							0xFF};			// Dummy byte for non vert - set to FFX, not used for vert.
 
-	// fill in the blanks - type
-	if(scroll_type == SCROLL_LEFT)
-		commands[0] = kCmdLeftHorizontalScroll;
-	else if(scroll_type == SCROLL_VERT_RIGHT)
-		commands[0] = kCmdVerticalRightHorzScroll;
-	else if(scroll_type == SCROLL_VERT_LEFT)
-		commands[0] = kCmdVerticalLeftHorzScroll;
-
-	// If this is a vertical scroll
-	if(!commands[5]){
-		// pull out a commands
-		n_commands--;
-		commands[6]=kCmdActivateScroll;
+	// Which way to scroll 
+	switch(scroll_type){
+		case SCROLL_RIGHT:
+			break;  // set in initializer of command array
+		case SCROLL_LEFT: 
+			commands[0] = kCmdLeftHorizontalScroll;	
+			break;
+		case SCROLL_VERT_LEFT:
+			commands[0] = kCmdVerticalLeftHorzScroll;
+			break;
+		case SCROLL_VERT_RIGHT:
+			commands[0] = kCmdVerticalRightHorzScroll;
+			break;		
 	}
-	scroll_stop();
+
+	// If we are scrolling vertically, modify the command list, and set the vertical scroll area on display
+	if(scroll_type & SCROLL_VERTICAL){
+
+		commands[5]=0x01;  	// set the scrolling offset
+		n_commands--;		// don't use the last byte of command buffer
+
+		// Set on display scroll area
+		send_dev_command(kCmdSetVerticalScrollArea, 0x00);
+		send_dev_command(_viewport.height);		
+	}
+
+	// send the scroll commands to the device
+	
+	// Do not use scroll_stop() - that method resets the display - memory ...etc - to it's 
+	// start state - the graphics displayed before scrolling was initially started.
+	//
+	// Here, we just stop scrolling and keep device memory state as is. This allows scrolling
+	// to change paraterms during a scroll session - gives a smooth presentation on  screen.
+	send_dev_command(kCmdDeactivateScroll);	
 	send_dev_command(commands, n_commands);
+	send_dev_command(kCmdActivateScroll);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

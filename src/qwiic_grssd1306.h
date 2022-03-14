@@ -42,14 +42,14 @@ typedef enum gr_op_funcs {
 #define SCROLL_VERT_RIGHT   SCROLL_VERTICAL|SCROLL_RIGHT
 #define SCROLL_VERT_LEFT    SCROLL_VERTICAL|SCROLL_LEFT
 
-#define SCROLL_INTERVAL_5_FRAMES 0b000
-#define SCROLL_INTERVAL_64_FRAMES 0b001
-#define SCROLL_INTERVAL_128_FRAMES 0b010
-#define SCROLL_INTERVAL_256_FRAMES 0b011
-#define SCROLL_INTERVAL_3_FRAMES 0b100
-#define SCROLL_INTERVAL_4_FRAMES 0b101
-#define SCROLL_INTERVAL_25_FRAMES 0b110
-#define SCROLL_INTERVAL_2_FRAMES 0b111
+#define SCROLL_INTERVAL_5_FRAMES    0x00
+#define SCROLL_INTERVAL_64_FRAMES   0x01
+#define SCROLL_INTERVAL_128_FRAMES  0x02
+#define SCROLL_INTERVAL_256_FRAMES  0x03
+#define SCROLL_INTERVAL_3_FRAMES    0x04
+#define SCROLL_INTERVAL_4_FRAMES    0x05
+#define SCROLL_INTERVAL_25_FRAMES   0x06
+#define SCROLL_INTERVAL_2_FRAMES 	0x07
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
 //
@@ -129,6 +129,7 @@ public:
 
 	
 	// screen control
+	void invert(bool);
 	void flip_vert(bool);
 	void flip_horz(bool);	
 
@@ -175,6 +176,8 @@ private:
 
 	bool set_screenbuffer_address(uint8_t page, uint8_t column);
 	void init_buffers(void); // clear graphics and screen buffer
+	void clear_screen_buffer(void);
+	void resend_graphics(void);
 	
 	// device communication methods
 	void send_dev_command(uint8_t command);
