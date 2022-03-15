@@ -15,30 +15,26 @@
   Distributed as-is; no warranty is given.
 */
 
+#include <SparkFun_Qwiic_OLED.h>
 
 #define MICRO
 //#define NARROW
 
 
 #if defined(MICRO)
-#include <qwiic_oledmicro.h> 
-QwOLEDMicro myOLED;
+QwiicMicroOLED myOLED;
 const char * deviceName = "Micro OLED";
 
 #elif defined(NARROW)
-#include <qwiic_olednarrow.h> 
-QwOLEDNarrow myOLED;
+QwiccNarrowOLED myOLED;
 const char * deviceName = "Narrow OLED";
 
 #else
-#include <qwiic_oledtransp.h>
-QwOLEDTransparent myOLED;
+QwiicTransparentOLED myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
 
 #include "res/qw_bmp_sparkfun.h"
-
-QwI2C i2cBus;
 
 int yoffset;
 
@@ -53,18 +49,15 @@ void setup()
     Serial.print("Running Scroll Test on: ");
     Serial.println(String(deviceName));
 
+    if(!myOLED.begin()){
 
-    i2cBus.init();
-    myOLED.set_comm_bus(i2cBus, myOLED.default_address);
-    if(!myOLED.init()){
-
-        Serial.println("Init Failed");
+        Serial.println("Device Begin Failed");
         while(1);
     }
 
     Serial.println("- Init Success");
     
-    yoffset = (myOLED.get_height() - myOLED.get_font()->height)/2;
+    yoffset = (myOLED.getHeight() - myOLED.getFont()->height)/2;
 
     delay(1000);
 }
@@ -73,39 +66,39 @@ void setup()
 
 void scroll_right(void){
 
-    myOLED.scroll_stop();
-    myOLED.scroll(SCROLL_RIGHT, 0, 7, SCROLL_INTERVAL_2_FRAMES); 
+    myOLED.scrollStop();
+    myOLED.scrollRight(0, 7, SCROLL_INTERVAL_2_FRAMES); 
 }
 
 void scroll_right_vert(void){
-    myOLED.scroll_stop();    
-    myOLED.scroll(SCROLL_VERT_RIGHT, 0, 7, SCROLL_INTERVAL_3_FRAMES); 
+    myOLED.scrollStop();    
+    myOLED.scrollVertRight(0, 7, SCROLL_INTERVAL_3_FRAMES); 
 }
 
 void scroll_left(void){
-    myOLED.scroll_stop();    
-    myOLED.scroll(SCROLL_LEFT, 0, 7, SCROLL_INTERVAL_4_FRAMES);
+    myOLED.scrollStop();    
+    myOLED.scrollLeft(0, 7, SCROLL_INTERVAL_4_FRAMES);
 }
 
 void scroll_left_vert(void){
-    myOLED.scroll_stop();    
-    myOLED.scroll(SCROLL_VERT_LEFT, 0, 7, SCROLL_INTERVAL_5_FRAMES);
+    myOLED.scrollStop();    
+    myOLED.scrollVertLeft(0, 7, SCROLL_INTERVAL_5_FRAMES);
 }
 
 void scroll_stop(void){
-    myOLED.scroll_stop();
+    myOLED.scrollStop();
 }
 
 void flip_horz(void){
 
     for(int i=0; i < 6; i++){
-        myOLED.flip_horz(!(i & 0x01));
+        myOLED.flipHorizontal(!(i & 0x01));
         delay(800);
     }
 }
 void flip_vert(void){
     for(int i=0; i < 6; i++){
-        myOLED.flip_vert(!(i & 0x01));
+        myOLED.flipVertical(!(i & 0x01));
         delay(800);
     }
 }

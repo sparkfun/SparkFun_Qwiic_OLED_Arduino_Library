@@ -19,28 +19,23 @@
 
 #include <stdint.h>
 
-//#define MICRO
-#define NARROW
+#include <SparkFun_Qwiic_OLED.h>
 
+//#define MICRO
+//#define NARROW
 
 #if defined(MICRO)
-#include <qwiic_oledmicro.h> 
-QwOLEDMicro myOLED;
+QwiicMicroOLED myOLED;
 const char * deviceName = "Micro OLED";
 
 #elif defined(NARROW)
-#include <qwiic_olednarrow.h> 
-QwOLEDNarrow myOLED;
+QwiccNarrowOLED myOLED;
 const char * deviceName = "Narrow OLED";
 
 #else
-#include <qwiic_oledtransp.h>
-QwOLEDTransparent myOLED;
+QwiicTransparentOLED myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
-
-QwI2C i2cBus;
-
 
 int width;
 int height;
@@ -81,19 +76,16 @@ void setup()
     Serial.print("Running Test #1 on: ");
     Serial.println(String(deviceName));
 
+    if(!myOLED.begin()){
 
-    i2cBus.init();
-    myOLED.set_comm_bus(i2cBus, myOLED.default_address);
-    if(!myOLED.init()){
-
-        Serial.println("Init Failed");
+        Serial.println("Device Begin Failed");
         while(1);
     }
 
-    Serial.println("- Init Success");
+    Serial.println("- Begin Success");
 
-    width = myOLED.get_width();
-    height = myOLED.get_height();
+    width = myOLED.getWidth();
+    height = myOLED.getHeight();
 
     // for frame rate calc
     draw_total_time =0;

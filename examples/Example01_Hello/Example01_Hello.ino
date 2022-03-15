@@ -26,33 +26,30 @@
 
 #include <stdint.h>
 
+#include <SparkFun_Qwiic_OLED.h>
+
 //#define MICRO
 //#define NARROW
 
-
 #if defined(MICRO)
-#include <qwiic_oledmicro.h> 
-QwOLEDMicro myOLED;
+QwiicMicroOLED myOLED;
 const char * deviceName = "Micro OLED";
 
 #elif defined(NARROW)
-#include <qwiic_olednarrow.h> 
-QwOLEDNarrow myOLED;
+QwiccNarrowOLED myOLED;
 const char * deviceName = "Narrow OLED";
 
 #else
-#include <qwiic_oledtransp.h>
-QwOLEDTransparent myOLED;
+QwiicTransparentOLED myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
+
 
 //#include "res/qw_fnt_5x7.h"
 #include "res/qw_fnt_8x16.h"
 //#include "res/qw_fnt_7segment.h"
 //#include "res/qw_fnt_31x48.h"
 //#include "res/qw_fnt_largenum.h"
-
-QwI2C i2cBus;
 
 
 int width;
@@ -152,37 +149,37 @@ void rect_test_move(void){
 
 void rect_fill_test(void){
 
-    myOLED.rectangle_fill(4, 4, width/2-4, height-4);
+    myOLED.rectangleFill(4, 4, width/2-4, height-4);
 
-    myOLED.rectangle_fill(width/2+4, 4, width-4, height-4);
+    myOLED.rectangleFill(width/2+4, 4, width-4, height-4);
 
-    myOLED.set_raster_op(grROPXOR);
-    myOLED.rectangle_fill(width/4, 8, width - width/4, height-8);
-    myOLED.set_raster_op(grROPCopy);        
+    myOLED.setDrawMode(grROPXOR);
+    myOLED.rectangleFill(width/4, 8, width - width/4, height-8);
+    myOLED.setDrawMode(grROPCopy);        
 }
 
 void circle_test(void){
 
     myOLED.circle(width/4, height/2, height/3);
 
-    myOLED.circle_fill(width - width/4, height/2, height/3);    
+    myOLED.circleFill(width - width/4, height/2, height/3);    
 
     myOLED.circle(4, height/2, height/3);
 
-    myOLED.circle_fill(width - width/4 , height/2, height/3);    
+    myOLED.circleFill(width - width/4 , height/2, height/3);    
 
-    myOLED.set_raster_op(grROPXOR);
-    myOLED.circle_fill(width - width/4 - height/4, height/2, height/3); // bug in here
-    myOLED.set_raster_op(grROPCopy);    
+    myOLED.setDrawMode(grROPXOR);
+    myOLED.circleFill(width - width/4 - height/4, height/2, height/3); // bug in here
+    myOLED.setDrawMode(grROPCopy);    
 }
 
 void text_hello(void){
 
     myOLED.text(10, 10 , "Hello World");
 
-    myOLED.set_raster_op(grROPXOR);
-    myOLED.rectangle_fill(8, 8, width/2, height/2);
-    myOLED.set_raster_op(grROPCopy);    
+    myOLED.setDrawMode(grROPXOR);
+    myOLED.rectangleFill(8, 8, width/2, height/2);
+    myOLED.setDrawMode(grROPCopy);    
 }
 // testing function table
 typedef void (*testFn)(void);
@@ -209,22 +206,19 @@ void setup()
     Serial.print("Running Test #1 on: ");
     Serial.println(String(deviceName));
 
+    if(!myOLED.begin()){
 
-    i2cBus.init();
-    myOLED.set_comm_bus(i2cBus, myOLED.default_address);
-    if(!myOLED.init()){
-
-        Serial.println("Init Failed");
+        Serial.println("Device Begin Failed");
         while(1);
     }
 
-    Serial.println("- Init Success");
+    Serial.println("- Begin Success");
 
-    width = myOLED.get_width();
-    height = myOLED.get_height();
+    width = myOLED.getWidth();
+    height = myOLED.getHeight();
 
 //    myOLED.set_font(QW_FONT_5X7);    // works
-    myOLED.set_font(QW_FONT_8X16);   // works
+    myOLED.setFont(QW_FONT_8X16);   // works
 //    myOLED.set_font(QW_FONT_31X48);   // works
  //   myOLED.set_font(QW_FONT_LARGENUM);   // works    
 
