@@ -15,31 +15,28 @@
   Distributed as-is; no warranty is given.
 */
 
+#include <SparkFun_Qwiic_OLED.h>
+
 //#define MICRO
 //#define NARROW
 
-
 #if defined(MICRO)
-#include <qwiic_oledmicro.h> 
-QwOLEDMicro myOLED;
+QwiicMicroOLED myOLED;
 const char * deviceName = "Micro OLED";
 
 #elif defined(NARROW)
-#include <qwiic_olednarrow.h> 
-QwOLEDNarrow myOLED;
+QwiccNarrowOLED myOLED;
 const char * deviceName = "Narrow OLED";
 
 #else
-#include <qwiic_oledtransp.h>
-QwOLEDTransparent myOLED;
+QwiicTransparentOLED myOLED;
 const char * deviceName = "Transparent OLED";
 #endif
+
 
 // Let's draw a truck
 #include "res/qw_bmp_truck.h"
 //#include "res/qw_bmp_sparkfun.h"
-
-QwI2C i2cBus;
 
 
 int width;
@@ -58,19 +55,16 @@ void setup(){
     Serial.print("Bitmap test on: ");
     Serial.println(String(deviceName));
 
+    if(!myOLED.begin()){
 
-    i2cBus.init();
-    myOLED.set_comm_bus(i2cBus, myOLED.default_address);
-    if(!myOLED.init()){
-
-        Serial.println("Init Failed");
+        Serial.println("Device Begin Failed");
         while(1);
     }
 
-    Serial.println("- Init Success");
+    Serial.println("- Begin Success");
 
-    width = myOLED.get_width();
-    height = myOLED.get_height();
+    width = myOLED.getWidth();
+    height = myOLED.getHeight();
 
     draw_total_time =0;
     n_draws=0;
