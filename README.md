@@ -10,6 +10,7 @@ The following demos work on validated hardware (see below)
 * Example 1 - Hello
 * Example 4 - Cube
 * Example 6 - Draw Icon
+* Example 8 - Scrolling, flips and invert
 
 ## Features
 ### Implemented
