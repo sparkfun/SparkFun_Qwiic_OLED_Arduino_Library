@@ -54,17 +54,21 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Screen Buffer 
 //
-// page management things
-
+// page management macros
+//
+// Made these macros to keep code quick. 
+//
+// Unique values
 // value just outside of the screen buffer (SSD1306) page range (0 base)
 // Note: A page  is 128 bits in length 
 
 #define  kPageMin					-1   // outside bounds - low value
 #define  kPageMax                  128   // outside bounds - high value
 
+// clean/ no settings in the page
 #define page_is_clean(_page_) (_page_.xmin == kPageMax)
 
-// Macro to rest page descriptor
+// Macro to reset page descriptor
 #define page_set_clean(_page_) \
 	do{ \
 		_page_.xmin = kPageMax; \
@@ -78,13 +82,14 @@
     	if( _x_ > _page_.xmax) _page_.xmax = _x_; \
     }while(false)
 
-// Macro to check and adjust record bounds using a arange
+// Macro to check and adjust record bounds using another page descriptor
 #define page_check_bounds_desc(_page_, _page2_) \
     do{ \
     	if( _page2_.xmin < _page_.xmin) _page_.xmin = _page2_.xmin; \
     	if( _page2_.xmax > _page_.xmax) _page_.xmax = _page2_.xmax; \
     }while(false)
 
+// Macro to check and adjust record bounds using bounds values
 #define page_check_bounds_range(_page_, _x0_, _x1_) \
     do{ \
     	if( _x0_ < _page_.xmin) _page_.xmin = _x0_; \
@@ -131,6 +136,8 @@ static const rasterOPsFn _rasterOps[] ={
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Constructor
+//
+// Just a bunch of member variable inits
 
 QwGrSSD1306::QwGrSSD1306(): 
 	_pBuffer{nullptr}, 

@@ -141,11 +141,14 @@ public:
 		return _currFont;
 	}
 
-	// Public Interface - Graphics interface TODO add color? 
+	// Public Interface - Graphics interface 
 	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=1);
+
 	void circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr=1);
 	void circle_fill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr=1);	
+	
 	void pixel(uint8_t x, uint8_t y, uint8_t clr=1);
+	
 	void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=1);
 	void rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=1);	
 
@@ -159,7 +162,6 @@ public:
 	// subclass interface 
 	virtual void display(void)=0; 
 	virtual void erase(void)=0;		
-
 
 protected:
 
