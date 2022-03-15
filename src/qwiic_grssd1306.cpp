@@ -186,7 +186,6 @@ bool QwGrSSD1306::init(void){
 
 	_idraw.draw_rect_filled = _idraw.draw_line_vert;
 
-
 	// Start the device setup - sending commands to device. See command defs in header, and
 	// device datasheet
 	send_dev_command(kCmdDisplayOff);
