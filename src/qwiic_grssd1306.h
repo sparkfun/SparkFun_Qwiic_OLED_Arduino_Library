@@ -27,12 +27,22 @@
 #define kDefaultVCOMDeselect	0x40
 #define kDefaultContrast		0x8F
 
-// Graphic pixel write operator function types
-typedef enum gr_op_funcs {
-	GrOpPixClear = 0,
-	GrOpPixSet   = 1,
-	GrOpPixXOR   = 2,
-} grOpFunction_t;
+// The Graphic operator functions (ROPS)
+//		- Copy 		- copy the pixel value in to the buffer (default)
+//		- Not Copy 	- copy the not of the pixel value to buffer
+//		- Not 	    - Set the buffer value to not it's current value
+//	    - XOR       - XOR of color and current pixel value
+//      - Black     - Set value to always be black
+//      - White     - set value to always be white
+
+typedef enum gr_op_funcs_{
+	grROPCopy 		= 0,
+	grROPNotCopy	= 1,
+	grROPNot 		= 2,
+	grROPXOR		= 3,
+	grROPBlack		= 4,
+	grROPWhite		= 5
+}grRasterOp_t;
 
 // Flags for scrolling
 
@@ -119,7 +129,6 @@ public:
 
 	// Set the current color/pixel write operation
 	void set_color(uint8_t color);
-	void set_xor(bool bEnable);
 
 	// Settings/operational methods
 	void set_contrast(uint8_t);
@@ -127,7 +136,12 @@ public:
 	// default address of the device - expect the sub to fill in.
 	uint8_t default_address;
 
-	
+	void set_raster_op(grRasterOp_t rop){
+		_rop = rop;
+	}
+  	grRasterOp_t get_raster_op(void){
+  		return _rop;
+  	}
 	// screen control
 	void invert(bool);
 	void flip_vert(bool);
@@ -143,24 +157,16 @@ protected:
 	// Subclass needs to define the graphics buffer array - stack based - and pass in 
 	void set_buffer(uint8_t *pBuffer);      
 
-	// Pixel operator getter/setter -- how to manage current set function
-	void set_pixel_op(grOpFunction_t optype){
-		_pix_op = optype;
-	}
-	grOpFunction_t get_pixel_op(void){
-		return _pix_op;
-	}
-
 	///////////////////////////////////////////////////////////////////////////
 	// Internal, fast draw routines - this are used in the overall 
 	// draw interface (_QwIDraw) for this object/device/system. 
 	//
 	// >> Pixels <<
-	void  draw_pixel(uint8_t x, uint8_t y);
+	void  draw_pixel(uint8_t x, uint8_t y, uint8_t clr);
 
 	// >> Fast Lines <<
-	void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
-	void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);	
+	void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
+	void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);	
 
 	// >> Fast Bitmap <<
 	void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
@@ -192,8 +198,10 @@ private:
 	pageState_t			_pageErase[kMaxPageNumber];   // keep track of erase boundaries 
 	bool                _pendingErase; 
 
-	grOpFunction_t	    _pix_op;    // op type
-	grOpFunction_t      _color; // current color
+	uint8_t				_color;
+
+	grRasterOp_t        _rop;
+
 
 	// I2C  things
 	QwI2C 			  * _i2cBus;       // pointer to our i2c bus object

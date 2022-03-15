@@ -103,53 +103,48 @@
 #define kDeviceSendCommand	0x00
 #define kDeviceSendData		0x40
 
-
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
 //
-// Using LAMBDAs to create fast pixel write/set operations. Using this pattern
-// eleminates the need for switch/if statements in each draw routine. 
+// Using LAMBDAs to create fast raster write/set operations. Using this pattern
+// eleminates the need for switch/if statements in each draw routine. This is basically
+// classic ROPs'
 //
-// NOTE - the order in the arrays is based on grOpFunction_t
+// NOTE - the order in the arrays is based on grRasterOp_t enum
 //
-// Single bit in a byte - aka a pixel
-typedef void (*bitOpPixFn)(uint8_t *, uint8_t);
-static const bitOpPixFn _pixelBitOpsFn[3] = {
-	[](uint8_t *pByte, uint8_t bit)->void { *pByte &= ~bit;},
-	[](uint8_t *pByte, uint8_t bit)->void { *pByte |= bit;},	
-	[](uint8_t *pByte, uint8_t bit)->void { *pByte ^= bit;}		
-};
-
-// Byte level functions - set bits of a byte (a page column of pixels)
-typedef void (*bitOpByteFn)(uint8_t *, uint8_t, uint8_t);
-static const bitOpByteFn _pixelByteOpsFn[3] = {
-	[](uint8_t *pByte, uint8_t bit, uint8_t mask)->void { *pByte = ~bit & *pByte & ~mask;},
-	[](uint8_t *pByte, uint8_t bit, uint8_t mask)->void { *pByte = bit | *pByte & ~mask;},	
-	[](uint8_t *pByte, uint8_t bit, uint8_t mask)->void { *pByte = bit ^ (*pByte & ~mask);}		
+// The Graphic operator functions (ROPS)
+//		- Copy 		- copy the pixel value in to the buffer (default)
+//		- Not Copy 	- copy the not of the pixel value to buffer
+//		- Not 	    - Set the buffer value to not it's current value
+//	    - XOR       - XOR of color and current pixel value
+//      - Black     - Set value to always be black
+//      - White     - set value to always be white
+typedef void (*rasterOPsFn)(uint8_t * dest, uint8_t src, uint8_t mask);
+static const rasterOPsFn _rasterOps[] ={
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | src & mask;},   // COPY
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | !src & mask;},  // NOT COPY
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | !(*dst) & mask;},  // NOT DEST
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | (*dst ^ src) & mask;},  // XOR
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = ~mask & *dst;},  // Always Black	
+	[](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst =  mask | *dst;},  // Always White
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 
-QwGrSSD1306::QwGrSSD1306() {
-
-	// Just set defaults
-	_pBuffer     = nullptr;
-
-	_i2cBus      = nullptr;
-	_i2c_address = 0; 
-
-	_initHWComPins   	= kDefaultPinConfig;
-	_initPreCharge		= kDefaultPreCharge;
-	_initVCOMDeselect	= kDefaultVCOMDeselect;
-	_initContrast		= kDefaultContrast;
-
-	default_address     = 0;
-
-	_pix_op = GrOpPixSet;
-
-	_isInit = false;
-}
+QwGrSSD1306::QwGrSSD1306(): 
+	_pBuffer{nullptr}, 
+	_i2cBus{nullptr}, 
+	_i2c_address{0}, 
+	_initHWComPins{kDefaultPinConfig},
+	_initPreCharge{kDefaultPreCharge},
+	_initVCOMDeselect{kDefaultVCOMDeselect},
+	_initContrast{kDefaultContrast},
+	default_address{0},
+	_color{1},
+	_rop{grROPCopy},
+	_isInit{false}
+{}
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -220,9 +215,6 @@ bool QwGrSSD1306::init(void){
 
 	// Finish up setting up this object
 
-	// set our current color to white (set a pixel)
-	set_color(GrOpPixSet); 
-
 	// Number of pages used for this device?
 	_nPages = _viewport.height/kByteNBits;  // height / number of pixels per byte. TODO - support multiples != 8
 
@@ -291,6 +283,10 @@ void QwGrSSD1306::set_buffer(uint8_t *pBuffer){
 		_pBuffer = pBuffer;
 }
 ////////////////////////////////////////////////////////////////////////////////////
+// clear_screen_buffer()
+//
+// Clear out all the on-device memory. 
+//
 void QwGrSSD1306::clear_screen_buffer(void){
 
 	// Clear out the screen buffer on the device
@@ -326,7 +322,14 @@ void QwGrSSD1306::init_buffers(void){
 	// clear out the screen buffer
 	clear_screen_buffer();
 }
-
+////////////////////////////////////////////////////////////////////////////////////
+// resetnd_graphics()
+//
+// Re-send the region in the graphics buffer (local) that contains drawn graphics. 
+// This region is defined by the contents of the _pageErase descriptors.
+//
+// Copy these to the page state, and call display
+//
 void QwGrSSD1306::resend_graphics(void){
 
 
@@ -337,6 +340,9 @@ void QwGrSSD1306::resend_graphics(void){
 ////////////////////////////////////////////////////////////////////////////////////
 // Screen Control
 ////////////////////////////////////////////////////////////////////////////////////
+// flip_vert()
+//
+// Flip the onscreen graphics vertically.
 
 void QwGrSSD1306::flip_vert(bool bFlip){
 
@@ -344,7 +350,11 @@ void QwGrSSD1306::flip_vert(bool bFlip){
 
 }
 ////////////////////////////////////////////////////////////////////////////////////
-
+// flip_horz()
+//
+// Flip the onscreen graphcis horizontally. This requires a resend of the graphics
+// data.
+//
 void QwGrSSD1306::flip_horz(bool bFlip){
 
 	send_dev_command( kCmdSegRemap | (bFlip ? 0x0 : 0x1));
@@ -353,6 +363,9 @@ void QwGrSSD1306::flip_horz(bool bFlip){
 }
 ////////////////////////////////////////////////////////////////////////////////////
 // invert()
+//
+// Inverts the display contents on device
+//
 void QwGrSSD1306::invert(bool bInvert){
 
 	send_dev_command( (bInvert ? kCmdInvertDisplay : kCmdNormalDisplay));
@@ -365,14 +378,13 @@ void QwGrSSD1306::scroll_stop(void){
 	send_dev_command(kCmdDeactivateScroll);
 
 	// After sending a deactivate command, the ram data in the device needs to be 
-	// re-written. 
+	// re-written. See datasheet
 	//
-	// First clear out the entire screen buffer. The device uses this off screen area 
-	// to scroll - if you don't erase it, when scroll starts back up, old graphics 
+	// First clear out the entire screen buffer (on device mem). The device uses this off screen area 
+	// to scroll - if you don't erase it, when scroll starts back up, old graphics turds
 	// will appear ...
 	//
-	// Second - Send over the graphics again to the display - these are defined as 
-	//          the dirty regions in _pageErase
+	// Second - Send over the graphics again to the display 
 
 	clear_screen_buffer();
 	resend_graphics();
@@ -380,6 +392,10 @@ void QwGrSSD1306::scroll_stop(void){
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+// scroll()
+//
+// Set scroll parametes on the device and start scrolling
+// 
 void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval){
 
 
@@ -399,7 +415,7 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint
 
 	// Which way to scroll 
 	switch(scroll_type){
-		case SCROLL_RIGHT:
+		case SCROLL_RIGHT: 
 			break;  // set in initializer of command array
 		case SCROLL_LEFT: 
 			commands[0] = kCmdLeftHorizontalScroll;	
@@ -439,6 +455,10 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint
 // Drawing Methods
 ////////////////////////////////////////////////////////////////////////////////////
 // erase()
+//
+// Erase the graphics that are on screen and anything that's been draw but
+// haven't been sent to the screen.
+//
 //
 // todo -- set a background color?
 //
@@ -483,14 +503,17 @@ void QwGrSSD1306::erase(void){
 //
 // Used to set a pixel in the graphics buffer - uses the current write operator function
 //
-void QwGrSSD1306::draw_pixel(uint8_t x, uint8_t y){
+void QwGrSSD1306::draw_pixel(uint8_t x, uint8_t y, uint8_t clr){
 
 	// quick sanity check on range
 	if(x >= _viewport.width || y >= _viewport.height)
 		return; // out of bounds
 
-	_pixelBitOpsFn[_pix_op](_pBuffer + x + y/kByteNBits * _viewport.width, // pixel offset
-					        byte_bits[mod_byte(y)]);  // which bit to set in byte
+	// this can get called off - lets just keep this bit biyte around : )
+	uint8_t bit = byte_bits[mod_byte(y)];
+
+	_rasterOps[_rop](_pBuffer + x + y/kByteNBits * _viewport.width, // pixel offset
+					        (clr ? bit : 0), bit);  // which bit to set in byte
 
 	page_check_bounds(_pageState[y/kByteNBits], x); // update dirty range for page
 
@@ -500,7 +523,7 @@ void QwGrSSD1306::draw_pixel(uint8_t x, uint8_t y){
 //
 // Fast horizontal line drawing routine
 //
-void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 	// Basically we set a bit within a range in a page of our graphics buffer.
 
@@ -515,15 +538,17 @@ void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 		x1 = _viewport.width-1;
 
 	uint8_t bit = byte_bits[mod_byte(y0)]; // bit to set
+	rasterOPsFn curROP = _rasterOps[_rop]; // current raster op
 
-	bitOpPixFn curOpFn = _pixelBitOpsFn[_pix_op]; // current pixel write function
+	//bitOpPixFn curOpFn = _pixelBitOpsFn[_pix_op]; // current pixel write function
 
 	// Get the start of this line in the graphics buffer
 	uint8_t *pBuffer = _pBuffer +  x0 + y0/kByteNBits * _viewport.width;
 
 	// walk up x and set the target pixel using the pixel operator function
 	for(int i=x0; i <= x1; i++, pBuffer++)
-		curOpFn(pBuffer, bit);
+		curROP(pBuffer, (clr ? bit : 0), bit);
+//		curOpFn(pBuffer, bit);		
 	
 	// Mark the page dirty for the range drawn
 	page_check_bounds_range(_pageState[y0/kByteNBits], x0, x1);
@@ -533,7 +558,7 @@ void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 //
 // Fast vertical line drawing routine - also supports fast filled rects
 //
-void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 	if(x0 >= _viewport.width) // out of bounds
 		return;
@@ -569,6 +594,8 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	if(x0 > x1)
 		swap_int(x0,x1);
 
+	rasterOPsFn curROP = _rasterOps[_rop]; // current raster op
+
 	for(int i=page0; i <= page1; i++){
 
 		startBit = mod_byte(y0);	//start bit in this byte
@@ -583,7 +610,7 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 		
 		// Note - We iterate over x to fill in a rect if specified.
 		for(xinc = x0; xinc <= x1; xinc++)
-			_pixelByteOpsFn[_pix_op](_pBuffer + i * _viewport.width + xinc, setBits, setBits);
+			curROP(_pBuffer + i * _viewport.width + xinc, (clr ? setBits : 0), setBits);
 
 		y0 += endBit - startBit + 1;  // increment Y0 to next page
 
@@ -619,6 +646,8 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 
 	page0 = y0/kByteNBits;
 	page1 = y1/kByteNBits;
+
+	rasterOPsFn curROP = _rasterOps[_rop]; // current raster op
 
 	// The Plan:
 	//   - Walk down the graphics buffer range (y) one page at a time
@@ -678,7 +707,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 
 			// Write the bmp data to the graphics buffer - using current write op. Note,
 			// if the location in the buffer didn't start at bit 0, we shift bmp_data
-			_pixelByteOpsFn[_pix_op](_pBuffer + i * _viewport.width + xinc + x0, 
+			curROP(_pBuffer + i * _viewport.width + xinc + x0, 
 									bmp_data << grStartBit, grSetBits);
 
 		}
@@ -692,36 +721,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-// set_xor()
-//
-// Public method to put the system in xor mode
-//
-void QwGrSSD1306::set_xor(bool bEnable){
 
-	set_pixel_op( bEnable ? GrOpPixXOR : _color);
-
-}
-////////////////////////////////////////////////////////////////////////////////////
-// set_color()
-//
-// Public method to set the color of the system.
-//
-// color = 0  - system clears bits
-// color > 0  - system sets bits
-//
-// If the system was in xor mode, this will take it out of xor mode
-//
-void QwGrSSD1306::set_color(uint8_t color){
-
-	grOpFunction_t newcolor = color >  0 ? GrOpPixSet : GrOpPixClear;
-
-	if(_color != newcolor ){
-
-		_color = newcolor;
-		set_pixel_op(_color);
-	}
-}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Device Update Methods
