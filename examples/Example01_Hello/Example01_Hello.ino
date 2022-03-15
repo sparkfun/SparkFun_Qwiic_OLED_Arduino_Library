@@ -142,9 +142,7 @@ void rect_test_move(void){
         //delay(100);
 
         // Erase the that rect
-        myOLED.set_color(0);
-        myOLED.rectangle(x, y, x+side, y+side);
-        myOLED.set_color(1);        
+        myOLED.rectangle(x, y, x+side, y+side, 0);
 
         x += xinc;
         y += yinc;       
@@ -158,6 +156,9 @@ void rect_fill_test(void){
 
     myOLED.rectangle_fill(width/2+4, 4, width-4, height-4);
 
+    myOLED.set_raster_op(grROPXOR);
+    myOLED.rectangle_fill(width/4, 8, width - width/4, height-8);
+    myOLED.set_raster_op(grROPCopy);        
 }
 
 void circle_test(void){
@@ -169,14 +170,19 @@ void circle_test(void){
     myOLED.circle(4, height/2, height/3);
 
     myOLED.circle_fill(width - width/4 , height/2, height/3);    
+
+    myOLED.set_raster_op(grROPXOR);
+    myOLED.circle_fill(width - width/4 - height/4, height/2, height/3); // bug in here
+    myOLED.set_raster_op(grROPCopy);    
 }
 
 void text_hello(void){
 
-    char cow[] = "he2llow3";
-//    char cow[] = "1233";    
-    myOLED.text(10, 10 , cow);
+    myOLED.text(10, 10 , "Hello World");
 
+    myOLED.set_raster_op(grROPXOR);
+    myOLED.rectangle_fill(8, 8, width/2, height/2);
+    myOLED.set_raster_op(grROPCopy);    
 }
 // testing function table
 typedef void (*testFn)(void);
