@@ -27,6 +27,9 @@ The following demos work on validated hardware (see below)
 * Filled Circles
 * Bitmap images (fast - 5x improvement on demo test)
 * Fonts and Text rendering
+* scrolling 
+* flip - vert & horz
+* invert 
 ### To Be Implemented
 * Arduino Objects - right now mostly C++
 ### Known Issues
