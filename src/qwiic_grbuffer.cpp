@@ -97,13 +97,13 @@ bool QwGrBufferDevice::init(void){
 ////////////////////////////////////////////////////////////////////////////////////////
 // pixel()
 //
-void QwGrBufferDevice::pixel(uint8_t x, uint8_t y){
+void QwGrBufferDevice::pixel(uint8_t x, uint8_t y, uint8_t clr){
 
 
 	if(x >= _viewport.width || y >= _viewport.height)
 		return;
 
-	(*_idraw.draw_pixel)(this, x, y);
+	(*_idraw.draw_pixel)(this, x, y, clr);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // line()
@@ -116,16 +116,16 @@ void QwGrBufferDevice::pixel(uint8_t x, uint8_t y){
 //		(x0, y0)   - Line origin
 //      (x1, y1)   - Line end 
 //
-void QwGrBufferDevice::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrBufferDevice::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 	// if we have a vertical or horizonal line, call the optimized drawing functions
 
 	if(x0 == x1)
-		(*_idraw.draw_line_vert)(this, x0, y0, x1, y1);
+		(*_idraw.draw_line_vert)(this, x0, y0, x1, y1, clr);
 	else if(y0 == y1)
-		(*_idraw.draw_line_horz)(this, x0, y0, x1, y1);	
+		(*_idraw.draw_line_horz)(this, x0, y0, x1, y1, clr);	
 	else
-		(*_idraw.draw_line)(this, x0, y0, x1, y1);	
+		(*_idraw.draw_line)(this, x0, y0, x1, y1, clr);	
 
 }
 
@@ -134,7 +134,7 @@ void QwGrBufferDevice::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 //
 // Core line drawing method - performs a line rasterization algorithm
 //
-void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){	
+void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){	
 
 	// The rasterization method uses an increment of 1 to walk the desired line
 	// to determine which pixels are being set in the buffer device. 
@@ -149,7 +149,7 @@ void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
 	// zero len line - turns out that's a point
 	if(!dx && !dy){
-		(*_idraw.draw_pixel)(this, x0, y0);
+		(*_idraw.draw_pixel)(this, x0, y0, clr);
 		return;
 	}
 	// If this is a steep line, switch the axis to increment along
@@ -175,9 +175,9 @@ void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	for (; x0 <= x1; x0++){
 
 		if(isSteep)
-			(*_idraw.draw_pixel)(this, y0, x0);
+			(*_idraw.draw_pixel)(this, y0, x0, clr);
 		else
-			(*_idraw.draw_pixel)(this, x0, y0);
+			(*_idraw.draw_pixel)(this, x0, y0, clr);
 
 		// do we need to bump up y? or if the slow is shallow, stay of 
 		// the same value?
@@ -192,7 +192,7 @@ void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 ////////////////////////////////////////////////////////////////////////////////////////
 // Rectangles
 
-void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 
 	if(x0 == x1 || y0 == y1){
@@ -215,7 +215,7 @@ void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
 	// Send to drawing routine. 
 
-	(*_idraw.draw_rect)(this, x0, y0, x1, y1);
+	(*_idraw.draw_rect)(this, x0, y0, x1, y1, clr);
 
 }
 
@@ -223,13 +223,13 @@ void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 // draw_rect()
 //
 // Does the actual drawing/logic
-void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 
 	// A rect is really just a series of lines 
 
-	(*_idraw.draw_line_horz)(this, x0, y0, x1, y0);
-	(*_idraw.draw_line_horz)(this, x0, y1, x1, y1);
+	(*_idraw.draw_line_horz)(this, x0, y0, x1, y0, clr);
+	(*_idraw.draw_line_horz)(this, x0, y1, x1, y1, clr);
 
 	// If the height is less than 2, no need for vert lines b/c the line itself is 1 pixel
 
@@ -237,15 +237,15 @@ void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 		return;
 
 	// Vertical lines - note - do not draw over our horz lines b/c of potential xor turds
-	(*_idraw.draw_line_vert)(this, x0, y0+1, x0 ,y1);
-	(*_idraw.draw_line_vert)(this, x1, y0+1, x1 ,y1);
+	(*_idraw.draw_line_vert)(this, x0, y0+1, x0 ,y1, clr);
+	(*_idraw.draw_line_vert)(this, x1, y0+1, x1 ,y1, clr);
 
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // rectangle_fill()
 //
-void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 
 	if(x0 == x1 || y0 == y1){
@@ -268,41 +268,41 @@ void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_
 
 	// Send to drawing routine. 
 
-	(*_idraw.draw_rect_filled)(this, x0, y0, x1, y1);
+	(*_idraw.draw_rect_filled)(this, x0, y0, x1, y1, clr);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // draw_rect_fill()
 //
 // Does the actual drawing/logic
-void QwGrBufferDevice::draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void QwGrBufferDevice::draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
 
 
 	// Just draw vertical lines 
 	for(int i=x0; i <= x1; i++)
-		(*_idraw.draw_line_vert)(this, i, y0, i, y1);
+		(*_idraw.draw_line_vert)(this, i, y0, i, y1, clr);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // circle()
 //
-void QwGrBufferDevice::circle(uint8_t x0, uint8_t y0, uint8_t radius){
+void QwGrBufferDevice::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr){
 
 	// Anything visible on screen?
 	if(!radius || x0 - (int8_t)radius >= _viewport.width || y0 - (int8_t)radius  >= _viewport.height)	
 		return;
 
 	if(radius == 1){
-		(*_idraw.draw_pixel)(this, x0, y0);
+		(*_idraw.draw_pixel)(this, x0, y0, clr);
 		return;
 	}
 
-	(*_idraw.draw_circle)(this, x0, y0, radius);
+	(*_idraw.draw_circle)(this, x0, y0, radius, clr);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // draw_circle()
 //
-void QwGrBufferDevice::draw_circle(uint8_t x0, uint8_t y0, uint8_t radius){
+void QwGrBufferDevice::draw_circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr){
 
 	int8_t f = 1 - radius;
 	int8_t ddF_x = 1;
@@ -310,10 +310,10 @@ void QwGrBufferDevice::draw_circle(uint8_t x0, uint8_t y0, uint8_t radius){
 	int8_t x = 0;
 	int8_t y = radius;
 
-	(*_idraw.draw_pixel)(this, x0, y0 + radius);
-	(*_idraw.draw_pixel)(this, x0, y0 - radius);
-	(*_idraw.draw_pixel)(this, x0 + radius, y0);
-	(*_idraw.draw_pixel)(this, x0 - radius, y0);
+	(*_idraw.draw_pixel)(this, x0, y0 + radius, clr);
+	(*_idraw.draw_pixel)(this, x0, y0 - radius, clr);
+	(*_idraw.draw_pixel)(this, x0 + radius, y0, clr);
+	(*_idraw.draw_pixel)(this, x0 - radius, y0, clr);
 
 	while (x < y){
 
@@ -326,15 +326,15 @@ void QwGrBufferDevice::draw_circle(uint8_t x0, uint8_t y0, uint8_t radius){
 		ddF_x += 2;
 		f += ddF_x;
 
-		(*_idraw.draw_pixel)(this, x0 + x, y0 + y);
-		(*_idraw.draw_pixel)(this, x0 - x, y0 + y);
-		(*_idraw.draw_pixel)(this, x0 + x, y0 - y);
-		(*_idraw.draw_pixel)(this, x0 - x, y0 - y);
+		(*_idraw.draw_pixel)(this, x0 + x, y0 + y, clr);
+		(*_idraw.draw_pixel)(this, x0 - x, y0 + y, clr);
+		(*_idraw.draw_pixel)(this, x0 + x, y0 - y, clr);
+		(*_idraw.draw_pixel)(this, x0 - x, y0 - y, clr);
 
-		(*_idraw.draw_pixel)(this, x0 + y, y0 + x);
-		(*_idraw.draw_pixel)(this, x0 - y, y0 + x);
-		(*_idraw.draw_pixel)(this, x0 + y, y0 - x);
-		(*_idraw.draw_pixel)(this, x0 - y, y0 - x);
+		(*_idraw.draw_pixel)(this, x0 + y, y0 + x, clr);
+		(*_idraw.draw_pixel)(this, x0 - y, y0 + x, clr);
+		(*_idraw.draw_pixel)(this, x0 + y, y0 - x, clr);
+		(*_idraw.draw_pixel)(this, x0 - y, y0 - x, clr);
 	}
 
 
@@ -342,24 +342,24 @@ void QwGrBufferDevice::draw_circle(uint8_t x0, uint8_t y0, uint8_t radius){
 ////////////////////////////////////////////////////////////////////////////////////////
 // circle_fill()
 //
-void QwGrBufferDevice::circle_fill(uint8_t x0, uint8_t y0, uint8_t radius){
+void QwGrBufferDevice::circle_fill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr){
 
 	// Anything visible on screen?
 	if(!radius || x0 - (int8_t)radius >= _viewport.width || y0 - (int8_t)radius  >= _viewport.height)
 		return;
 
 	if(radius == 1){
-		(*_idraw.draw_pixel)(this, x0, y0);
+		(*_idraw.draw_pixel)(this, x0, y0, clr);
 		return;
 	}
 
-	(*_idraw.draw_circle_filled)(this, x0, y0, radius);
+	(*_idraw.draw_circle_filled)(this, x0, y0, radius, clr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // draw_circle_fill()
 //
-void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius){
+void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr){
 
 	int8_t f = 1 - radius;
 	int8_t ddF_x = 1;
@@ -369,7 +369,7 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 	int8_t i;
 
 
-	(*_idraw.draw_line_vert)(this, x0, y0-radius, x0, y0+radius);
+	(*_idraw.draw_line_vert)(this, x0, y0-radius, x0, y0+radius, clr);
 
 	while (x < y){
 
@@ -382,11 +382,11 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 		ddF_x += 2;
 		f += ddF_x;
 
-		(*_idraw.draw_line_vert)(this, x0+x, y0-y, x0+x, y0+y);
-		(*_idraw.draw_line_vert)(this, x0-x, y0-y, x0-x, y0+y);
+		(*_idraw.draw_line_vert)(this, x0+x, y0-y, x0+x, y0+y, clr);
+		(*_idraw.draw_line_vert)(this, x0-x, y0-y, x0-x, y0+y, clr);
 
-		(*_idraw.draw_line_vert)(this, x0+y, y0-x, x0+y, y0+x);
-		(*_idraw.draw_line_vert)(this, x0-y, y0-x, x0-y, y0+x);
+		(*_idraw.draw_line_vert)(this, x0+y, y0-x, x0+y, y0+x, clr);
+		(*_idraw.draw_line_vert)(this, x0-y, y0-x, x0-y, y0+x, clr);
 
 	}
 
@@ -394,6 +394,7 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 ////////////////////////////////////////////////////////////////////////////////////////
 // bitmap()
 //
+// Draw a bitmap on the screen
 void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 					 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
 	
@@ -412,15 +413,21 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // text()
-void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, const char * text){
+//
+void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr){
 
 	if(!text, x0 >= _viewport.width || y0 >= _viewport.height )
 		return;
 
-	(_idraw.draw_text)(this, x0, y0, text);
+	(_idraw.draw_text)(this, x0, y0, text, clr);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, const char *text){
+// draw_test()
+//
+// Draw text - one pixel at a time. Based on the algorithm in the Micro OLED 
+// Arduino library
+//
+void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr){
 
 	// check things
 	if(!_currFont || !text)
@@ -481,7 +488,7 @@ void QwGrBufferDevice::draw_text(uint8_t x0, uint8_t y0, const char *text){
 				// draw bits
 				for(j = 0; j < kByteNBits; j++)
 					if(currChar & byte_bits[j])
-						(*_idraw.draw_pixel)(this, x0+i, y0 + j + rowOffset );
+						(*_idraw.draw_pixel)(this, x0+i, y0 + j + rowOffset, clr );
 				
 			} // walk font width
 
