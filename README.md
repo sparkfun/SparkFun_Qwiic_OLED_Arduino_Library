@@ -31,12 +31,15 @@ The following demos work on validated hardware (see below)
 * scrolling 
 * flip - vert & horz
 * invert 
+* Raster OPs (ROPS) - XOR, Not, Copy, Not Copy, Black and White
+
 ### To Be Implemented
 * Arduino Objects - right now mostly C++
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
 * Narrow OLED - some pixels - max X are not getting erased at times 
   * See on nrf5280 and ESP32
+* Fill Circle - XOR - some double draws so not a clean render ..
 ## Hardware
 ### Tested/Working
 * Qwiic Micro OLED
