@@ -32,9 +32,10 @@ The following demos work on validated hardware (see below)
 * flip - vert & horz
 * invert 
 * Raster OPs (ROPS) - XOR, Not, Copy, Not Copy, Black and White
+* Arduino Object interface
 
 ### To Be Implemented
-* Arduino Objects - right now mostly C++
+* Functionally Complete
 ### Known Issues
 * Filled circles being clipped/not drawn based on positon 
 * Narrow OLED - some pixels - max X are not getting erased at times 
