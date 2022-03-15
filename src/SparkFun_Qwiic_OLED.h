@@ -211,13 +211,13 @@ public:
 // For our actual implementations - just subclass from the Arduino template
 
 class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro>{
-
+	// nothing here - see above
 };
 
 class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow>{
-
+	// nothing here - see above
 };
 
 class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>{
-
+	// nothing here - see above
 };
