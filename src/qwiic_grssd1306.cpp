@@ -548,7 +548,6 @@ void QwGrSSD1306::draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 	// walk up x and set the target pixel using the pixel operator function
 	for(int i=x0; i <= x1; i++, pBuffer++)
 		curROP(pBuffer, (clr ? bit : 0), bit);
-//		curOpFn(pBuffer, bit);		
 	
 	// Mark the page dirty for the range drawn
 	page_check_bounds_range(_pageState[y0/kByteNBits], x0, x1);

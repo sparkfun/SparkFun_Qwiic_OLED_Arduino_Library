@@ -381,13 +381,12 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
 		x++;
 		ddF_x += 2;
 		f += ddF_x;
-
+		
 		(*_idraw.draw_line_vert)(this, x0+x, y0-y, x0+x, y0+y, clr);
 		(*_idraw.draw_line_vert)(this, x0-x, y0-y, x0-x, y0+y, clr);
 
 		(*_idraw.draw_line_vert)(this, x0+y, y0-x, x0+y, y0+x, clr);
 		(*_idraw.draw_line_vert)(this, x0-y, y0-x, x0-y, y0+x, clr);
-
 	}
 
 }

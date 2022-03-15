@@ -25,7 +25,7 @@
 // will lead to symbol collision at link time - confusing the user.
 //
 // These simple classes help place the bitmap data in a singleton class AND
-// only create on copy/instance of the bitmap data no matter how many times a
+// only create one copy/instance of the bitmap data no matter how many times a
 // resource header file is included.
 //
 // The Plan:
@@ -72,9 +72,11 @@
 //
 //				And internal methods get the data of this bitmap object using the bitmap() method
 //					ex:
-//						const uint8_t * pData = QW_BMP_TRUCK.bitmap();
+//						const uint8_t * pData = QW_BMP_TRUCK.data();
 //
-
+//  It shoulds complicated - it isn't. Just look at examples in ths folder and copy when 
+//  adding new resources.
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Simple Bitmap class definition
 
