@@ -1,0 +1,57 @@
+
+site_name: SparkFun Qwiic OLED Library
+site_description: SparkFun Arduino Library for Qwiic OLED Boards
+site_url: https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library
+
+theme:
+  name: material
+  logo: img/sfe_logo_sm.png
+  palette:
+    primary: grey
+    accent: red
+  features:
+    - content.code.annotate
+    - navigation.tracking
+
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+repo_url: https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
+repo_name: sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
+
+copyright: Copyright 2022 SparkFun Electronics (6333 Dry Creek Parkway, Niwot, Colorado 80503)
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - tables
+
+extra:
+  social:
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/sparkfun
+    - icon: fontawesome/brands/github
+      link: https://www.github.com/sparkfun
+    - icon: fontawesome/brands/facebook
+      link: https://www.facebook.com/SparkFun
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/sparkfun
+  
+nav:
+  - Home: index.md
+  - started.md
+  - api_ref.md
