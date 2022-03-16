@@ -3,6 +3,11 @@
 A new Arduino library to support SparkFun's qwiic OLED boards
 
 Currently in Development - Alpha
+
+## Contents
+* [Example Use](#Example)
+* [Library  API Documentation](#API)
+
 ========================================
 
 ## Demos
@@ -58,7 +63,8 @@ The following demos work on validated hardware (see below)
 * RP2040 - Not working. Note - doesn't work with old Micro OLED library either
 
 
-# Example
+Example
+---------
 A simple example to show the use of OLED Library. In this example, a series of lines are drawn that originate in a corner of the screen and span out to the other side of the display, incremented by six pixels.
 
 After installing this library in your local Arduino environment, begin with a standard Arduino sketch, and include the header file for this library.
@@ -116,7 +122,8 @@ void loop(){
 ```
 A key point when using the OLED library, graphic/screen updates are only sent to the OLED device when the ```display()``` method is called. 
 
-# API 
+API 
+------
 The device objects in the SparkFun qwiic OLED Library all implement the following methods.
 
 ### begin()
