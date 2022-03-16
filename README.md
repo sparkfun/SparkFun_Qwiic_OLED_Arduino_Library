@@ -10,10 +10,6 @@ Currently in Development - Alpha
 * [API Documentation](#API)
 * [Development Status](#development-status)
 
-========================================
-
-
-
 Example
 ---------
 A simple example to show the use of OLED Library. In this example, a series of lines are drawn that originate in a corner of the screen and span out to the other side of the display, incremented by six pixels.
