@@ -6,7 +6,7 @@ Currently in Development - Alpha
 
 ## Contents
 * [Example Use](#Example)
-* [Library  API Documentation](#API)
+* [API Documentation](#API)
 
 ========================================
 
