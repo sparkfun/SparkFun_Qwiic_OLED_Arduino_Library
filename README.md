@@ -6,13 +6,14 @@ Currently in Development - Alpha
 
 ## Contents
 * [Example Use](#Example)
+* [Demos](#Demos)
 * [API Documentation](#API)
 
 ========================================
 
 ## Demos
 The following demos work on validated hardware (see below)
-* Example 1 - Hello
+* [Example 1 - Hello](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/tree/main/examples/Example01_Hello)
 * Example 4 - Cube
 * Example 6 - Draw Icon
 * Example 8 - Scrolling, flips and invert
