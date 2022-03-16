@@ -306,11 +306,11 @@ For the library, fonts are added to your program by including them via include f
 The following fonts are included:
 | Font | Include File | Font Variable | Description|
 | :--- | :--- | :--- | :--- |
-| 5x7 | `"res/qw_fnt_5x7.h"` | `QW_FONT_5X7`| A full, 5 x 7 font|
-| 31x48 | `"res/qw_fnt_31x48.h"` |`QW_FONT_31X48`| A full, 31 x 48 font|
-| Seven Segment | `"res/qw_fnt_7segment.h"` |`QW_FONT_7SEGMENT`| Numbers only|
-| 8x16 | `"res/qw_fnt_8x16.h"` | `QW_FONT_8X16`| A full, 8 x 16 font|
-| Large Numbers | `"res/qw_fnt_largenum.h"` |`QW_FONT_LARGENUM`| Numbers only|
+| 5x7 | `<res/qw_fnt_5x7.h>` | `QW_FONT_5X7`| A full, 5 x 7 font|
+| 31x48 | `<res/qw_fnt_31x48.h>` |`QW_FONT_31X48`| A full, 31 x 48 font|
+| Seven Segment | `<res/qw_fnt_7segment.h>` |`QW_FONT_7SEGMENT`| Numbers only|
+| 8x16 | `<res/qw_fnt_8x16.h>` | `QW_FONT_8X16`| A full, 8 x 16 font|
+| Large Numbers | `<res/qw_fnt_largenum.h>` |`QW_FONT_LARGENUM`| Numbers only|
 
 For each font, the font variables are objects with the following attributes:
 | Attribute | Value |
