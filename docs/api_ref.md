@@ -232,3 +232,35 @@ QwiicFont * getFont(void)
 | :--- | :--- | :--- |
 | return value | `QwiicFont*` | A pointer to the current font. See `setFont()` for font object details.|
 
+### setDrawMode()
+This method sets the current draw mode for the library. The draw mode determines how pixels are set on the screen during drawing operations. 
+
+```c++
+void setDrawMode(grRasterOp_t rop)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| rop | `grRasterOp_t` | The raster operation (ROP) to set the graphics system to.|
+
+Raster operatoins device how source (pixels to draw) are represented on the destination device. The available Raster Operation (ROP) codes are:
+
+| ROP Code | Description|
+| :--- | :--- |
+| grROPCopy | **default** Drawn pixel values are copied to the device screen|
+| grROPNotCopy | A not operation is applied to the source value before copying to screen|
+| grROPNot | A not operation is applied to the destination (screen) value |
+| grROPXOR | A XOR operation is performed between the source and destination values|
+| grROPBlack | A value of 0, or black is drawn to the destination |
+| grROPWhite | A value of 1, or black is drawn to the destination |
+
+### getDrawMode()
+This method returns the current draw mode for the library. The draw mode determines how pixels are set on the screen during drawing operations. 
+
+```c++
+grRasterOp_t getDrawMode(void)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| return value | `grRasterOp_t` | The current aster operation (ROP) of the graphics system.|
