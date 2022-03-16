@@ -222,7 +222,7 @@ void scrollStop(void)
 
 
 ### scrollRight()
-This method is called start the device scrolling the displayed graphics to the right. This action is performed immediately.
+This method is called to start the device scrolling the displayed graphics to the right. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
@@ -248,7 +248,7 @@ Defined values for the `interval` parameter:
 |`SCROLL_INTERVAL_256_FRAMES` | 256 |
 
 ### scrollVertRight()
-This method is called start the device scrolling the displayed graphics verticall and to the right. This action is performed immediately.
+This method is called to start the device scrolling the displayed graphics verticall and to the right. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
@@ -262,7 +262,7 @@ void scrolVertlRight(uint8_t start, uint8_t stop, uint8_t interval)
 | `interval` | `uint8_t` | The time interval between scroll step - values listed in ```scrollRight``` |
 
 ### scrollLeft()
-This method is called start the device scrolling the displayed graphics to the left. This action is performed immediately.
+This method is called start to the device scrolling the displayed graphics to the left. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
@@ -276,7 +276,7 @@ void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
 | `interval` | `uint8_t` | The time interval between scroll step - values listed in ```scrollRight``` |
 
 ### scrollVertLeft()
-This method is called start the device scrolling the displayed graphics verticall and to the left. This action is performed immediately.
+This method is called to start the device scrolling the displayed graphics verticall and to the left. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
@@ -289,3 +289,41 @@ void scrolVertlLeft(uint8_t start, uint8_t stop, uint8_t interval)
 | `stop` | `uint8_t` | The stop/end page address of the scroll - valid values are 0 thru 7|
 | `interval` | `uint8_t` | The time interval between scroll step - values listed in ```scrollRight``` |
 
+### setFont()
+This method is called to set the current font in the library. The current font is used when calling the ```text()``` method on this device. 
+
+The default font for the device is `5x7`.
+
+```c++
+void setFont(QwiicFont& theFont)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `theFont` | `QwiicFont` | The font to set as current in the device|
+
+For the library, fonts are added to your program by including them via include files which are part of this library. 
+
+The following fonts are included:
+| Font | Include File | Font Variable |
+| :--- | :--- | :--- | :--- |
+| 5x7 | `"res/qw_fnt_5x7.h"` | `QW_FONT_5X7`| A full, 5 x 7 font|
+| 31x48 | `"res/qw_fnt_31x48.h"` |`QW_FONT_31X48`| A full, 31 x 48 font|
+| Seven Segment | `"res/qw_fnt_7segment.h"` |`QW_FONT_7SEGMENT`| Numbers only|
+| 8x16 | `"res/qw_fnt_8x16.h"` | `QW_FONT_8X16`| A full, 8 x 16 font|
+| Large Numbers | `"res/qw_fnt_largenum.h"` |`QW_FONT_LARGENUM`| Numbers only|
+
+For each font, the font variables are objects with the following attributes:
+| Attribute | Value |
+| :--- | :--- | 
+| `width` | The font width in pixels|
+| `height` | The font height in pixels|
+| `start` | The font start character offset|
+| `n_chars` | The number of characters|
+| `map_width` | The width of the font map|
+
+Example use of a font object attribute:
+```C++
+#include <res/qw_fnt_31x48.h>
+   
+int myFontWidth = QW_FONT_31X48.width;
+```
