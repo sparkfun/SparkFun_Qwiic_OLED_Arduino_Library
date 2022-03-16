@@ -304,7 +304,7 @@ void setFont(QwiicFont& theFont)
 For the library, fonts are added to your program by including them via include files which are part of this library. 
 
 The following fonts are included:
-| Font | Include File | Font Variable |
+| Font | Include File | Font Variable | Description|
 | :--- | :--- | :--- | :--- |
 | 5x7 | `"res/qw_fnt_5x7.h"` | `QW_FONT_5X7`| A full, 5 x 7 font|
 | 31x48 | `"res/qw_fnt_31x48.h"` |`QW_FONT_31X48`| A full, 31 x 48 font|
