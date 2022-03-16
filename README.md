@@ -327,3 +327,12 @@ Example use of a font object attribute:
    
 int myFontWidth = QW_FONT_31X48.width;
 ```
+### getFont()
+This method returns the current font for the device.
+
+```c++
+QwiicFont * getFont(void)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| return value | `QwiicFont*` | A pointer to the current font. See `setFont()` for font object details.|
