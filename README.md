@@ -130,3 +130,74 @@ bool begin(TwoWire &wirePort, uint8_t address)
 | `wirePort` | `TwoWire` | **optional**. The Wire port to use for device communication. If not provided, the default port is used|
 | `address` | `uint8_t` | **optional**. The I2C address for the device. If not provided, the default address is used.|
 | return value | `bool` | ```true``` on success, ```false``` on startup failure |
+
+### getWidth()
+This method returns the width, in pixels, of the connected OLED device
+
+```c++
+uint8_t getWidth(void)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| return value | `uint8_t` | The width in pixels of the connected OLED device |
+
+### getHeight()
+This method returns the height, in pixels, of the connected OLED device
+
+```c++
+uint8_t getHeight(void)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| return value | `uint8_t` | The height in pixels of the connected OLED device |
+
+### display()
+When called, any pending display updates are sent to the connected OLED device. This includes drawn graphics and erase commands.
+
+```c++
+void display(void)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| NONE|  |  |
+
+### erase()
+Erases all graphics on the device, placing the display in a blank state. The erase update isn't sent to the device until the next ```display()``` call on the device.
+
+```c++
+void erase(void)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| NONE|  |  |
+
+
+### invert()
+This method inverts the current graphics on the display. This results of this command happen immediatly.
+
+```c++
+void invert(bool bInvert)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| ```bInvert``` | `bool` | ```true``` - the screen is inverted. ```false``` - the screen is set to normal |
+
+### flipVertical()
+When called, the screen contents are flipped vertically if the flip parameter is true, or restored to normal display if the flip parameter is false. 
+
+```c++
+void flipVertical(bool bFlip)
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| ```bFlip``` | `bool` | ```true``` - the screen is flipped vertically. ```false``` - the screen is set to normal |
+
+### flipHorizontal()
+When called, the screen contents are flipped horizontally if the flip parameter is true, or restored to normal display if the flip parameter is false. 
+
+```c++
+void flipHorizontal(bool bFlip){
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| ```bFlip``` | `bool` | ```true``` - the screen is flipped horzontally. ```false``` - the screen is set to normal |
