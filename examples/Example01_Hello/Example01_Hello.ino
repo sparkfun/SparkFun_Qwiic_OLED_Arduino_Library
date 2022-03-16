@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 
+// Include the SparkFun qwiic OLED Library
 #include <SparkFun_Qwiic_OLED.h>
 
 //#define MICRO
@@ -46,7 +47,7 @@ const char * deviceName = "Transparent OLED";
 
 
 //#include "res/qw_fnt_5x7.h"
-#include "res/qw_fnt_8x16.h"
+#include <res/qw_fnt_8x16.h>
 //#include "res/qw_fnt_7segment.h"
 //#include "res/qw_fnt_31x48.h"
 //#include "res/qw_fnt_largenum.h"
