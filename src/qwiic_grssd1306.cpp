@@ -239,6 +239,8 @@ bool QwGrSSD1306::init(void){
 //
 // These should be called/set before calling init
 //
+// For details of each of these settings -- see the datasheet
+//
 void QwGrSSD1306::set_comm_pins(uint8_t pin_code){
 
 	_initHWComPins = pin_code;
@@ -329,7 +331,7 @@ void QwGrSSD1306::init_buffers(void){
 	clear_screen_buffer();
 }
 ////////////////////////////////////////////////////////////////////////////////////
-// resetnd_graphics()
+// resend_graphics()
 //
 // Re-send the region in the graphics buffer (local) that contains drawn graphics. 
 // This region is defined by the contents of the _pageErase descriptors.
@@ -359,7 +361,7 @@ void QwGrSSD1306::flip_vert(bool bFlip){
 // flip_horz()
 //
 // Flip the onscreen graphcis horizontally. This requires a resend of the graphics
-// data.
+// data to the device/screen buffer.
 //
 void QwGrSSD1306::flip_horz(bool bFlip){
 
@@ -466,7 +468,6 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint
 // haven't been sent to the screen.
 //
 //
-// todo -- set a background color?
 //
 void QwGrSSD1306::erase(void){
 
@@ -508,6 +509,7 @@ void QwGrSSD1306::erase(void){
 // draw_pixel()
 //
 // Used to set a pixel in the graphics buffer - uses the current write operator function
+//
 //
 void QwGrSSD1306::draw_pixel(uint8_t x, uint8_t y, uint8_t clr){
 
@@ -632,8 +634,10 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t dst_height, 
 							  uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
 
-	// TO DO - find the range in the graphics buffer to write to 
-	//         - based on position, size of screen, bmp size ...etc
+	// some simple checks
+	if(x0 >= _viewport.width || y0 >= _viewport.height || !bmp_width || !bmp_height)
+		return;
+
 
 	uint8_t bmp_x = 0; // fix
 	uint8_t bmp_y = 0; // fix

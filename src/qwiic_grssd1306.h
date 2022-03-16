@@ -13,9 +13,9 @@
 #include "res/qwiic_resdef.h"
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Device Config
+/////////////////////////////////////////////////////////////////////////////
 //
 // Defaults
 // Each device can have a different Hardware pin configuration, which must
@@ -27,7 +27,9 @@
 #define kDefaultVCOMDeselect	0x40
 #define kDefaultContrast		0x8F
 
-// The Graphic operator functions (ROPS)
+/////////////////////////////////////////////////////////////////////////////
+// The graphics Raster Operator functions (ROPS)
+/////////////////////////////////////////////////////////////////////////////
 //		- Copy 		- copy the pixel value in to the buffer (default)
 //		- Not Copy 	- copy the not of the pixel value to buffer
 //		- Not 	    - Set the buffer value to not it's current value
@@ -44,7 +46,9 @@ typedef enum gr_op_funcs_{
 	grROPWhite		= 5
 }grRasterOp_t;
 
+/////////////////////////////////////////////////////////////////////////////
 // Flags for scrolling
+/////////////////////////////////////////////////////////////////////////////
 
 #define SCROLL_VERTICAL 	0x01
 #define SCROLL_RIGHT    	0x02
@@ -60,8 +64,10 @@ typedef enum gr_op_funcs_{
 #define SCROLL_INTERVAL_4_FRAMES    0x05
 #define SCROLL_INTERVAL_25_FRAMES   0x06
 #define SCROLL_INTERVAL_2_FRAMES 	0x07
+
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
+/////////////////////////////////////////////////////////////////////////////
 //
 // The memory/back buffer of the SSD1306 is based on the concept of pages -
 // each page is a stream of bytes, and defined as follows:
@@ -180,6 +186,7 @@ protected:
 
 private:
 
+	// Internal buffer management methods
 	bool set_screenbuffer_address(uint8_t page, uint8_t column);
 	void init_buffers(void); // clear graphics and screen buffer
 	void clear_screen_buffer(void);
@@ -191,17 +198,19 @@ private:
 	void send_dev_command(uint8_t *commands, uint8_t n);		
 	void send_dev_data(uint8_t *pData, uint8_t nData);
 
+	/////////////////////////////////////////////////////////////////////////////
 	// instance vars
+
+	// Buffer variables
 	uint8_t  		  * _pBuffer;           // Pointer to the graphics buffer
 	uint8_t    		  	_nPages; 			// number of pages for current device
 	pageState_t 		_pageState[kMaxPageNumber];   // page state descriptors 
 	pageState_t			_pageErase[kMaxPageNumber];   // keep track of erase boundaries 
 	bool                _pendingErase; 
 
-	uint8_t				_color;
-
-	grRasterOp_t        _rop;
-
+	// display variables
+	uint8_t				_color;   	// current color (really 0 or 1)
+	grRasterOp_t        _rop;		// current raster operation code
 
 	// I2C  things
 	QwI2C 			  * _i2cBus;       // pointer to our i2c bus object
@@ -214,5 +223,5 @@ private:
 	uint8_t				_initVCOMDeselect;
 	uint8_t				_initContrast;
 
-	bool				_isInit; // general init flat
+	bool				_isInit; // general init flag
 };
