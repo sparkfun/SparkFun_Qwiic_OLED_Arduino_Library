@@ -39,4 +39,4 @@ Detailed examples are included as part of the library installation proces and av
 A complete listing of the qwiic OLED library API is avialable on the [API Page].
 
 [Getting Started Page]: using.md
-[API Page]: api.md
+[API Page]: api_ref.md

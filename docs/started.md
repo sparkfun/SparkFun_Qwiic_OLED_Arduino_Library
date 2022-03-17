@@ -5,11 +5,12 @@
 
 The SparkFun Qwiic OLED Arduino Library is available within in the Arduino library manager, which is launched via the `Sketch > Include Libraries > Manage Libraries …` menu option in the Arduino IDE. Just search for ***SparkFun Qwiic OLED Library***
 
-The following resources available at [SparkFun](https://www.sparkfun.com) provide the details on setting up and configuring Arduino to use this library.
+!!! note
+    This guide assumes you are using the latest version of the Arduino IDE on your desktop. The following resources available at [SparkFun](https://www.sparkfun.com) provide the details on setting up and configuring Arduino to use this library.
 
-* [Installing the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-arduino-ide)
-* [ Installing Board Definitions in the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide)
-* [Installing an Arduino Library](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)
+    - [Installing the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-arduino-ide)
+    - [Installing Board Definitions in the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide)
+    - [Installing an Arduino Library](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)
 
 An Initial Example - Drawing Lines
 ---------
