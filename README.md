@@ -1,4 +1,4 @@
-# SparkFun_Qwiic_OLED_Arduino_Library
+# SparkFun Qwiic OLED Arduino Library
 <p align="center">
 	<a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/issues" alt="Issues">
 		<img src="https://img.shields.io/github/issues/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library.svg" /></a>
