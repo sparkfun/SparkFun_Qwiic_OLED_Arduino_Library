@@ -25,6 +25,8 @@
 
 // SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
 //
+// SPDX-License-Identifier: MIT
+//
 //    The MIT License (MIT)
 //
 //    Copyright (c) 2022 SparkFun Electronics
