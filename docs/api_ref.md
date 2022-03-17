@@ -227,7 +227,7 @@ void setDrawMode(grRasterOp_t rop)
 | :--- | :--- | :--- |
 | rop | `grRasterOp_t` | The raster operation (ROP) to set the graphics system to.|
 
-Raster operatoins device how source (pixels to draw) are represented on the destination device. The available Raster Operation (ROP) codes are:
+Raster operations device how source (pixels to draw) are represented on the destination device. The available Raster Operation (ROP) codes are:
 
 | ROP Code | Description|
 | :--- | :--- |
