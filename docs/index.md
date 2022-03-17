@@ -1,4 +1,4 @@
-# The SparkFun Qwiic OLED Arduino Library
+# SparkFun Qwiic OLED Arduino Library - Hookup Guide
 
 ==TODO: Add Wonderful Intro Here==
 
