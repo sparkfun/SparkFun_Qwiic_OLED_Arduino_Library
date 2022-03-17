@@ -6,7 +6,7 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//	 Micro OLED 			https://www.sparkfun.com/products/14532
+//   Micro OLED 			https://www.sparkfun.com/products/14532
 //   Transparent OLED     	https://www.sparkfun.com/products/15173
 //   "Narrow" OLED  		https://www.sparkfun.com/products/17153
 // 

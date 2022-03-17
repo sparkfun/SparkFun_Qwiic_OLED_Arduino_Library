@@ -6,7 +6,7 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//	 Micro OLED 			https://www.sparkfun.com/products/14532
+//   Micro OLED 			https://www.sparkfun.com/products/14532
 //   Transparent OLED     	https://www.sparkfun.com/products/15173
 //   "Narrow" OLED  		https://www.sparkfun.com/products/17153
 // 
@@ -22,7 +22,7 @@
 // Documentation:
 //     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
 //
-
+//
 // SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
 //
 //    The MIT License (MIT)

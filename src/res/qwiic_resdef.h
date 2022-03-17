@@ -22,7 +22,7 @@
 // Documentation:
 //     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
 //
-
+//
 // SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
 //
 //    The MIT License (MIT)
