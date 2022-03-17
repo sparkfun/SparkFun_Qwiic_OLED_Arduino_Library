@@ -101,15 +101,16 @@ public:
 		
 		_i2cBus.init(wirePort);
 
-    	_device.set_comm_bus(_i2cBus, 
+		_device.set_comm_bus(_i2cBus, 
     						(address == kNoAddressSet ? _device.default_address : address));
 
-    	bool bStatus = _device.init();
+		// call init on the device
+		bool bStatus = _device.init();
 
-    	// Want to start cursor at Y height of the current font, if we have a font.
-    	//
+		// Want to start cursor at Y height of the current font, if we have a font.
+		//
     	// Get our font height ... a default font is set during init ...
-    	if(bStatus){
+		if(bStatus){
 			QwiicFont * pFont = _device.get_font();
 			if(pFont)
 				_cursorY = pFont->height;
