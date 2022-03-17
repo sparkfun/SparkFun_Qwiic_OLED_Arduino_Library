@@ -68,7 +68,7 @@ typedef QwBitmap 	QwiicBitmap;
 //
 // For each supported device the following is needed
 //    
-//    	- A commmon Arduino interface/implementation. Once impl, once area to maintain
+//    	- A commmon Arduino interface/implementation. One impl, one area to maintain
 //		- Classes that are specialized for each device
 //		- No abstract methods that a subclass must implement
 //
