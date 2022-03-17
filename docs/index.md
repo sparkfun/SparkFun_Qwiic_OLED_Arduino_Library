@@ -1,4 +1,4 @@
-#  Qwiic OLED Arduino Library - Hookup Guide
+#  The Qwiic OLED Arduino Library
 
 ==TODO: Add Wonderful Intro Here==
 
