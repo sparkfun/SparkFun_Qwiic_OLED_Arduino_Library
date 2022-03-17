@@ -1,6 +1,6 @@
 
 
-# Transparent OLED Hookup Guide
+# Transparent OLED Setup
 
 ## Introduction
 
