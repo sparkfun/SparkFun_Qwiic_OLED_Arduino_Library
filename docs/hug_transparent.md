@@ -1,6 +1,6 @@
 
 
-# Transparent Graphical OLED Breakout Hookup Guide
+# Transparent OLED Hookup Guide
 
 ## Introduction
 
