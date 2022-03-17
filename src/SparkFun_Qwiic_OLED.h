@@ -109,7 +109,7 @@ public:
 
 		// Want to start cursor at Y height of the current font, if we have a font.
 		//
-    	// Get our font height ... a default font is set during init ...
+		// Get our font height ... a default font is set during init ...
 		if(bStatus){
 			QwiicFont * pFont = _device.get_font();
 			if(pFont)
