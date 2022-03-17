@@ -1,6 +1,6 @@
 
 
-# Micro OLED Hook-up Guide
+# Micro OLED Hookup Guide
 
 ## Introduction
 

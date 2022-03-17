@@ -69,4 +69,5 @@ nav:
   - Home: index.md
   - started.md
   - api_ref.md
-  - Micro OLED Hook-up Guide: hug_micro_view.md
+  - Micro OLED Hookup Guide: hug_micro_view.md
+  - hug_transparent.md
