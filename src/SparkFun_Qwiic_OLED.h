@@ -116,7 +116,7 @@ public:
 				_cursorY = pFont->height;
 		}
 
-    	return bStatus;
+		return bStatus;
     }
 
     uint8_t getWidth(void){
