@@ -94,16 +94,28 @@ private:
 public:
 	bool begin(TwoWire &wirePort=Wire, uint8_t address=kNoAddressSet){
 
-
+		// defaults for Arduino Print 
 		_cursorX = 0;
-		_cursorY = _device.get_font()->height;
+		_cursorY = 0; 
 		_color   = COLOR_WHITE;
-
+		
 		_i2cBus.init(wirePort);
 
     	_device.set_comm_bus(_i2cBus, 
     						(address == kNoAddressSet ? _device.default_address : address));
-    	return _device.init();
+
+    	bool bStatus = _device.init();
+
+    	// Want to start cursor at Y height of the current font, if we have a font.
+    	//
+    	// Get our font height ... a default font is set during init ...
+    	if(bStatus){
+			QwiicFont * pFont = _device.get_font();
+			if(pFont)
+				_cursorY = pFont->height;
+		}
+
+    	return bStatus;
     }
 
     uint8_t getWidth(void){
