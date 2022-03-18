@@ -170,6 +170,9 @@ public:
     void setFont(QwiicFont& theFont){
     	_device.set_font(theFont);
     }
+    void setFont(const QwiicFont  *theFont){
+    	_device.set_font(theFont);
+    }
 
     QwiicFont * getFont(void){
     	return _device.get_font();
@@ -240,6 +243,9 @@ public:
 	virtual size_t write(uint8_t theChar){
 
 		QwiicFont *pFont = _device.get_font();
+
+		if(!pFont) // no Font?! No dice?
+			return 0;
 
 		switch(theChar){
 			case '\n':        	// Carriage return

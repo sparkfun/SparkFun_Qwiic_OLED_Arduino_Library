@@ -125,16 +125,67 @@ bool QwGrBufferDevice::init_draw_functions(void){
 	return true;
 }
 ////////////////////////////////////////////////////////////////////////////////////
+// init()
+//
+// init the class
+//
 bool QwGrBufferDevice::init(void){
 
-	// set our default font
-	_currFont = &QW_FONT_5X7;
+	// set our default font if we don't have one yet - i.e. set font was called before
+	// init
+
+	init_font();
 
 	// setup the draw function table
 
 	return init_draw_functions();
 }
+////////////////////////////////////////////////////////////////////////////////////
+// Font things
+////////////////////////////////////////////////////////////////////////////////////
+// init_font()
+//
+// Set the default font if one hasn't been set yet
+//
+void QwGrBufferDevice::init_font(void){
 
+	if(!_currFont)
+		_currFont = &QW_FONT_5X7;	
+}
+////////////////////////////////////////////////////////////////////////////////////
+// get_font()
+//
+// Return the current font. 
+QwFont * QwGrBufferDevice::get_font(void){
+	
+	if(!_currFont) // device hasn't been init'd - maybe ? Go default
+		init_font();
+
+	return _currFont;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// set_font()
+//
+// ref version
+//
+void QwGrBufferDevice::set_font(QwFont &font){
+
+	_currFont = &font;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+// set_font() 
+//
+// Pointer version
+//
+void QwGrBufferDevice::set_font(const QwFont *font){
+
+	if(font)
+		_currFont = (QwFont*)font;
+	else if(!_currFont)   // null passed, we have no default set - init font.
+		init_font();
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 // pixel()
 //

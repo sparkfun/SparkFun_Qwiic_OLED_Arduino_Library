@@ -29,7 +29,7 @@
 // Include the SparkFun qwiic OLED Library
 #include <SparkFun_Qwiic_OLED.h>
 
-//#define MICRO
+#define MICRO
 //#define NARROW
 
 #if defined(MICRO)

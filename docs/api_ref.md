@@ -72,7 +72,7 @@ void flipHorizontal(bool bFlip)
 | :--- | :--- | :--- |
 | ```bFlip``` | `bool` | ```true``` - the screen is flipped horzontally. ```false``` - the screen is set to normal |
 
-## Scrolling 
+## Scrolling
 
 ### scrollStop()
 If the device is in a scrolling mode, calling this method stops the scroll, and restores the device to normal display operation. This action is performed immediately.
@@ -170,11 +170,13 @@ The default font for the device is `5x7`.
 
 ```c++
 void setFont(QwiicFont& theFont)
+void setFont(const QwiicFont * theFont)
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `theFont` | `QwiicFont` | The font to set as current in the device|
+| `theFont` | `QwiicFont*` | Pointer to the font to set as current in the device.|
 
 For the library, fonts are added to your program by including them via include files which are part of this library. 
 
