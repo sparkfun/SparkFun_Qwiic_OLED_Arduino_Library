@@ -1,3 +1,4 @@
+![SparkFun Qwiic OLED Arduino Library](img/OLEDLibBanner.png "SparkFun Qwiic OLED Arduino Library")
 #  The Qwiic OLED Arduino Library
 
 ==TODO: Add Wonderful Intro Here==
