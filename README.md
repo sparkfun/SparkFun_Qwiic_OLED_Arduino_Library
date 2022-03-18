@@ -1,3 +1,5 @@
+![SparkFun Qwiic OLED Arduino Library](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/docs/img/OLEDLibBanner.png "SparkFun Qwiic OLED Arduino Library")
+
 # SparkFun Qwiic OLED Arduino Library
 <p align="center">
 	<a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/issues" alt="Issues">
