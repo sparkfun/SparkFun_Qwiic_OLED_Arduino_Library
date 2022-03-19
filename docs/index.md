@@ -36,9 +36,9 @@ The SparkFun Qwiic OLED Arduino Library supports the following SparFun Products
 
 The [Getting Started Page] outlines library installation and the general use of the qwiic OLED library. 
 
-Detailed examples are included as part of the library installation proces and available in the Arduino IDE `File > Examples >` menu. 
+Detailed examples are included as part of the library installation process and available in the Arduino IDE `File > Examples >` menu. 
 
-A complete listing of the qwiic OLED library API is avialable on the [API Page].
+A complete listing of the qwiic OLED library API is available on the [API Page].
 
 [Getting Started Page]: using.md
 [API Page]: api_ref.md

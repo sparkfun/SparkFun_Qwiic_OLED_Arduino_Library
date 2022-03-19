@@ -42,10 +42,10 @@ void setup()
 {
     Serial.begin(115200);
     if(!myOLED.begin()){
-        Serial.println("Device failled to initialize");
+        Serial.println("Device failed to initialize");
         while(1);  // halt execution
     }
-    Serial.println("Device is intitialized");
+    Serial.println("Device is initialized");
     
     // get the device dimensions
     width  = myOLED.getWidth();

@@ -70,7 +70,7 @@ void flipHorizontal(bool bFlip)
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| ```bFlip``` | `bool` | ```true``` - the screen is flipped horzontally. ```false``` - the screen is set to normal |
+| ```bFlip``` | `bool` | ```true``` - the screen is flipped horizontally. ```false``` - the screen is set to normal |
 
 ## Scrolling
 
@@ -116,7 +116,7 @@ Defined values for the `interval` parameter:
 |`SCROLL_INTERVAL_256_FRAMES` | 256 |
 
 ### scrollVertRight()
-This method is called to start the device scrolling the displayed graphics verticall and to the right. This action is performed immediately.
+This method is called to start the device scrolling the displayed graphics vertically and to the right. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
@@ -146,7 +146,7 @@ void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
 | `interval` | `uint8_t` | The time interval between scroll step - values listed in ```scrollRight``` |
 
 ### scrollVertLeft()
-This method is called to start the device scrolling the displayed graphics verticall and to the left. This action is performed immediately.
+This method is called to start the device scrolling the displayed graphics vertically and to the left. This action is performed immediately.
 
 The screen will scroll until the ```scrollStop()``` method is called.
 
