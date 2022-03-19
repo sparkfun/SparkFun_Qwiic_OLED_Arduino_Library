@@ -582,6 +582,11 @@ public:
     void text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr=COLOR_WHITE){
         _device.text(x0, y0, text, clr);
     }
+    
+    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr=COLOR_WHITE){
+
+        _device.text(x0, y0, text.c_str(), clr);
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // Methods to support Arduino Print  capability
