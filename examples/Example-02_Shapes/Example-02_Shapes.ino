@@ -110,7 +110,6 @@ void line_test_1(void){
 
     int x, y, i;
 
-
     int mid = width/2;
     int delta = mid/8;
     
@@ -126,7 +125,6 @@ void line_test_1(void){
             myOLED.display();
         }
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -250,6 +248,7 @@ void rect_fill_test(void){
 // Draw a series of circles - filled and not filled
 void circle_test(void){
 
+    // Lets draw some circles that fit on the device
     myOLED.circle(width/4, height/2, height/3);
 
     myOLED.circleFill(width - width/4, height/2, height/3);    
