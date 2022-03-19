@@ -1,4 +1,4 @@
-#  The Qwiic OLED Arduino Library
+# The Qwiic OLED Arduino Library
 
 ![SparkFun Qwiic OLED Arduino Library](img/OLEDLibBanner.png "SparkFun Qwiic OLED Arduino Library")
 
@@ -40,5 +40,3 @@ Detailed examples are included as part of the library installation process and a
 
 A complete listing of the qwiic OLED library API is available on the [API Page].
 
-[Getting Started Page]: using.md
-[API Page]: api_ref.md

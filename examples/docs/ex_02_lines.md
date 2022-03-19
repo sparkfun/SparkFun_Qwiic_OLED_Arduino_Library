@@ -1,20 +1,8 @@
-# Getting Started
+# Example 2 - Lines
 
-
-## Installation
-
-The SparkFun Qwiic OLED Arduino Library is available within in the Arduino library manager, which is launched via the `Sketch > Include Libraries > Manage Libraries …` menu option in the Arduino IDE. Just search for ***SparkFun Qwiic OLED Library***
-
-!!! note
-    This guide assumes you are using the latest version of the Arduino IDE on your desktop. The following resources available at [SparkFun](https://www.sparkfun.com) provide the details on setting up and configuring Arduino to use this library.
-
-    - [Installing the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-arduino-ide)
-    - [Installing Board Definitions in the Arduino IDE](https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide)
-    - [Installing an Arduino Library](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)
-
-An Initial Example - Drawing Lines
----------
 A simple example to show the use of OLED Library. In this example, a series of lines are drawn that originate in a corner of the screen and span out to the other side of the display, incremented by six pixels.
+
+## Setup
 
 After installing this library in your local Arduino environment, begin with a standard Arduino sketch, and include the header file for this library.
 ```C++
@@ -35,6 +23,9 @@ For this example, the Qwiic Micro OLED is used.
 ```C++
 QwiicMicroOLED myOLED;
 ```
+
+## Drawing Lines
+
 In the ```setup()``` function of this sketch, like all of the SparkFun qwiic libraries, the device is initialized by calling the ```begin()``` method. This method returns a value of ```true``` on success, or ```false``` on failure. 
 ```C++
 int width, height;  // global variables for use in the sketch
@@ -71,14 +62,3 @@ void loop(){
 }
 ```
 A key point when using the OLED library, graphic/screen updates are only sent to the OLED device when the ```display()``` method is called. 
-
-Library Provided Examples
---------
-The following Examples are part of the library installation:
-
-* [Example 1 - Hello](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/examples/Example01_Hello/Example01_Hello.ino)
-* [Example 4 - Cube](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/examples/Example4_Cube/Example4_Cube.ino)
-* [Example 6 - Draw Icon](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/examples/Example6_DrawIcon/Example6_DrawIcon.ino)
-* [Example 8 - Scrolling, flips and invert](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/examples/Example8_Scroll/Example8_Scroll.ino)
-
-

@@ -1,0 +1,11 @@
+site_name: SparkFun Qwiic OLED Arduino Library - Examples
+
+nav:
+  - Example 1 - Hello: "ex_01_hello.md"
+  - Example 2 - Lines: "ex_02_lines.md"
+  - Example 3 - Circles: "ex_03_circles.md"
+  - Example 4 - Text: "ex_04_text.md"
+  - Example 5 - Bitmaps: "ex_05_bitmaps.md"
+  - Example 6 - Scroll/Flip: "ex_06_scrollflip.md"
+  - Example 7 - XOR: "ex_07_rops.md"
+  - Example 8 - Everything: "ex_08_bigdemo.md"              

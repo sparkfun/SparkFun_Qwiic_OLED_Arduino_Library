@@ -3,15 +3,21 @@ site_name: SparkFun Qwiic OLED Arduino Library - Hookup Guide
 site_description: SparkFun Arduino Library for Qwiic OLED Boards
 site_url: https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library
 
+
 theme:
   name: material
   logo: img/sfe_logo_sm.png
   palette:
     primary: grey
     accent: red
+  font:
+    text: Roboto
+    code: Roboto Mono
   features:
     - content.code.annotate
     - navigation.tracking
+    - navigation.tabs.sticky
+    - navigation.tabs    
 
   icon:
     repo: fontawesome/brands/github
@@ -31,6 +37,7 @@ theme:
 
 plugins:
   - search
+  - monorepo
 
 repo_url: https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 repo_name: sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
@@ -67,7 +74,15 @@ extra:
   
 nav:
   - Home: index.md
-  - started.md
-  - api_ref.md
-  - hug_micro_view.md
-  - hug_transparent.md
+  - Getting Started:
+    - Software Setup: software.md
+    - hug_micro_view.md
+    - hug_transparent.md
+  - API Reference:
+    - Device: api_device.md
+    - Scrolling: api_scroll.md
+    - Drawing State: api_draw.md
+    - Graphics: api_graphics.md
+    - Arduino Print: api_arduino.md
+  - Examples: '!include ./examples/mkdocs.yml'
+    
