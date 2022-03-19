@@ -111,6 +111,6 @@ The last step is sending the graphics to the device. This is accomplished by cal
     myOLED.display();
 ```
 
-And that's in - the graphic is displayed on the OLED device.*
+And that's in - the graphic is displayed on the OLED device.
 
 ![Hello!](img/ex01_hello.png "Hello")
