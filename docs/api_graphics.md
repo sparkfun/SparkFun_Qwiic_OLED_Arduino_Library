@@ -166,4 +166,5 @@ void text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr)
 | x0 | `uint8_t` | The X coordinate to start drawing the text|
 | y0 | `uint8_t` | The Y coordinate to start drawing the text|
 | text | `const char*` | The string to draw on the screen |
+| text | `String` | The Arduino string to draw on the screen |
 | clr | `uint8_t` | **optional** The color value to draw the circle. This defaults to white (1).|
