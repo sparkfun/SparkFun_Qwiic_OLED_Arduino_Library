@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -51,21 +51,21 @@
 class QwFont7Segment final : public fontSingleton<QwFont7Segment> {
 
 public:
-	const uint8_t * data(void){
+    const uint8_t * data(void){
 
-		// include font data (static const), and attribute defines.
-		// Doing this here makes the data variable a static (aka only one instance ever)
-		// variable in this method. 
+        // include font data (static const), and attribute defines.
+        // Doing this here makes the data variable a static (aka only one instance ever)
+        // variable in this method. 
 #include "_fnt_7segment.h"
 
-		return segment7_data;
-	}
+        return segment7_data;
+    }
 
-	QwFont7Segment(): fontSingleton<QwFont7Segment>(FONT_7SEG_WIDTH, 
-											  		FONT_7SEG_HEIGHT,
-											  		FONT_7SEG_START, 
-											  		FONT_7SEG_NCHAR, 
-											  		FONT_7SEG_MAP_WIDTH){}
+    QwFont7Segment(): fontSingleton<QwFont7Segment>(FONT_7SEG_WIDTH, 
+                                                    FONT_7SEG_HEIGHT,
+                                                    FONT_7SEG_START, 
+                                                    FONT_7SEG_NCHAR, 
+                                                    FONT_7SEG_MAP_WIDTH){}
 
 };
 

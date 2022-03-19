@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -43,6 +43,8 @@
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Implementation for the Qwiic Narrow OLED Device (128x32) 
+
 #pragma once
 
 
@@ -52,14 +54,14 @@
 //////////////////////////////////////////////////////////////////
 // Set the defaults for the SparkFun Qwiic "Narrow" OLED
 
-#define kOLEDNarrowWidth  	128
-#define kOLEDNarrowHeight 	32
+#define kOLEDNarrowWidth    128
+#define kOLEDNarrowHeight   32
 
 
 // Parameters for this device
 #define kOLEDNarrowPinConfig  0x02
 #define kOLEDNarrowPreCharge  0xF1
-#define kOLEDNarrowVCOM	     0x40
+#define kOLEDNarrowVCOM      0x40
 
 #define kOLEDNarrowDefaultAddress 0x3C
 
@@ -67,28 +69,28 @@ class QwOLEDNarrow : public QwGrSSD1306 {
 
 public:
 
-	// Constructor - setup the viewport and default address for this device. 
-	QwOLEDNarrow() : 
-		QwGrSSD1306(kOLEDNarrowWidth, kOLEDNarrowHeight)
-		{
-			default_address = kOLEDNarrowDefaultAddress;
-		};
+    // Constructor - setup the viewport and default address for this device. 
+    QwOLEDNarrow() : 
+        QwGrSSD1306(kOLEDNarrowWidth, kOLEDNarrowHeight)
+        {
+            default_address = kOLEDNarrowDefaultAddress;
+        };
 
-	// set up the specific values 
-	bool init(void){
+    // set up the specific values 
+    bool init(void){
 
-		set_buffer(_graphicsBuffer);
+        set_buffer(_graphicsBuffer);
 
-		set_comm_pins(kOLEDNarrowPinConfig);
-		set_pre_charge(kOLEDNarrowPreCharge);
-		set_vcom_deselect(kOLEDNarrowVCOM);
+        set_comm_pins(kOLEDNarrowPinConfig);
+        set_pre_charge(kOLEDNarrowPreCharge);
+        set_vcom_deselect(kOLEDNarrowVCOM);
 
-		// Call the super class to do all the work
-		return this->QwGrSSD1306::init();
-	};
+        // Call the super class to do all the work
+        return this->QwGrSSD1306::init();
+    };
 
 private:
-	// Graphics buffer for this device. 
-	uint8_t _graphicsBuffer[kOLEDNarrowWidth * kOLEDNarrowHeight/8];
+    // Graphics buffer for this device. 
+    uint8_t _graphicsBuffer[kOLEDNarrowWidth * kOLEDNarrowHeight/8];
 
 };

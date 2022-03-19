@@ -43,6 +43,9 @@
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 
+
+// Class provide an abstract interface to the I2C device
+
 #include <Arduino.h>
 #include "qwiic_i2c.h"
 
@@ -63,6 +66,7 @@
 
 #endif
 
+// What we use for transfer chunk size
 
 const static 	uint16_t kChunkSize = kMaxTransferBuffer - 1;
 
@@ -74,6 +78,11 @@ QwI2C::QwI2C(void){
 	_i2cPort = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
+// init()
+//
+// Methods to init/setup this device. The caller can provide a Wire Port, or this class
+// will use the default
+
 bool QwI2C::init(TwoWire &wirePort){
 
     // if we don't have a wire port already
@@ -86,6 +95,8 @@ bool QwI2C::init(TwoWire &wirePort){
     return true;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
 bool QwI2C::init(void){
 
     // do we already have a wire port?
@@ -97,6 +108,9 @@ bool QwI2C::init(void){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+// ping()
+// 
+// Is a device connected?
 bool QwI2C::ping(uint8_t i2c_address){
 
 	_i2cPort->beginTransmission(i2c_address);
@@ -104,6 +118,10 @@ bool QwI2C::ping(uint8_t i2c_address){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+// writeRegisterByte()
+//
+// Write a byte to a register
+
 bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataToWrite){
 
 	_i2cPort->beginTransmission(i2c_address);
@@ -115,7 +133,7 @@ bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataT
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // writeRegisterRegion()
 //
-//
+// Write a block of data to a device. This routine will chunk over the data if needed
 
 int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length){
 

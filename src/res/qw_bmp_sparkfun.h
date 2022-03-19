@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -51,14 +51,14 @@
 class QwBMPSparkFun final : public bmpSingleton<QwBMPSparkFun> {
 
 public:
-	const uint8_t * data(void){
+    const uint8_t * data(void){
 
 #include "_bmp_sparkfun.h"
 
-		return bmp_sparkfun_data;
-	}
+        return bmp_sparkfun_data;
+    }
 
-	QwBMPSparkFun(): bmpSingleton<QwBMPSparkFun>(BMP_SPARKFUN_WIDTH, BMP_SPARKFUN_HEIGHT){}
+    QwBMPSparkFun(): bmpSingleton<QwBMPSparkFun>(BMP_SPARKFUN_WIDTH, BMP_SPARKFUN_HEIGHT){}
 
 };
 

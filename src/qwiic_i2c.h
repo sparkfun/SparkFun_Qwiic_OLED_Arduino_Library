@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -65,23 +65,23 @@ class QwI2C {
 
 public: 
 
-	QwI2C(void);  
+    QwI2C(void);  
 
-	bool init(void);
-	bool init(TwoWire &wirePort);
+    bool init(void);
+    bool init(TwoWire &wirePort);
 
-	// see if a device exists
-	bool ping(uint8_t address);
+    // see if a device exists
+    bool ping(uint8_t address);
 
 
-	bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
+    bool writeRegisterByte(uint8_t address, uint8_t offset, uint8_t data);
 
-	// Write a block of bytes to the device -- 
-	int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t *data, uint16_t length); 
+    // Write a block of bytes to the device -- 
+    int writeRegisterRegion(uint8_t address, uint8_t offset, uint8_t *data, uint16_t length); 
 
 
 private:
 
-	TwoWire  *_i2cPort;
+    TwoWire  *_i2cPort;
 
 };

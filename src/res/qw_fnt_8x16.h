@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -51,21 +51,21 @@
 class QwFont8x16 final : public fontSingleton<QwFont8x16> {
 
 public:
-	const uint8_t * data(void){
+    const uint8_t * data(void){
 
-		// include font data (static const), and attribute defines.
-		// Doing this here makes the data variable a static (aka only one instance ever)
-		// variable in this method. 
+        // include font data (static const), and attribute defines.
+        // Doing this here makes the data variable a static (aka only one instance ever)
+        // variable in this method. 
 #include "_fnt_8x16.h"
 
-		return font8x16_data;
-	}
+        return font8x16_data;
+    }
 
-	QwFont8x16(): fontSingleton<QwFont8x16>(FONT_8X16_WIDTH, 
-											FONT_8X16_HEIGHT,
-											FONT_8X16_START, 
-											FONT_8X16_NCHAR, 
-											FONT_8X16_MAP_WIDTH){}
+    QwFont8x16(): fontSingleton<QwFont8x16>(FONT_8X16_WIDTH, 
+                                            FONT_8X16_HEIGHT,
+                                            FONT_8X16_START, 
+                                            FONT_8X16_NCHAR, 
+                                            FONT_8X16_MAP_WIDTH){}
 
 };
 

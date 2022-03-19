@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -51,21 +51,21 @@
 class QwFontLargeNum final : public fontSingleton<QwFontLargeNum> {
 
 public:
-	const uint8_t * data(void){
+    const uint8_t * data(void){
 
-		// include font data (static const), and attribute defines.
-		// Doing this here makes the data variable a static (aka only one instance ever)
-		// variable in this method. 
+        // include font data (static const), and attribute defines.
+        // Doing this here makes the data variable a static (aka only one instance ever)
+        // variable in this method. 
 #include "_fnt_largenum.h"
 
-		return fontlargenum_data;
-	}
+        return fontlargenum_data;
+    }
 
-	QwFontLargeNum(): fontSingleton<QwFontLargeNum>(FONT_LARGENUM_WIDTH, 
-											  		FONT_LARGENUM_HEIGHT,
-											  		FONT_LARGENUM_START, 
-											  		FONT_LARGENUM_NCHAR, 
-											  		FONT_LARGENUM_MAP_WIDTH){}
+    QwFontLargeNum(): fontSingleton<QwFontLargeNum>(FONT_LARGENUM_WIDTH, 
+                                                    FONT_LARGENUM_HEIGHT,
+                                                    FONT_LARGENUM_START, 
+                                                    FONT_LARGENUM_NCHAR, 
+                                                    FONT_LARGENUM_MAP_WIDTH){}
 
 };
 

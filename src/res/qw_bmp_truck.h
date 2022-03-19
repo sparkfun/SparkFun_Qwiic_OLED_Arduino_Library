@@ -6,9 +6,9 @@
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED 			https://www.sparkfun.com/products/14532
-//   Transparent OLED     	https://www.sparkfun.com/products/15173
-//   "Narrow" OLED  		https://www.sparkfun.com/products/17153
+//   Micro OLED             https://www.sparkfun.com/products/14532
+//   Transparent OLED       https://www.sparkfun.com/products/15173
+//   "Narrow" OLED          https://www.sparkfun.com/products/17153
 // 
 // 
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
@@ -51,14 +51,14 @@
 class QwBMPTruck final : public bmpSingleton<QwBMPTruck> {
 
 public:
-	const uint8_t * data(void){
+    const uint8_t * data(void){
 
 #include "_bmp_truck.h"
 
-		return bmp_truck_data;
-	}
+        return bmp_truck_data;
+    }
 
-	QwBMPTruck(): bmpSingleton<QwBMPTruck>(BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT){}
+    QwBMPTruck(): bmpSingleton<QwBMPTruck>(BMP_TRUCK_WIDTH, BMP_TRUCK_HEIGHT){}
 
 };
 
