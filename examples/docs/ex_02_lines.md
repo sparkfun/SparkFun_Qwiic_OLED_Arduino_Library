@@ -132,7 +132,7 @@ void line_test_vert(void){
 }
 ```
 
-### Rectangles 
+### Rectangles
 
 Several rectangle routines are shown in this example. A key test is a fast drawing routine which animates a small rectangle being drawn diagonally across the screen. 
 
@@ -146,11 +146,11 @@ The animation algorithm:
   for(int i = 0; i < steps; i++){
 
         // Draw the rectangle and send it to device
-        myOLED.rectangle(x, y, x+side, y+side);
+        myOLED.rectangle(x, y, side, side);
         myOLED.display(); // sends erased rect and new rect pixels to device
 
         // Erase the that rect, increment and loop
-        myOLED.rectangle(x, y, x+side, y+side, 0);
+        myOLED.rectangle(x, y, side, side, 0);
 
         x += xinc;
         y += yinc;       
@@ -166,12 +166,12 @@ Filled rectangles and XOR operations:
 ```C++
 void rect_fill_test(void){
 
-    myOLED.rectangleFill(4, 4, width/2-4, height-4);
+    myOLED.rectangleFill(4, 4, width/2-8, height-8);
 
-    myOLED.rectangleFill(width/2+4, 4, width-4, height-4);
+    myOLED.rectangleFill(width/2+4, 4, width/2-8, height-8);
 
-    myOLED.setDrawMode(grROPXOR);   // XOR ON
-    myOLED.rectangleFill(width/4, 8, width - width/4, height-8);
+    myOLED.setDrawMode(grROPXOR);   // xor
+    myOLED.rectangleFill(width/4, 8, width/2, height-16);
     myOLED.setDrawMode(grROPCopy);  // back to copy op (default)
 }
 ```
