@@ -91,6 +91,7 @@ const char * deviceName = "Micro OLED";
 
 // Let's draw a truck - use our built in bitmap
 #include "res/qw_bmp_truck.h"
+#include "res/qw_bmp_sparkfun.h"
 
 
 int width;
@@ -99,6 +100,32 @@ int height;
 // For simple frame rate calculations
 uint32_t draw_total_time;
 uint32_t n_draws;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  show_splash()
+//
+// Show SFE spash screen
+
+void show_splash(){
+
+
+    int x0 = (width - QW_BMP_SPARKFUN.width)/2;
+    if(x0 < 0 )
+        x0 = 0;
+
+    int y0 = (height - QW_BMP_SPARKFUN.height)/2;
+    if(y0 < 0)
+        y0=0;
+
+    myOLED.erase();
+    myOLED.bitmap(x0, y0, QW_BMP_SPARKFUN);
+    myOLED.display();
+    delay(2000);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
+// setup()
+// 
+// Standard Arduino setup routine
 
 void setup(){
     
@@ -122,6 +149,8 @@ void setup(){
     width = myOLED.getWidth();
     height = myOLED.getHeight();
     
+    show_splash();
+
     draw_total_time =0;
     n_draws=0;
 
@@ -133,6 +162,11 @@ int iconX = 8;
 int iconXChangeAmount = 1;
 int iconY = 8;
 int iconYChangeAmount = 1;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// loop()
+// 
+// Standard Arduino loop routine
 
 void loop(){
   
