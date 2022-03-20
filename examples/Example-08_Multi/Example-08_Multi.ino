@@ -60,9 +60,9 @@
 //
 // The default is Micro OLED
 
-#define MICRO
+//#define MICRO
 //#define NARROW
-//#define TRANSPARENT
+#define TRANSPARENT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -187,7 +187,7 @@ void shapeExample()
     // Paddle 1 (right) position coordinates
     int paddle1_Y = ( height / 2) - (paddleH / 2);
     int paddle1_X = width - 3 - paddleW;
-    int ball_rad = 2; // Ball radius
+    int ball_rad = 4; // Ball radius
     
     // Ball position coordinates
     int ball_X = paddle0_X + paddleW + ball_rad;
@@ -197,9 +197,28 @@ void shapeExample()
     int paddle0Velocity = -1;                                          // Paddle 0 velocity
     int paddle1Velocity = 1;                                           // Paddle 1 velocity
 
-    //while(ball_X >= paddle0_X + paddleW - 1)
+    // Draw the Pong Field
+    myOLED.erase();
+    
+    // Draw an outline of the screen:
+    myOLED.rectangle(0, 0, width-1,  height-1);
+    
+    // Draw the center line
+    myOLED.rectangleFill( width/ 2 - 1, 0, width/2 + 1, height-1);
+
+    bool firstLoop = true; 
+
     while((ball_X - ball_rad > 1) && (ball_X + ball_rad <  width - 2)){
 
+        if(!firstLoop){
+
+            // Erase the old ball. In XOR mode, so just draw old values again!
+            // Draw the Paddles:
+            myOLED.rectangleFill(paddle0_X, paddle0_Y, paddle0_X+paddleW, paddle0_Y+paddleH);
+            myOLED.rectangleFill(paddle1_X, paddle1_Y, paddle1_X+paddleW, paddle1_Y+paddleH);
+            // Draw the ball: - use rect - xor and circle fails b/c of circle algorithm overdraws
+            myOLED.rectangleFill(ball_X, ball_Y, ball_X+ball_rad, ball_Y+ball_rad);   
+        }
         // Increment ball's position
         ball_X += ballVelocityX;
         ball_Y += ballVelocityY;
@@ -227,7 +246,7 @@ void shapeExample()
         }
     
         // Check if the ball hit the top or bottom
-        if((ball_Y <= ball_rad) || (ball_Y >= (height - ball_rad - 1))){
+        if((ball_Y <= 1) || (ball_Y >= (height - ball_rad - 1))){
 
             // Change up/down velocity direction
             ballVelocityY = -ballVelocityY;
@@ -245,28 +264,27 @@ void shapeExample()
         if((paddle1_Y <= 1) || (paddle1_Y > height - 2 - paddleH))
             paddle1Velocity = -paddle1Velocity;
 
-        // Draw the Pong Field
-        myOLED.erase();
-    
-        // Draw an outline of the screen:
-        myOLED.rectangle(0, 0, width-1,  height-1);
-    
-        // Draw the center line
-        myOLED.rectangleFill( width/ 2 - 1, 0, width/2 + 1, height-1);
-
         // Draw the Paddles:
         myOLED.rectangleFill(paddle0_X, paddle0_Y, paddle0_X+paddleW, paddle0_Y+paddleH);
         myOLED.rectangleFill(paddle1_X, paddle1_Y, paddle1_X+paddleW, paddle1_Y+paddleH);
 
         // Draw the ball:
-        myOLED.circle(ball_X, ball_Y, ball_rad);
+        myOLED.rectangleFill(ball_X, ball_Y, ball_X+ball_rad, ball_Y+ball_rad);
 
         // Actually draw everything on the screen:
         myOLED.display();
 
+        // Once the first loop is done, switch to XOR mode. So we just update our 
+        // moving parts 
+        if(firstLoop){
+            firstLoop = false;
+            myOLED.setDrawMode(grROPXOR);
+        }
+
         delay(25); // Delay for visibility
     }
     delay(1000);
+    myOLED.setDrawMode(grROPCopy);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
