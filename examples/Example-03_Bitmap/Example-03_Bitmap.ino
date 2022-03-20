@@ -105,7 +105,7 @@ uint32_t n_draws;
 //  show_splash()
 //
 // Show SFE spash screen
-
+    
 void show_splash(){
 
 
