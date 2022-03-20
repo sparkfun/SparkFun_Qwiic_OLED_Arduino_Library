@@ -284,7 +284,7 @@ static const testFn testFunctions[] = {
 
 void setup()
 {
-    delay(100);   //Give display time to power on
+    delay(500);   //Give display time to power on
     Serial.begin(115200);
 
     Serial.println("\n\r-----------------------------------");

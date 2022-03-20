@@ -1,4 +1,4 @@
-// Example-02_Shapes.ino
+// Example-05_ScrollFlip.ino
 // 
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
