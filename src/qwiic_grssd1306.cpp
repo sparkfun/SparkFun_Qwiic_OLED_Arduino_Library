@@ -693,18 +693,28 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
     if(x0 >= _viewport.width || y0 >= _viewport.height || !bmp_width || !bmp_height)
         return;
 
+    // Bounds check
+    if(x0 + dst_width > _viewport.width) // out of bounds
+        dst_width = _viewport.width - x0;
 
-    uint8_t bmp_x = 0; // fix
-    uint8_t bmp_y = 0; // fix
+    if(bmp_width < dst_width)
+        dst_width = bmp_width;
 
-    uint8_t xinc, page0, page1;
+    if(y0 + dst_height > _viewport.height) // out of bounds
+        dst_height = _viewport.height - y0;
+
+    if(bmp_height < dst_height)
+        dst_height = bmp_height;
+
+    // current position in the bitmap
+    uint8_t bmp_x = 0; 
+    uint8_t bmp_y = 0; 
+
+    uint8_t page0, page1;
     uint8_t startBit, endBit, grSetBits, grStartBit;    
 
-    uint8_t bmp_mask[2];
-    uint8_t bmp_data, bmpPage;
-
-    uint8_t remainingBits;
-    uint8_t neededBits; 
+    uint8_t bmp_mask[2], bmp_data, bmpPage;
+    uint8_t remainingBits, neededBits; 
 
     uint8_t y1 = y0+dst_height-1;
 
@@ -725,7 +735,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
     //              - Write the bitmap bits to the graphis buffer using the current operator
 
     // Loop over the memory pages in the graphics buffer
-    for(int i=page0; i <= page1; i++){
+    for(int iPage=page0; iPage <= page1; iPage++){
 
         // First, get the number of destination bits in the current page
         grStartBit = mod_byte(y0);  //start bit
@@ -761,17 +771,17 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
 
         // we have the mask for the bmp - loop over the width of the copy region, pulling out
         // bmp data and writing it to the graphics buffer
-        for(xinc = 0; xinc < dst_width; xinc++  ){
+        for(bmp_x = 0; bmp_x < dst_width; bmp_x++){
 
             // get data bits out of current bitmap location and shift if needed
-            bmp_data = (pBitmap[bmp_width*bmpPage + bmp_x + xinc] & bmp_mask[0]) >> startBit;
+            bmp_data = (pBitmap[bmp_width*bmpPage + bmp_x] & bmp_mask[0]) >> startBit;
             
             if(remainingBits) // more data to add from the next byte in this column
-                bmp_data |= (pBitmap[bmp_width*(bmpPage+1) + bmp_x + xinc] & bmp_mask[1]) << (kByteNBits - remainingBits);
+                bmp_data |= (pBitmap[bmp_width*(bmpPage+1) + bmp_x] & bmp_mask[1]) << (kByteNBits - remainingBits);
 
             // Write the bmp data to the graphics buffer - using current write op. Note,
             // if the location in the buffer didn't start at bit 0, we shift bmp_data
-            curROP(_pBuffer + i * _viewport.width + xinc + x0, 
+            curROP(_pBuffer + iPage * _viewport.width + bmp_x + x0, 
                                     bmp_data << grStartBit, grSetBits);
 
         }
@@ -779,7 +789,7 @@ void QwGrSSD1306::draw_bitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t
         y0 += neededBits;
         bmp_y += neededBits;
 
-        page_check_bounds_range(_pageState[i], x0, x0+dst_width); // mark dirty range in page desc
+        page_check_bounds_range(_pageState[iPage], x0, x0+dst_width); // mark dirty range in page desc
     }
 
 }
