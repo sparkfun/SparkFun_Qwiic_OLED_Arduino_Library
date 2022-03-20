@@ -11,58 +11,34 @@
            	 alt="follow on Twitter"></a>
 	
 </p>
-A new Arduino library to support SparkFun's qwiic OLED boards
+The SparkFun Qwiic OLED Arduino Library is a single graphics module that supports all SparkFun OLED boards based on the SSD1306 from Solomon Systech. Prior to this library, three different libraries were used to support our four different OLED boards. 
 
-Currently in Development - Alpha
+The SparkFun Qwiic OLED Library delivers a common implementation for all our Qwiic OLED products, delivering a unified, fast, and efficient solution that implements a familiar and easy to understand user experience.
 
-## Contents
-* [Documentation](https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/)
-* [Development Status](#development-status)
+## Key Features
+*	Implements common graphics capabilities: pixel, line, rectangle, filled rectangle, circle, filled circle, bitmap, text and raster operators (i.e. XOR).
+* Smart data transfer to the device – only sends _dirty_ regions of the graphics buffer to the OLED device, not the entire buffer. 
+* High performance – 2x faster than our previous OLED library, often much higher. 
+* Efficient memory usage. No dynamic memory utilized. Static resources are loaded once, and only on explicit declaration. 
+* Implements a familiar interface, making migration from older libraries straight forward
 
+## Documentation
+A full library use overview, API reference guide and key example walk through are available on this repositories github page - [sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library](https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/)
 
-Development Status
-------------------
-### Implemented
-* Fast data transfers/updates to OLED device 
-  * Only transfers needed bytes
-  * 2x to 6x performance gains over current Micro OLED libray. Massive gains over "hyperdisplay"
-* C++ / Platform neutral implementation
-* Pixel set
-* General lines
-* Fast horizontal lines
-* Fast vertical lines
-* Rectangles (fast)
-* Filled rectangles (fast)
-* Circles
-* Filled Circles
-* Bitmap images (fast - 5x improvement on demo test)
-* Fonts and Text rendering
-* scrolling 
-* flip - vert & horz
-* invert 
-* Raster OPs (ROPS) - XOR, Not, Copy, Not Copy, Black and White
-* Arduino Object interface
+## Supported Products
 
-### To Be Implemented
-* Functionally Complete
-### Known Issues
-* Filled circles being clipped/not drawn based on positon 
-* Narrow OLED - some pixels - max X are not getting erased at times 
-  * See on nrf5280 and ESP32
-* Fill Circle - XOR - some double draws so not a clean render ..
-## Hardware
-### Tested/Working
-* Qwiic Micro OLED
-* Qwiic "narrow OLED"
-* Qwiic Transparent OLED
-* Artemis
-* SAMD51
-* ESP32
-* STM32
-* SAMD21
-* nrf5280
-* Teensy (MicroMod + ATP carrier)
-* Redboard Plus (works mostly. Cube demo w/ Transparent OLED fails - runs out of memory - not surprizing)
-### To Be Tested/Supported
-* RP2040 - Not working. Note - doesn't work with old Micro OLED library either
-* 
+* [LCD-14532](https://www.sparkfun.com/products/14532) - SparkFun Micro OLED Breakout (Qwiic)
+* [LCD-17153](https://www.sparkfun.com/products/17153) - SparkFun Qwiic OLED Display (0.91 in, 128x32)
+* [LCD-15173](https://www.sparkfun.com/products/15173) - SparkFun Transparent Graphical OLED Breakout (Qwiic) 
+* [SPX-18996](https://www.sparkfun.com/products/18996) - smôl Display (0.91 in, 128x32) 
+
+### Supported Microcontrollers - Arduino Environment
+
+* [Artemis](https://www.sparkfun.com/products/15574)
+* [SAMD51](https://www.sparkfun.com/products/14713)
+* [ESP32](https://www.sparkfun.com/products/15663)
+* [STM32](https://www.sparkfun.com/products/17712)
+* [SAMD21](https://www.sparkfun.com/products/14812)
+* [nrf5280](https://www.sparkfun.com/products/15025)
+* [Teensy](https://www.sparkfun.com/products/16402)
+* [ATMega328](https://www.sparkfun.com/products/18158)
