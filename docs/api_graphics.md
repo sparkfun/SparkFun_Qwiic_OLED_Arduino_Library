@@ -61,15 +61,15 @@ void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 Draw a rectangle on the screen. 
 
 ```c++
-void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | x0 | `uint8_t` | The start X coordinate of the rectangle - upper left corner|
 | y0 | `uint8_t` | The start Y coordinate of the rectangle - upper left corner|
-| x1 | `uint8_t` | The end X coordinate of the rectangle - lower right corner|
-| y1 | `uint8_t` | The end Y coordinate of the rectangle - lower right corner|
+| width | `uint8_t` | The width of the rectangle|
+| height | `uint8_t` | The height of the rectangle|
 | clr | `uint8_t` | **optional** The color value to draw the line. This defaults to white (1).|
 
 ### rectangleFill()
@@ -77,15 +77,15 @@ void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 Draw a filled rectangle on the screen. 
 
 ```c++
-void rectangleFill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | x0 | `uint8_t` | The start X coordinate of the rectangle - upper left corner|
 | y0 | `uint8_t` | The start Y coordinate of the rectangle - upper left corner|
-| x1 | `uint8_t` | The end X coordinate of the rectangle - lower right corner|
-| y1 | `uint8_t` | The end Y coordinate of the rectangle - lower right corner|
+| width | `uint8_t` | The width of the rectangle|
+| height | `uint8_t` | The height of the rectangle|
 | clr | `uint8_t` | **optional** The color value to draw the line. This defaults to white (1).|
 
 ### circle()
