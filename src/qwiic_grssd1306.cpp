@@ -238,13 +238,6 @@ bool QwGrSSD1306::init(void){
     if(!this->QwGrBufferDevice::init())
         return false; // something isn't right
 
-    // At this point, the main device interface is filled in. This classes draw_line_vert()
-    // can also draw filled rects, so hack the device table to have draw_rect_filled points
-    // to this classes draw_line_vert(), which should be the method in the draw_line_vert entry
-    // of the draw interface.
-
-    _idraw.draw_rect_filled = _idraw.draw_line_vert;
-
     // Start the device setup - sending commands to device. See command defs in header, and
     // device datasheet
     send_dev_command(kCmdDisplayOff);
@@ -679,7 +672,21 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
     }
 
 }
+////////////////////////////////////////////////////////////////////////////////////////
+// draw_rect_fill()
+//
+// Does the actual drawing/logic
 
+void QwGrSSD1306::draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){
+
+
+    uint8_t x1 = x0 + width-1;
+    uint8_t y1 = y0 + height-1;
+
+    // just call vert line
+    draw_line_vert(x0, y0, x1, y1, clr);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // draw_bitmap()
 //

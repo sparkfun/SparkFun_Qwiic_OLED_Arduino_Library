@@ -104,8 +104,8 @@ class _QwIDraw{
     virtual void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){}  
 
     // Rectangles
-    virtual void draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){}
-    virtual void draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){}    
+    virtual void draw_rect(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){}
+    virtual void draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){}    
 
     //Circles
     virtual void draw_circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr){} 

@@ -312,19 +312,13 @@ void QwGrBufferDevice::draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 //
 // Draw a rectangle on screen.
 
-void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
+void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){
 
     // Is this a line?
-    if(x0 == x1 || y0 == y1){
+    if(width <=1 || height <=1){
         // this is a line
-        line(x0, y0, x1, y1);
+        line(x0, y0, x0+width-1, y0+height-1);
         return;
-    }
-
-    // Sanity check
-    if(x0 > x1 || y0 > y1){
-        swap_int(x0, x1);
-        swap_int(y0, y1);
     }
 
     // bounds check
@@ -333,7 +327,7 @@ void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 
     // Send to drawing routine. 
 
-    (*_idraw.draw_rect)(this, x0, y0, x1, y1, clr);
+    (*_idraw.draw_rect)(this, x0, y0, width, height, clr);
 
 }
 
@@ -342,10 +336,13 @@ void QwGrBufferDevice::rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 //
 // Does the actual drawing/logic
 
-void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
+void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){
 
 
     // A rect is really just a series of vert and horz lines 
+
+    uint8_t x1 = x0 + width-1;
+    uint8_t y1 = y0 + height-1;
 
     (*_idraw.draw_line_horz)(this, x0, y0, x1, y0, clr);
     (*_idraw.draw_line_horz)(this, x0, y1, x1, y1, clr);
@@ -364,28 +361,22 @@ void QwGrBufferDevice::draw_rect(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 ////////////////////////////////////////////////////////////////////////////////////////
 // rectangle_fill()
 
-void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
+void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){
 
 
-    if(x0 == x1 || y0 == y1){
+    // Is this a line?
+    if(width <=1 || height <=1){
         // this is a line
-        line(x0, y0, x1, y1);
+        line(x0, y0, x0+width-1, y0+height-1);
         return;
     }
-
-    // Sanity check
-    if(x0 > x1 || y0 > y1){
-        swap_int(x0, x1);
-        swap_int(y0, y1);
-    }
-
     // bounds check
     if(x0 >= _viewport.width || y0 >= _viewport.height)
         return; // not on screen
 
     // Send to drawing routine. 
 
-    (*_idraw.draw_rect_filled)(this, x0, y0, x1, y1, clr);
+    (*_idraw.draw_rect_filled)(this, x0, y0, width, height, clr);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -393,8 +384,11 @@ void QwGrBufferDevice::rectangle_fill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_
 //
 // Does the actual drawing/logic
 
-void QwGrBufferDevice::draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr){
+void QwGrBufferDevice::draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr){
 
+
+    uint8_t x1 = x0 + width-1;
+    uint8_t y1 = y0 + height-1;
 
     // Just draw vertical lines 
     for(int i=x0; i <= x1; i++)

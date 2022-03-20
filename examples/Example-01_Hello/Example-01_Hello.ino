@@ -118,7 +118,7 @@ void setup()
     // Do a simple test - fill a rectangle on the screen and then print hello!
 
     // fill a rectangle on the screen that has a 4 pixel board
-    myOLED.rectangleFill(4, 4, myOLED.getWidth()-4, myOLED.getHeight()-4);
+    myOLED.rectangleFill(4, 4, myOLED.getWidth()-8, myOLED.getHeight()-8);
 
     String hello = "hello"; // our message
 

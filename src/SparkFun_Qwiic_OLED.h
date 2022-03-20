@@ -474,12 +474,12 @@ public:
     // ---------    -----------------------------
     // x0           The start X coordinate of the rectangle - upper left corner
     // y0           The start Y coordinate of the rectangle - upper left corner
-    // x1           The end X coordinate of the rectangle - lower right corner
-    // y1           The end Y coordinate of the rectangle - lower right corner
+    // width        The width of the rectangle
+    // height       The height of the rectangle    
     // clr          optional The color value to draw the rectangle. This defaults to white (1).
 
-    void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=COLOR_WHITE){
-        _device.rectangle(x0, y0, x1, y1, clr);
+    void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr=COLOR_WHITE){
+        _device.rectangle(x0, y0, width, height, clr);
     }    
 
     ///////////////////////////////////////////////////////////////////////
@@ -491,12 +491,12 @@ public:
     // ---------    -----------------------------
     // x0           The start X coordinate of the rectangle - upper left corner
     // y0           The start Y coordinate of the rectangle - upper left corner
-    // x1           The end X coordinate of the rectangle - lower right corner
-    // y1           The end Y coordinate of the rectangle - lower right corner
+    // width        The width of the rectangle
+    // height       The height of the rectangle
     // clr          optional The color value to draw the filled rectangle. This defaults to white (1).
 
-    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=COLOR_WHITE){
-        _device.rectangle_fill(x0, y0, x1, y1, clr);
+    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr=COLOR_WHITE){
+        _device.rectangle_fill(x0, y0, width, height, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -215,6 +215,9 @@ protected:
     void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
     void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);   
 
+    // fast rect fill 
+    void draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr);
+    
     // >> Fast Bitmap <<
     void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
                      uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );

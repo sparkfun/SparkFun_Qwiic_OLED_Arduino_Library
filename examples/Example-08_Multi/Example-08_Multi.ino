@@ -60,9 +60,9 @@
 //
 // The default is Micro OLED
 
-//#define MICRO
+#define MICRO
 //#define NARROW
-#define TRANSPARENT
+//#define TRANSPARENT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,10 +201,10 @@ void shapeExample()
     myOLED.erase();
     
     // Draw an outline of the screen:
-    myOLED.rectangle(0, 0, width-1,  height-1);
+    myOLED.rectangle(0, 0, width-1,  height);
     
     // Draw the center line
-    myOLED.rectangleFill( width/ 2 - 1, 0, width/2 + 1, height-1);
+    myOLED.rectangleFill( width/ 2 - 1, 0, 2, height);
 
     bool firstLoop = true; 
 
@@ -214,10 +214,10 @@ void shapeExample()
 
             // Erase the old ball. In XOR mode, so just draw old values again!
             // Draw the Paddles:
-            myOLED.rectangleFill(paddle0_X, paddle0_Y, paddle0_X+paddleW, paddle0_Y+paddleH);
-            myOLED.rectangleFill(paddle1_X, paddle1_Y, paddle1_X+paddleW, paddle1_Y+paddleH);
+            myOLED.rectangleFill(paddle0_X, paddle0_Y, paddleW, paddleH);
+            myOLED.rectangleFill(paddle1_X, paddle1_Y, paddleW, paddleH);
             // Draw the ball: - use rect - xor and circle fails b/c of circle algorithm overdraws
-            myOLED.rectangleFill(ball_X, ball_Y, ball_X+ball_rad, ball_Y+ball_rad);   
+            myOLED.rectangleFill(ball_X, ball_Y, ball_rad, ball_rad);   
         }
         // Increment ball's position
         ball_X += ballVelocityX;
@@ -265,11 +265,11 @@ void shapeExample()
             paddle1Velocity = -paddle1Velocity;
 
         // Draw the Paddles:
-        myOLED.rectangleFill(paddle0_X, paddle0_Y, paddle0_X+paddleW, paddle0_Y+paddleH);
-        myOLED.rectangleFill(paddle1_X, paddle1_Y, paddle1_X+paddleW, paddle1_Y+paddleH);
+        myOLED.rectangleFill(paddle0_X, paddle0_Y, paddleW, paddleH);
+        myOLED.rectangleFill(paddle1_X, paddle1_Y, paddleW, paddleH);
 
         // Draw the ball:
-        myOLED.rectangleFill(ball_X, ball_Y, ball_X+ball_rad, ball_Y+ball_rad);
+        myOLED.rectangleFill(ball_X, ball_Y, ball_rad, ball_rad);
 
         // Actually draw everything on the screen:
         myOLED.display();
