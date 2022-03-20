@@ -116,9 +116,8 @@ public:
     bool begin(TwoWire &wirePort=Wire, uint8_t address=kNoAddressSet){
 
         // defaults for Arduino Print 
-        _cursorX = 0;
-        _cursorY = 0; 
-        _color   = COLOR_WHITE;
+        setCursor(0,0);
+        setColor(COLOR_WHITE);
         
         _i2cBus.init(wirePort);
 
@@ -582,7 +581,7 @@ public:
     void text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr=COLOR_WHITE){
         _device.text(x0, y0, text, clr);
     }
-    
+
     void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr=COLOR_WHITE){
 
         _device.text(x0, y0, text.c_str(), clr);
@@ -654,6 +653,7 @@ public:
         if(!pFont) // no Font?! No dice?
             return 0;
 
+
         switch(theChar){
             case '\n':          // Carriage return
                 _cursorX = 0;
@@ -661,8 +661,12 @@ public:
             case '\r':          // Line feed - do nothing
                 break;
             default:
-                _device.text(_cursorX, _cursorY, (const char*)&theChar, _color);
-                _cursorX += pFont->width;
+                
+                char buffer[2]={theChar, '\0'}; // text() needs a c string
+                _device.text(_cursorX, _cursorY, buffer, _color);
+                
+                _cursorX += pFont->width + 1;
+
                 if( _cursorX > _device.get_width() - pFont->width){  // overflow
                     _cursorX = 0;
                     _cursorY += pFont->height;
@@ -670,8 +674,9 @@ public:
                 }
                 break;
         }
-        if(_cursorY > _device.get_height()) // check for overflow
-            _cursorY = pFont->height;
+        if(_cursorY >= _device.get_height()) // check for overflow
+            _cursorY = 0;
+
         return 1;
     }
 
