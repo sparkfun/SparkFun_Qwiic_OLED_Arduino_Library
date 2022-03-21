@@ -537,7 +537,7 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 
 void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr){
 
-    if(x0 >= _viewport.width || y0 >= _viewport.height )
+    if(!text || x0 >= _viewport.width || y0 >= _viewport.height )
         return;
 
     (_idraw.draw_text)(this, x0, y0, text, clr);
