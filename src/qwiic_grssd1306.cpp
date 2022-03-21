@@ -177,10 +177,10 @@
 typedef void (*rasterOPsFn)(uint8_t * dest, uint8_t src, uint8_t mask);
 
 static const rasterOPsFn _rasterOps[] ={
-    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | src & mask;},   // COPY
-    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | !src & mask;},  // NOT COPY
-    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | !(*dst) & mask;},  // NOT DEST
-    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | (*dst ^ src) & mask;},  // XOR
+    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | (src & mask);},   // COPY
+    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | ((!src) & mask);},  // NOT COPY
+    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | ((!(*dst)) & mask);},  // NOT DEST
+    [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = (~mask & *dst) | ((*dst ^ src) & mask);},  // XOR
     [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst = ~mask & *dst;},  // Always Black 
     [](uint8_t *dst, uint8_t src, uint8_t mask)->void { *dst =  mask | *dst;},  // Always White
 };
@@ -191,16 +191,16 @@ static const rasterOPsFn _rasterOps[] ={
 // Just a bunch of member variable inits
 
 QwGrSSD1306::QwGrSSD1306(): 
+    default_address{0},    
     _pBuffer{nullptr}, 
+    _color{1},
+    _rop{grROPCopy},    
     _i2cBus{nullptr}, 
     _i2c_address{0}, 
     _initHWComPins{kDefaultPinConfig},
     _initPreCharge{kDefaultPreCharge},
     _initVCOMDeselect{kDefaultVCOMDeselect},
     _initContrast{kDefaultContrast},
-    default_address{0},
-    _color{1},
-    _rop{grROPCopy},
     _isInit{false}
 {}
 
@@ -658,7 +658,7 @@ void QwGrSSD1306::draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
         endBit = y0 + kByteNBits - startBit > y1 ? mod_byte(y1)  : kByteNBits-1;    
 
         // Set the bits from startBit to endBit
-        setBits = (0xFF >> (kByteNBits - endBit)-1) << startBit; // what bits are being set in this byte        
+        setBits = (0xFF >> ((kByteNBits - endBit)-1)) << startBit; // what bits are being set in this byte        
         
         // set the bits in the graphics buffer using the current byte operator function
         

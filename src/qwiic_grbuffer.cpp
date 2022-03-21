@@ -484,7 +484,6 @@ void QwGrBufferDevice::draw_circle_filled(uint8_t x0, uint8_t y0, uint8_t radius
     int8_t ddF_y = -2 * radius;
     int8_t x = 0;
     int8_t y = radius;
-    int8_t i;
 
 
     (*_idraw.draw_line_vert)(this, x0, y0-radius, x0, y0+radius, clr);
@@ -538,7 +537,7 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){
 
 void QwGrBufferDevice::text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr){
 
-    if(!text, x0 >= _viewport.width || y0 >= _viewport.height )
+    if(x0 >= _viewport.width || y0 >= _viewport.height )
         return;
 
     (_idraw.draw_text)(this, x0, y0, text, clr);
