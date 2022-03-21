@@ -31,10 +31,8 @@ https://github.com/DaAwesomeP/SparkFun_Micro_OLED_Arduino_Library/
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
     static const uint8_t font31x48_data [] = {
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
-	#include <avr/pgmspace.h>
     static const uint8_t font31x48_data [] PROGMEM = {
 #else
-	#include <pgmspace.h>
     static const uint8_t font31x48_data [] PROGMEM = {
 #endif
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xF8, 0xF8, 0xF8, 0xF8,

@@ -52,6 +52,11 @@
 //
 #pragma once
 
+// NOTE: The way I'm including the font/resource defines, some platforms have 
+//       include file issues 
+
+#include "qw_pgm_arduino.h"
+
 #include <stdint.h>
 
 ////////////////////////////////////////////////////////////////////////
