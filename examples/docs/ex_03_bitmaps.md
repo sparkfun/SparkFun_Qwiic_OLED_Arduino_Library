@@ -3,6 +3,7 @@
 An example that shows drawing bitmaps using the  SparkFun Qwiic OLED Library.
 
 **Key Demo Features**
+
 * Understanding bitmap structure
 * Bitmap objects
 * Drawing Bitmap

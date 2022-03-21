@@ -3,6 +3,7 @@
 A simple example to show the basic setup and use of the SparkFun Qwiic OLED Library.
 
 **Key Demo Features**
+
 * Declaring a Qwiic OLED device object.
 * Initializing the Qwiic OLED device
 * Drawing a simple graphic - a filled rectangle and a text string

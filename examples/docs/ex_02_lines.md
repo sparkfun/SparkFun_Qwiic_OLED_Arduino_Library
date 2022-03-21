@@ -3,6 +3,7 @@
 An example that shows drawing simple shapes using the  SparkFun Qwiic OLED Library.
 
 **Key Demo Features**
+
 * Drawing lines, rectangles and circles
 * Demonstrating how graphics size impacts display speed
 * Drawing and erasing graphics quickly

@@ -3,6 +3,7 @@
 An example that shows drawing bitmaps using the  SparkFun Qwiic OLED Library.
 
 **Key Demo Features**
+
 * Understanding font structure and use
 * Drawing text
 * Using the Arduino `Print` functionality
