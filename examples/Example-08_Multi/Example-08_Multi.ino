@@ -1,132 +1,78 @@
-// Example-08_Multi.ino
-//
-// This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
-//
-// SparkFun sells these at its website: www.sparkfun.com
-//
-// Do you like this library? Help support SparkFun. Buy a board!
-//
-//   Micro OLED             https://www.sparkfun.com/products/14532
-//   Transparent OLED       https://www.sparkfun.com/products/15173
-//   "Narrow" OLED          https://www.sparkfun.com/products/17153
-//
-//
-// Updated from example writtin by Paul Clark @ SparkFun Electronics
-// Original Creation Date: December 11th, 2020
-//
-// This library configures and draws graphics to OLED boards that use the
-// SSD1306 display hardware. The library only supports I2C.
-//
-// Repository:
-//     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
-//
-// Documentation:
-//     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
-//
-//
-// SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
-//
-// SPDX-License-Identifier: MIT
-//
-//    The MIT License (MIT)
-//
-//    Copyright (c) 2022 SparkFun Electronics
-//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-//    associated documentation files (the "Software"), to deal in the Software without restriction,
-//    including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-//    and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
-//    do so, subject to the following conditions:
-//    The above copyright notice and this permission notice shall be included in all copies or substantial
-//    portions of the Software.
-//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-//    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-// Example 8 for the SparkFun Qwiic OLED Arduino Library
-//
-// >> Overview <<
-//
-// This demo performs multiple examples
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-// >>> SELECT THE CONNECTED DEVICE FOR THIS EXAMPLE <<<
-//
+/*
+  Example-08_Multi.ino
+
+  This demo performs multiple examples
+
+  This library configures and draws graphics to OLED boards that use the
+  SSD1306 display hardware. The library only supports I2C.
+
+  SparkFun sells these at its website: www.sparkfun.com
+
+  Do you like this library? Help support SparkFun. Buy a board!
+
+   Micro OLED             https://www.sparkfun.com/products/14532
+   Transparent OLED       https://www.sparkfun.com/products/15173
+   "Narrow" OLED          https://www.sparkfun.com/products/17153
+
+  Updated from example writtin by Paul Clark @ SparkFun Electronics
+  Original Creation Date: December 11th, 2020
+
+  Repository:
+     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
+
+  Documentation:
+     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
+
+  SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
+*/
+
+#include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
+
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
-//
-// The default is Micro OLED
 
-#define MICRO
-//#define NARROW
-//#define TRANSPARENT
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-#include <stdint.h>
-
-// Include the SparkFun qwiic OLED Library
-#include <SparkFun_Qwiic_OLED.h>
-
-// What device is being used in this demo
-
-#if defined(TRANSPARENT)
-QwiicTransparentOLED myOLED;
-const char *deviceName = "Transparent OLED";
-
-#elif defined(NARROW)
-QwiicNarrowOLED myOLED;
-const char *deviceName = "Narrow OLED";
-
-#else
 QwiicMicroOLED myOLED;
-const char *deviceName = "Micro OLED";
-
-#endif
+// QwiicTransparentOLED myOLED;
+// QwiicNarrowOLED myOLED;
 
 int width;
 int height;
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-// setup()
-//
-// Standard Arduino setup routine
-
 void setup()
 {
-
-    delay(500); // Give display time to power on
     Serial.begin(115200);
+    Serial.println("Running OLED example");
 
-    Serial.println("\n\r-----------------------------------");
+    Wire.begin();
+    // Wire.setClock(400000); //Optionally increase I2C bus speed to 400kHz
 
-    Serial.print("Running Test #2 on: ");
-    Serial.println(String(deviceName));
-
-    if (!myOLED.begin())
+    // Initalize the OLED device and related graphics system
+    if (myOLED.begin() == false)
     {
-
-        Serial.println("- Device Begin Failed");
-        while (1)
+        Serial.println("Device begin failed. Freezing...");
+        while (true)
             ;
     }
-
-    Serial.println("- Begin Successful");
+    Serial.println("Begin success");
 
     width = myOLED.getWidth();
     height = myOLED.getHeight();
 
-    randomSeed(analogRead(A0) + analogRead(A1));
+    // Not all platforms have A0
+#ifdef A0
+    randomSeed(analogRead(A0));
+#endif
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-//
+void loop()
+{
+    pixelExample();
+    lineExample();
+    shapeExample();
+}
+
 void pixelExample()
 {
-    // printTitle("Pixels", 1);
     myOLED.erase();
     for (int i = 0; i < 512; i++)
     {
@@ -135,7 +81,6 @@ void pixelExample()
         delay(10);
     }
 }
-///////////////////////////////////////////////////////////////////////////////////////////////
 
 void lineExample()
 {
@@ -144,7 +89,6 @@ void lineExample()
     int xEnd, yEnd;
     int lineWidth = min(middleX, middleY);
 
-    // printTitle("Lines!", 1);
     myOLED.erase();
     int deg;
 
@@ -174,11 +118,9 @@ void lineExample()
         }
     }
 }
-///////////////////////////////////////////////////////////////////////////////////////////////
+
 void shapeExample()
 {
-    // printTitle("Shapes!", 0);
-
     // Silly pong demo. It takes a lot of work to fake pong...
     int paddleW = 3;  // Paddle width
     int paddleH = 15; // Paddle height
@@ -296,12 +238,4 @@ void shapeExample()
     }
     delay(1000);
     myOLED.setDrawMode(grROPCopy);
-}
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-void loop()
-{
-    pixelExample(); // Run the pixel example function
-    lineExample();  // Then the line example function
-    shapeExample(); // Then the shape example
 }
