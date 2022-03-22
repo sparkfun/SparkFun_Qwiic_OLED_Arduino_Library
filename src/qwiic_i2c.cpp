@@ -86,10 +86,6 @@ bool QwI2C::init(TwoWire &wirePort)
 {
 
     // if we don't have a wire port already
-    if(!_i2cPort){
-    	_i2cPort = &wirePort;
-
-    	_i2cPort->begin();
     if (!_i2cPort)
     {
         _i2cPort = &wirePort;
