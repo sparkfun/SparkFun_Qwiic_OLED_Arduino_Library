@@ -1,6 +1,6 @@
 
 // Example-01_Hello.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -10,13 +10,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -49,7 +49,7 @@
 // >> Overview <<
 //
 // This demo shows the basic setup of the OLED library, generating simple graphics and displaying
-// the results on the target device. 
+// the results on the target device.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 // >>> SELECT THE CONNECTED DEVICE FOR THIS EXAMPLE <<<
@@ -74,29 +74,28 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
-// 
-// Arduino setup() function. 
+//
+// Arduino setup() function.
 //
 // Initialize our device and draw a simple graphic. That's all this example does.
 
 void setup()
 {
-    delay(500);   //Give display time to power on
+    delay(500); // Give display time to power on
 
     // Serial on!
     Serial.begin(115200);
@@ -107,10 +106,12 @@ void setup()
     Serial.println(String(deviceName));
 
     // Initalize the OLED device and related graphics system
-    if(!myOLED.begin()){
+    if (!myOLED.begin())
+    {
 
         Serial.println(" - Device Begin Failed");
-        while(1);
+        while (1)
+            ;
     }
 
     Serial.println("- Begin Success");
@@ -118,18 +119,18 @@ void setup()
     // Do a simple test - fill a rectangle on the screen and then print hello!
 
     // fill a rectangle on the screen that has a 4 pixel board
-    myOLED.rectangleFill(4, 4, myOLED.getWidth()-8, myOLED.getHeight()-8);
+    myOLED.rectangleFill(4, 4, myOLED.getWidth() - 8, myOLED.getHeight() - 8);
 
     String hello = "hello"; // our message
 
-    // Lets center our message on the screen. We need to current font. 
+    // Lets center our message on the screen. We need to current font.
 
-    QwiicFont * pFont = myOLED.getFont();
+    QwiicFont *pFont = myOLED.getFont();
 
     // starting x position - width minus string length (font width * number of characters) / 2
-    int x0 = (myOLED.getWidth() - pFont->width * hello.length())/2;
+    int x0 = (myOLED.getWidth() - pFont->width * hello.length()) / 2;
 
-    int y0 = (myOLED.getHeight() - pFont->height)/2;
+    int y0 = (myOLED.getHeight() - pFont->height) / 2;
 
     // Draw the text - color of black (0)
     myOLED.text(x0, y0, hello, 0);
@@ -137,13 +138,13 @@ void setup()
     // There's nothing on the screen yet - Now send the graphics to the device
     myOLED.display();
 
-    // That's it - HELLO! 
-  
+    // That's it - HELLO!
 }
 
-// Standard Arduino loop function. 
-void loop(){
+// Standard Arduino loop function.
+void loop()
+{
 
-    // All loop does in sleep. 
+    // All loop does in sleep.
     delay(1000);
 }

@@ -1,5 +1,5 @@
 // Example-07_Cube.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,14 +9,14 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written Jim Lindblom @ SparkFun Electronics
 //  Original Creation Date: October 27, 2014
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -49,7 +49,7 @@
 //
 // >> Overview <<
 //
-// This demo draws a rotating 3D cube 
+// This demo draws a rotating 3D cube
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -75,18 +75,17 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
-
 
 int width;
 int height;
@@ -95,9 +94,9 @@ uint32_t draw_total_time;
 uint32_t n_draws;
 
 float d = 3;
-float px[] = { -d, d, d, -d, -d, d, d, -d};
-float py[] = { -d, -d, d, d, -d, -d, d, d};
-float pz[] = { -d, -d, -d, -d, d, d, d, d};
+float px[] = {-d, d, d, -d, -d, d, d, -d};
+float py[] = {-d, -d, d, d, -d, -d, d, d};
+float pz[] = {-d, -d, -d, -d, d, d, d, d};
 
 float p2x[8] = {0};
 float p2y[8] = {0};
@@ -110,12 +109,12 @@ float r[3] = {0};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
-// 
+//
 // Standard Arduino setup routine
 
 void setup()
 {
-    delay(500);   //Give display time to power on
+    delay(500); // Give display time to power on
     Serial.begin(115200);
 
     Serial.println("\n\r-----------------------------------");
@@ -123,10 +122,12 @@ void setup()
     Serial.print("Running Test #2 on: ");
     Serial.println(String(deviceName));
 
-    if(!myOLED.begin()){
+    if (!myOLED.begin())
+    {
 
         Serial.println("- Device Begin Failed");
-        while(1);
+        while (1)
+            ;
     }
 
     Serial.println("- Begin Successful");
@@ -135,11 +136,11 @@ void setup()
     height = myOLED.getHeight();
 
     // for frame rate calc
-    draw_total_time =0;
-    n_draws=0;
+    draw_total_time = 0;
+    n_draws = 0;
 
     // set a template for our framerate display
-    Serial.print("- Frame Rate: 00.00"); 
+    Serial.print("- Frame Rate: 00.00");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,27 +159,26 @@ void loop()
 void drawCube()
 {
 
-
     r[0] = r[0] + PI / 180.0; // Add a degree
     r[1] = r[1] + PI / 180.0; // Add a degree
     r[2] = r[2] + PI / 180.0; // Add a degree
-    if(r[0] >= 360.0 * PI / 180.0)
+    if (r[0] >= 360.0 * PI / 180.0)
         r[0] = 0;
-    if(r[1] >= 360.0 * PI / 180.0)
+    if (r[1] >= 360.0 * PI / 180.0)
         r[1] = 0;
-    if(r[2] >= 360.0 * PI / 180.0)
+    if (r[2] >= 360.0 * PI / 180.0)
         r[2] = 0;
 
     // This routine gets called often, so just make these statics
     static float px2, py2, pz2, px3, py3, pz3, ax, ay, az;
 
-    for (int i = 0; i < 8; i++){
-        
+    for (int i = 0; i < 8; i++)
+    {
+
         px2 = px[i];
         py2 = cos(r[0]) * py[i] - sin(r[0]) * pz[i];
         pz2 = sin(r[0]) * py[i] + cos(r[0]) * pz[i];
 
-        
         px3 = cos(r[1]) * px2 + sin(r[1]) * pz2;
         py3 = py2;
         pz3 = -sin(r[1]) * px2 + cos(r[1]) * pz2;
@@ -189,14 +189,14 @@ void drawCube()
 
         p2x[i] = width / 2 + ax * SHAPE_SIZE / az;
         p2y[i] = height / 2 + ay * SHAPE_SIZE / az;
-
     }
 
     // Calculate draw time...
     uint32_t milStart = millis();
 
     myOLED.erase();
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++)
+    {
 
         myOLED.line(p2x[i], p2y[i], p2x[i + 1], p2y[i + 1]);
         myOLED.line(p2x[i + 4], p2y[i + 4], p2x[i + 5], p2y[i + 5]);
@@ -213,15 +213,16 @@ void drawCube()
     n_draws++;
 
     // output framerate?
-    if(n_draws % 120 == 0){
-        // backspace over old number 
-        Serial.print("\b\b\b\b\b");  // backspace over old number
-        Serial.print(((float)draw_total_time)/n_draws);
+    if (n_draws % 120 == 0)
+    {
+        // backspace over old number
+        Serial.print("\b\b\b\b\b"); // backspace over old number
+        Serial.print(((float)draw_total_time) / n_draws);
 
-        if(n_draws > 1000){ // reset after a bit...
+        if (n_draws > 1000)
+        { // reset after a bit...
             n_draws = 0;
-            draw_total_time=0;
+            draw_total_time = 0;
         }
     }
-
 }
