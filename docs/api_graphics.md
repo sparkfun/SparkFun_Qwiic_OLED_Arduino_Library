@@ -158,6 +158,7 @@ void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 | pBitmap | `uint8_t *` | A pointer to the bitmap array|
 | bmp_width | `uint8_t` | The width of the bitmap|
 | bmp_height | `uint8_t` | The height of the bitmap|
+
 ### bitmap()
 
 Draws a bitmap on the screen using a Bitmap object for the bitmap data.
