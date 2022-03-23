@@ -1,17 +1,9 @@
 /*
+
   Example-01_Hello.ino
 
   This demo shows the basic setup of the OLED library, generating simple graphics and displaying
   the results on the target device.
-
-  This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
-
-  This library configures and draws graphics to OLED boards that use the
-  SSD1306 display hardware. The library only supports I2C.
-
-  SparkFun sells these at its website: www.sparkfun.com
-
-  Do you like this library? Help support SparkFun. Buy a board!
 
    Micro OLED             https://www.sparkfun.com/products/14532
    Transparent OLED       https://www.sparkfun.com/products/15173
@@ -30,12 +22,16 @@
 
 #include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
 
+// Add in our font descriptor -- so we can center the text on the scren
+#include <res/qw_fnt_5x7.h>
+
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
 
 QwiicMicroOLED myOLED;
 // QwiicTransparentOLED myOLED;
 // QwiicNarrowOLED myOLED;
+
 
 void setup()
 {
@@ -60,14 +56,13 @@ void setup()
 
     String hello = "hello"; // our message
 
-    // Let's center our message on the screen. We need the current font.
+    // Center our message on the screen. Use our Font Descriptor: QW_FONT_5X7, the default
+    // font of the system.
 
-    QwiicFont *pFont = myOLED.getFont();
+    // starting x position - width minus string length (font width * number of characters) / 2
+    int x0 = (myOLED.getWidth() - QW_FONT_5X7.width * hello.length()) / 2;
 
-    // Starting x position - width minus string length (font width * number of characters) / 2
-    int x0 = (myOLED.getWidth() - pFont->width * hello.length()) / 2;
-
-    int y0 = (myOLED.getHeight() - pFont->height) / 2;
+    int y0 = (myOLED.getHeight() - QW_FONT_5X7.height) / 2;
 
     // Draw the text - color of black (0)
     myOLED.text(x0, y0, hello, 0);

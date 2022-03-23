@@ -125,6 +125,26 @@ Draws a bitmap on the screen.
 The bitmap should be 8 bit encoded - each pixel contains 8 y values.
 
 ```c++
+void bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| x0 | `uint8_t` | The X coordinate to place the bitmap - upper left corner|
+| y0 | `uint8_t` | The Y coordinate to place the bitmap - upper left corner|
+| pBitmap | `uint8_t *` | A pointer to the bitmap array|
+| bmp_width | `uint8_t` | The width of the bitmap|
+| bmp_height | `uint8_t` | The height of the bitmap|
+
+### bitmap()
+
+Draws a bitmap on the screen.
+
+The bitmap should be 8 bit encoded - each pixel contains 8 y values.
+
+The coordinate [x1,y1] allows for only a portion of bitmap to be drawn. 
+
+```c++
 void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
 				uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height )
 ```
