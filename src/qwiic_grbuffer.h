@@ -195,6 +195,10 @@ public:
 
     void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
                 uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
+
+    // draw full bitmap
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height );
+
     // Bitmap draw - using a bitmap object
     void bitmap(uint8_t x0, uint8_t y0, QwBitmap& bitmap);  
 

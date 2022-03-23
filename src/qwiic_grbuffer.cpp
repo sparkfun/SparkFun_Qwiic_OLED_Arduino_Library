@@ -520,6 +520,17 @@ void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// bitmap()
+//
+// Draw a bitmap on the screen
+
+void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
+    
+
+    (*_idraw.draw_bitmap)(this, x0, y0, bmp_width, bmp_height, pBitmap, bmp_width, bmp_height);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
 // bitmap() - use a bitmap object
 //
 void QwGrBufferDevice::bitmap(uint8_t x0, uint8_t y0, QwBitmap& theBMP){

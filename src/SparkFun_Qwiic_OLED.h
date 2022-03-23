@@ -540,8 +540,10 @@ public:
     // ---------    -----------------------------
     // x0           The X coordinate to place the bitmap - upper left corner
     // y0           The Y coordinate to place the bitmap - upper left corner
-    // x1           The end X coordinate of the bitmap - lower right corner
-    // y1           The end Y coordinate of the bitmap - lower right corner
+    // x1           The end X coordinate of area to draw - lower right corner
+    //              Range will not exceed bitmap width
+    // y1           The end Y coordinate of area to draw - lower right corner
+    //              Range will not exceed bitmap height
     // pBitmap      A pointer to the bitmap array
     // bmp_width    The width of the bitmap
     // bmp_height   The height of the bitmap
@@ -551,6 +553,23 @@ public:
         _device.bitmap(x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
     }
     
+    ///////////////////////////////////////////////////////////////////////
+    // bitmap()
+    // 
+    // Draws a bitmap on the screen.
+    //
+    // Parameter    Description
+    // ---------    -----------------------------
+    // x0           The X coordinate to place the bitmap - upper left corner
+    // y0           The Y coordinate to place the bitmap - upper left corner
+    // pBitmap      A pointer to the bitmap array
+    // bmp_width    The width of the bitmap
+    // bmp_height   The height of the bitmap
+
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
+
+        _device.bitmap(x0, y0, pBitmap, bmp_width, bmp_height);
+    }
     ///////////////////////////////////////////////////////////////////////
     // bitmap()
     // 
