@@ -1,5 +1,5 @@
 // SparkFun_Qwiic_OLED.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -43,10 +43,9 @@
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 #pragma once
 
-// Arduino wrapper for the OLED library. Provides an Arduino experience and platform support 
+// Arduino wrapper for the OLED library. Provides an Arduino experience and platform support
 // for the Qwiic OLED driver.
 
 // include the underlying SDK implementation headers for the OLED devices
@@ -58,8 +57,8 @@
 #include <Wire.h>
 
 // Friendly typenames
-typedef QwFont      QwiicFont;
-typedef QwBitmap    QwiicBitmap;
+typedef QwFont QwiicFont;
+typedef QwBitmap QwiicBitmap;
 
 #define COLOR_WHITE 1
 #define COLOR_BLACK 0
@@ -67,14 +66,14 @@ typedef QwBitmap    QwiicBitmap;
 // The Plan:
 //
 // For each supported device the following is needed
-//    
+//
 //      - A commmon Arduino interface/implementation. One impl, one area to maintain
 //      - Classes that are specialized for each device
 //      - No abstract methods that a subclass must implement
 //
 // The solution
 //    A templated base class that device specific sub-classes derive from.
-//              
+//
 
 // flag - internal - to determine if an address is passed into begin or not
 
@@ -83,27 +82,27 @@ typedef QwBitmap    QwiicBitmap;
 // Define the template and fill in the interface methods in-line.
 
 template <typename SSD1306DeviceType>
-class QwiicOLEDBaseClass : public Print {   // NOTE: implementing Arduino Print
+class QwiicOLEDBaseClass : public Print
+{ // NOTE: implementing Arduino Print
 private:
     // our device driver
-    SSD1306DeviceType   _device;
-    QwI2C               _i2cBus;  // our i2c object
+    SSD1306DeviceType _device;
+    QwI2C _i2cBus; // our i2c object
 
     // for the Aruduino print functionaliyt
-    uint8_t             _cursorX;
-    uint8_t             _cursorY;   
+    uint8_t _cursorX;
+    uint8_t _cursorY;
 
-    uint8_t             _color; 
+    uint8_t _color;
 
 public:
-
     ///////////////////////////////////////////////////////////////////////
     // begin()
     //
-    // This method is called to initialize the OLED library and connection to 
+    // This method is called to initialize the OLED library and connection to
     // the OLED device. This method must be called before calling any graphics methods.
     //
-    // This method follows the standard startup pattern in SparkFun Arduino 
+    // This method follows the standard startup pattern in SparkFun Arduino
     // libraries.
     //
     //  Parameter   Description
@@ -112,17 +111,17 @@ public:
     //  address     optional. I2C Address. If not provided, the default address is used.
     //  retval      true on success, false on startup failure
 
+    bool begin(TwoWire &wirePort = Wire, uint8_t address = kNoAddressSet)
+    {
 
-    bool begin(TwoWire &wirePort=Wire, uint8_t address=kNoAddressSet){
-
-        // defaults for Arduino Print 
-        setCursor(0,0);
+        // defaults for Arduino Print
+        setCursor(0, 0);
         setColor(COLOR_WHITE);
-        
+
         _i2cBus.init(wirePort);
 
-        _device.set_comm_bus(_i2cBus, 
-                            (address == kNoAddressSet ? _device.default_address : address));
+        _device.set_comm_bus(_i2cBus,
+                             (address == kNoAddressSet ? _device.default_address : address));
 
         // call init on the device
         bool bStatus = _device.init();
@@ -130,9 +129,10 @@ public:
         // Want to start cursor at Y height of the current font, if we have a font.
         //
         // Get our font height ... a default font is set during init ...
-        if(bStatus){
-            QwiicFont * pFont = _device.get_font();
-            if(pFont)
+        if (bStatus)
+        {
+            QwiicFont *pFont = _device.get_font();
+            if (pFont)
                 _cursorY = pFont->height;
         }
 
@@ -148,7 +148,8 @@ public:
     //  ---------   -----------------------------
     //  retval      The width in pixels of the connected OLED device
 
-    uint8_t getWidth(void){
+    uint8_t getWidth(void)
+    {
         return _device.get_width();
     }
 
@@ -161,89 +162,96 @@ public:
     //  ---------   -----------------------------
     //  retval      The height in pixels of the connected OLED device
 
-    uint8_t getHeight(void){
+    uint8_t getHeight(void)
+    {
         return _device.get_height();
     }
 
     ///////////////////////////////////////////////////////////////////////
     // display()
     //
-    // When called, any pending display updates are sent to the connected OLED 
+    // When called, any pending display updates are sent to the connected OLED
     // device. This includes drawn graphics and erase commands.
     //
-    // To display any graphics, this method must be called. 
+    // To display any graphics, this method must be called.
 
-    void display(void){
+    void display(void)
+    {
         _device.display();
     }
 
     ///////////////////////////////////////////////////////////////////////
     // erase()
     //
-    // Erases all graphics on the device, placing the display in a blank state. 
-    // The erase update isn't sent to the device until the next display() call 
+    // Erases all graphics on the device, placing the display in a blank state.
+    // The erase update isn't sent to the device until the next display() call
     // on the device.
 
-    void erase(void){
+    void erase(void)
+    {
         _device.erase();
     }
 
     ///////////////////////////////////////////////////////////////////////
     // invert()
     //
-    // This method inverts the current graphics on the display. This results 
+    // This method inverts the current graphics on the display. This results
     // of this command happen immediatly.
-    // 
+    //
     // Parameter    Description
     // ---------    -----------------------------
     // bInvert      true - the screen is inverted. false - the screen is set to normal
 
-    void invert(bool bInvert){
+    void invert(bool bInvert)
+    {
         _device.invert(bInvert);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // flipVertical()
     //
-    // When called, the screen contents are flipped vertically if the flip parameter 
+    // When called, the screen contents are flipped vertically if the flip parameter
     // is true, or restored to normal display if the flip parameter is false.
-    // 
+    //
     // Parameter    Description
     // ---------    -----------------------------
     // bFlip        true - the screen is flipped vertically. false - the screen is set to normal
 
-    void flipVertical(bool bFlip){
+    void flipVertical(bool bFlip)
+    {
         _device.flip_vert(bFlip);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // flipHorizontal()
     //
-    // When called, the screen contents are flipped horizontally if the flip parameter 
+    // When called, the screen contents are flipped horizontally if the flip parameter
     // is true, or restored to normal display if the flip parameter is false.
-    // 
+    //
     // Parameter    Description
     // ---------    -----------------------------
     // bFlip        true - the screen is flipped horizontally. false - the screen is set to normal
 
-    void flipHorizontal(bool bFlip){
+    void flipHorizontal(bool bFlip)
+    {
         _device.flip_horz(bFlip);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // scrollStop()
     //
-    // If the device is in a scrolling mode, calling this method stops the scroll, 
+    // If the device is in a scrolling mode, calling this method stops the scroll,
     // and restores the device to normal display operation. This action is performed immediately.
 
-    void scrollStop(void){
+    void scrollStop(void)
+    {
         _device.scroll_stop();
     }
 
     ///////////////////////////////////////////////////////////////////////
     // scrollRight()
     //
-    // This method is called to start the device scrolling the displayed graphics to the right. 
+    // This method is called to start the device scrolling the displayed graphics to the right.
     // This action is performed immediately.
     //
     // The screen will scroll until the scrollStop() method is called.
@@ -267,14 +275,15 @@ public:
     //  SCROLL_INTERVAL_128_FRAMES      128
     //  SCROLL_INTERVAL_256_FRAMES      256
 
-    void scrollRight(uint8_t start, uint8_t stop, uint8_t interval){
+    void scrollRight(uint8_t start, uint8_t stop, uint8_t interval)
+    {
         _device.scroll(SCROLL_RIGHT, start, stop, interval);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // scrollVertRight()
     //
-    // This method is called to start the device scrolling the displayed graphics verticall and to the right. 
+    // This method is called to start the device scrolling the displayed graphics verticall and to the right.
     // This action is performed immediately.
     //
     // The screen will scroll until the scrollStop() method is called.
@@ -285,14 +294,15 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval){
+    void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval)
+    {
         _device.scroll(SCROLL_VERT_RIGHT, start, stop, interval);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // scrollLeft()
     //
-    // This method is called start to the device scrolling the displayed graphics to the left. 
+    // This method is called start to the device scrolling the displayed graphics to the left.
     // This action is performed immediately.
     //
     // The screen will scroll until the scrollStop() method is called.
@@ -303,14 +313,15 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval){
+    void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
+    {
         _device.scroll(SCROLL_LEFT, start, stop, interval);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // scrollVertLeft()
     //
-    // This method is called to start the device scrolling the displayed graphics verticall and to the left. 
+    // This method is called to start the device scrolling the displayed graphics verticall and to the left.
     // This action is performed immediately.
     //
     // The screen will scroll until the scrollStop() method is called.
@@ -321,14 +332,15 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval){
+    void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval)
+    {
         _device.scroll(SCROLL_VERT_LEFT, start, stop, interval);
-    }   
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // setFont()
     //
-    // This method is called to set the current font in the library. The current font is used 
+    // This method is called to set the current font in the library. The current font is used
     // when calling the text() method on this device.
     //
     // The default font for the device is 5x7.
@@ -337,7 +349,7 @@ public:
     // ---------    -----------------------------
     // theFont      The font to set as current in the device. A Font object or pointer is accepted
     //
-    // For the library, fonts are added to your program by including them via include files which 
+    // For the library, fonts are added to your program by including them via include files which
     // are part of this library.
     //
     // The following fonts are included:
@@ -367,10 +379,12 @@ public:
     //     int myFontWidth = QW_FONT_31X48.width;
     //
 
-    void setFont(QwiicFont& theFont){
+    void setFont(QwiicFont &theFont)
+    {
         _device.set_font(theFont);
     }
-    void setFont(const QwiicFont  *theFont){
+    void setFont(const QwiicFont *theFont)
+    {
         _device.set_font(theFont);
     }
 
@@ -383,21 +397,22 @@ public:
     // ---------    -----------------------------
     //  retval      A pointer to the current font. See setFont() for font object details.
 
-    QwiicFont * getFont(void){
+    QwiicFont *getFont(void)
+    {
         return _device.get_font();
     }
 
     ///////////////////////////////////////////////////////////////////////
     // setDrawMode()
     //
-    // This method sets the current draw mode for the library. The draw mode 
+    // This method sets the current draw mode for the library. The draw mode
     // determines how pixels are set on the screen during drawing operations.
     //
     // Parameter    Description
     // ---------    -----------------------------
     // rop          The raster operation (ROP) to set the graphics system to.
     //
-    // Raster operations device how source (pixels to draw) are represented on the 
+    // Raster operations device how source (pixels to draw) are represented on the
     // destination device. The available Raster Operation (ROP) codes are:
     //
     //  ROP Code        Description
@@ -409,21 +424,23 @@ public:
     //  grROPBlack      A value of 0, or black is drawn to the destination
     //  grROPWhite      A value of 1, or black is drawn to the destination
 
-    void setDrawMode(grRasterOp_t rop){
+    void setDrawMode(grRasterOp_t rop)
+    {
         _device.set_raster_op(rop);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // setDrawMode()
     //
-    // This method returns the current draw mode for the library. The draw mode 
+    // This method returns the current draw mode for the library. The draw mode
     // determines how pixels are set on the screen during drawing operations.
     //
     // Parameter    Description
     // ---------    -----------------------------
     //  retval      The current aster operation (ROP) of the graphics system.
 
-    grRasterOp_t getDrawMode(void){
+    grRasterOp_t getDrawMode(void)
+    {
         return _device.get_raster_op();
     }
 
@@ -432,7 +449,7 @@ public:
     ///////////////////////////////////////////////////////////////////////
     //
     // pixel()
-    // 
+    //
     // Set the value of a pixel on the screen.
     //
     // Parameter    Description
@@ -441,16 +458,17 @@ public:
     //  y           The Y coordinate of the pixel to set
     //  clr         optional The color value to set the pixel. This defaults to white (1).
 
-    void pixel(uint8_t x, uint8_t y, uint8_t clr=COLOR_WHITE){
+    void pixel(uint8_t x, uint8_t y, uint8_t clr = COLOR_WHITE)
+    {
         _device.pixel(x, y, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // line()
-    // 
+    //
     // Draw a line on the screen.
     //
-    // Note:    If a line is horizontal (y0 = y1) or vertical (x0 = x1), optimized 
+    // Note:    If a line is horizontal (y0 = y1) or vertical (x0 = x1), optimized
     //          draw algorithms are used by the library.
     //
     // Parameter    Description
@@ -461,13 +479,14 @@ public:
     // y1           The end Y coordinate of the line
     // clr          optional The color value to draw the line. This defaults to white (1).
 
-    void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr=COLOR_WHITE){
+    void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = COLOR_WHITE)
+    {
         _device.line(x0, y0, x1, y1, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // rectangle()
-    // 
+    //
     // Draw a rectangle on the screen.
     //
     // Parameter    Description
@@ -475,16 +494,17 @@ public:
     // x0           The start X coordinate of the rectangle - upper left corner
     // y0           The start Y coordinate of the rectangle - upper left corner
     // width        The width of the rectangle
-    // height       The height of the rectangle    
+    // height       The height of the rectangle
     // clr          optional The color value to draw the rectangle. This defaults to white (1).
 
-    void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr=COLOR_WHITE){
+    void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE)
+    {
         _device.rectangle(x0, y0, width, height, clr);
-    }    
+    }
 
     ///////////////////////////////////////////////////////////////////////
     // rectangleFill()
-    // 
+    //
     // Draw a filled rectangle on the screen.
     //
     // Parameter    Description
@@ -495,13 +515,14 @@ public:
     // height       The height of the rectangle
     // clr          optional The color value to draw the filled rectangle. This defaults to white (1).
 
-    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr=COLOR_WHITE){
+    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE)
+    {
         _device.rectangle_fill(x0, y0, width, height, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // circle()
-    // 
+    //
     // Draw a circle on the screen.
     //
     // Parameter    Description
@@ -511,13 +532,14 @@ public:
     // radius       The radius of the circle
     // clr          optional The color value to draw the circle. This defaults to white (1).
 
-    void circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr=COLOR_WHITE){
+    void circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE)
+    {
         _device.circle(x0, y0, radius, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // circleFill()
-    // 
+    //
     // Draw a circle on the screen.
     //
     // Parameter    Description
@@ -527,13 +549,14 @@ public:
     // radius       The radius of the circle
     // clr          optional The color value to draw the circle. This defaults to white (1).
 
-    void circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr=COLOR_WHITE){
+    void circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE)
+    {
         _device.circle_fill(x0, y0, radius, clr);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // bitmap()
-    // 
+    //
     // Draws a bitmap on the screen.
     //
     // Parameter    Description
@@ -548,11 +571,12 @@ public:
     // bmp_width    The width of the bitmap
     // bmp_height   The height of the bitmap
 
-    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, 
-                uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height ){
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
+                uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height)
+    {
         _device.bitmap(x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
     }
-    
+
     ///////////////////////////////////////////////////////////////////////
     // bitmap()
     // 
@@ -581,27 +605,30 @@ public:
     // y0           The Y coordinate to place the bitmap - upper left corner
     // bitmap       A bitmap object
 
-    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap& bitmap){
+    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap &bitmap)
+    {
         _device.bitmap(x0, y0, bitmap);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // text()
-    // 
+    //
     // Draws a string using the current font on the screen.
     //
     // Parameter    Description
     // ---------    -----------------------------
     // x0           The X coordinate to start drawing the text
     // y0           The Y coordinate to start drawing the text
-    // text         The string to draw on the screen    
+    // text         The string to draw on the screen
     // clr          optional The color value to draw the text. This defaults to white (1).
 
-    void text(uint8_t x0, uint8_t y0, const char * text, uint8_t clr=COLOR_WHITE){
+    void text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr = COLOR_WHITE)
+    {
         _device.text(x0, y0, text, clr);
     }
 
-    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr=COLOR_WHITE){
+    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr = COLOR_WHITE)
+    {
 
         _device.text(x0, y0, text.c_str(), clr);
     }
@@ -612,19 +639,20 @@ public:
     //
     // setCursor()
     //
-    // This method is called set the "cursor" position in the device. The library 
-    // supports the Arduino Print interface, enabling the use of a print() and 
-    // println() methods. The set cursor position defines where to start text 
-    // output for this functionality.   
+    // This method is called set the "cursor" position in the device. The library
+    // supports the Arduino Print interface, enabling the use of a print() and
+    // println() methods. The set cursor position defines where to start text
+    // output for this functionality.
     //
     // Parameter    Description
     // ---------    -----------------------------
     // x            The X coordinate of the cursor
     // y            The Y coordinate of the cursor
 
-    void setCursor(uint8_t x, uint8_t y){
+    void setCursor(uint8_t x, uint8_t y)
+    {
 
-        if(x < 0 || x >= _device.get_width() || y < 0 || y >= _device.get_height())
+        if (x < 0 || x >= _device.get_width() || y < 0 || y >= _device.get_height())
             return;
 
         _cursorX = x;
@@ -634,28 +662,30 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // setColor()
     //
-    // This method is called to set the current color of the system. This is 
+    // This method is called to set the current color of the system. This is
     // used by the Arduino Print interface functionality
     //
     // Parameter    Description
     // ---------    -----------------------------
     //  clr         The color to set. 0 = black, > 0 = white
 
-    void setColor(uint8_t clr){
-        _color = (clr > 0 ?  COLOR_WHITE : COLOR_BLACK);
+    void setColor(uint8_t clr)
+    {
+        _color = (clr > 0 ? COLOR_WHITE : COLOR_BLACK);
     }
 
     ///////////////////////////////////////////////////////////////////////
     // getColor()
     //
-    // This method is called to get the current color of the system. This is 
+    // This method is called to get the current color of the system. This is
     // used by the Arduino Print interface functionality
     //
     // Parameter    Description
     // ---------    -----------------------------
     //  retval      The current color. 0 = black, > 0 = white
 
-    uint8_t getColor(void){
+    uint8_t getColor(void)
+    {
         return _color;
     }
 
@@ -665,53 +695,56 @@ public:
     // For the Arduino Print interface
     //
 
-    virtual size_t write(uint8_t theChar){
+    virtual size_t write(uint8_t theChar)
+    {
 
         QwiicFont *pFont = _device.get_font();
 
-        if(!pFont) // no Font?! No dice?
+        if (!pFont) // no Font?! No dice?
             return 0;
 
+        switch (theChar)
+        {
+        case '\n': // Carriage return
+            _cursorX = 0;
+            _cursorY += pFont->height;
+        case '\r': // Line feed - do nothing
+            break;
+        default:
 
-        switch(theChar){
-            case '\n':          // Carriage return
+            char buffer[2] = {theChar, '\0'}; // text() needs a c string
+            _device.text(_cursorX, _cursorY, buffer, _color);
+
+            _cursorX += pFont->width + 1;
+
+            if (_cursorX > _device.get_width() - pFont->width)
+            { // overflow
                 _cursorX = 0;
                 _cursorY += pFont->height;
-            case '\r':          // Line feed - do nothing
-                break;
-            default:
-                
-                char buffer[2]={theChar, '\0'}; // text() needs a c string
-                _device.text(_cursorX, _cursorY, buffer, _color);
-                
-                _cursorX += pFont->width + 1;
-
-                if( _cursorX > _device.get_width() - pFont->width){  // overflow
-                    _cursorX = 0;
-                    _cursorY += pFont->height;
-
-                }
-                break;
+            }
+            break;
         }
-        if(_cursorY >= _device.get_height()) // check for overflow
+        if (_cursorY >= _device.get_height()) // check for overflow
             _cursorY = 0;
 
         return 1;
     }
-
 };
 
 ///////////////////////////////////////////////////////////////////////
 // For our actual implementations - just subclass from the above Arduino template
 
-class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro>{
+class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro>
+{
     // nothing here - see above
 };
 
-class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow>{
+class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow>
+{
     // nothing here - see above
 };
 
-class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>{
+class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>
+{
     // nothing here - see above
 };

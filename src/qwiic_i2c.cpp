@@ -1,5 +1,5 @@
 // qwiic_i2c.cpp
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -41,14 +41,12 @@
 //    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 //    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
-
+//    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Class provide an abstract interface to the I2C device
 
 #include <Arduino.h>
 #include "qwiic_i2c.h"
-
 
 // What is the max buffer size for this platform.
 
@@ -61,21 +59,22 @@
 #elif defined(BUFFER_LENGTH)
 #define kMaxTransferBuffer BUFFER_LENGTH
 
-#else  // just the standard Arduino value
-#define kMaxTransferBuffer 32   
+#else // just the standard Arduino value
+#define kMaxTransferBuffer 32
 
 #endif
 
 // What we use for transfer chunk size
 
-const static 	uint16_t kChunkSize = kMaxTransferBuffer - 1;
+const static uint16_t kChunkSize = kMaxTransferBuffer - 1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 
-QwI2C::QwI2C(void){
+QwI2C::QwI2C(void)
+{
 
-	_i2cPort = nullptr;
+    _i2cPort = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // init()
@@ -83,13 +82,13 @@ QwI2C::QwI2C(void){
 // Methods to init/setup this device. The caller can provide a Wire Port, or this class
 // will use the default
 
-bool QwI2C::init(TwoWire &wirePort){
+bool QwI2C::init(TwoWire &wirePort)
+{
 
     // if we don't have a wire port already
-    if(!_i2cPort){
-    	_i2cPort = &wirePort;
-
-    	_i2cPort->begin();
+    if (!_i2cPort)
+    {
+        _i2cPort = &wirePort;
     }
 
     return true;
@@ -97,24 +96,25 @@ bool QwI2C::init(TwoWire &wirePort){
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-bool QwI2C::init(void){
+bool QwI2C::init(void)
+{
 
     // do we already have a wire port?
-    if(!_i2cPort)
-    	return init(Wire); // no wire, send in Wire
+    if (!_i2cPort)
+        return init(Wire); // no wire, send in Wire
 
     return true;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // ping()
-// 
+//
 // Is a device connected?
-bool QwI2C::ping(uint8_t i2c_address){
+bool QwI2C::ping(uint8_t i2c_address)
+{
 
-	_i2cPort->beginTransmission(i2c_address);
-	return _i2cPort->endTransmission() == 0;	
+    _i2cPort->beginTransmission(i2c_address);
+    return _i2cPort->endTransmission() == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,26 +122,28 @@ bool QwI2C::ping(uint8_t i2c_address){
 //
 // Write a byte to a register
 
-bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataToWrite){
+bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataToWrite)
+{
 
-	_i2cPort->beginTransmission(i2c_address);
-	_i2cPort->write(offset);
-	_i2cPort->write(dataToWrite);
-	return _i2cPort->endTransmission() == 0;	
-
+    _i2cPort->beginTransmission(i2c_address);
+    _i2cPort->write(offset);
+    _i2cPort->write(dataToWrite);
+    return _i2cPort->endTransmission() == 0;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // writeRegisterRegion()
 //
 // Write a block of data to a device. This routine will chunk over the data if needed
 
-int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length){
+int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length)
+{
 
     uint16_t nSent;
-    uint16_t nRemaining=length;
+    uint16_t nRemaining = length;
     uint16_t nToWrite;
 
-    while(nRemaining > 0){
+    while (nRemaining > 0)
+    {
 
         _i2cPort->beginTransmission(i2c_address);
         _i2cPort->write(offset);
@@ -149,11 +151,11 @@ int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *dat
         nToWrite = (nRemaining > kChunkSize ? kChunkSize : nRemaining);
         nSent = _i2cPort->write(data, nToWrite);
 
-        nRemaining -= nToWrite;        // Note - use nToWrite, not nSent, or lock on esp32
-        data += nSent; // move up to remaining data in buffer
+        nRemaining -= nToWrite; // Note - use nToWrite, not nSent, or lock on esp32
+        data += nSent;          // move up to remaining data in buffer
 
         // only release bus if we've sent all data
-        if( _i2cPort->endTransmission( nRemaining <= 0 ) )
+        if (_i2cPort->endTransmission(nRemaining <= 0))
             return -1; // the client didn't ACK
     }
 

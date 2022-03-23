@@ -1,6 +1,6 @@
 
 // Example-03_Bitmap.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -10,14 +10,14 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Nathan Seidle @ SparkFun Electronics
 // Original Creation Date: November 15, 2020
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -76,23 +76,21 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
-
 
 // Let's draw a truck - use our built in bitmap
 #include "res/qw_bmp_truck.h"
 #include "res/qw_bmp_sparkfun.h"
-
 
 int width;
 int height;
@@ -105,57 +103,60 @@ uint32_t n_draws;
 //  show_splash()
 //
 // Show SFE spash screen
-    
-void show_splash(){
 
+void show_splash()
+{
 
-    int x0 = (width - QW_BMP_SPARKFUN.width)/2;
-    if(x0 < 0 )
-        x0 = 0;
+  int x0 = (width - QW_BMP_SPARKFUN.width) / 2;
+  if (x0 < 0)
+    x0 = 0;
 
-    int y0 = (height - QW_BMP_SPARKFUN.height)/2;
-    if(y0 < 0)
-        y0=0;
+  int y0 = (height - QW_BMP_SPARKFUN.height) / 2;
+  if (y0 < 0)
+    y0 = 0;
 
-    myOLED.erase();
-    myOLED.bitmap(x0, y0, QW_BMP_SPARKFUN);
-    myOLED.display();
-    delay(2000);
+  myOLED.erase();
+  myOLED.bitmap(x0, y0, QW_BMP_SPARKFUN);
+  myOLED.display();
+  delay(2000);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
-// 
+//
 // Standard Arduino setup routine
 
-void setup(){
-    
-    delay(500);   //Give display time to power on
-    Serial.begin(115200);
+void setup()
+{
 
-    Serial.println("\n\r-----------------------------------");
+  delay(500); // Give display time to power on
+  Serial.begin(115200);
 
-    Serial.print("Running Test #2 on: ");
-    Serial.println(String(deviceName));
+  Serial.println("\n\r-----------------------------------");
 
-    if(!myOLED.begin()){
+  Serial.print("Running Test #2 on: ");
+  Serial.println(String(deviceName));
 
-        Serial.println("- Device Begin Failed");
-        while(1);
-    }
+  if (!myOLED.begin())
+  {
 
-    Serial.println("- Begin Successful");
+    Serial.println("- Device Begin Failed");
+    while (1)
+      ;
+  }
 
-    // save device dims for the test routines
-    width = myOLED.getWidth();
-    height = myOLED.getHeight();
-    
-    show_splash();
+  Serial.println("- Begin Successful");
 
-    draw_total_time =0;
-    n_draws=0;
+  // save device dims for the test routines
+  width = myOLED.getWidth();
+  height = myOLED.getHeight();
 
-    // set a template for our framerate display
-    Serial.println("- Frame Rate"); 
+  show_splash();
+
+  draw_total_time = 0;
+  n_draws = 0;
+
+  // set a template for our framerate display
+  Serial.println("- Frame Rate");
 }
 
 int iconX = 8;
@@ -165,46 +166,47 @@ int iconYChangeAmount = 1;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // loop()
-// 
+//
 // Standard Arduino loop routine
 
-void loop(){
-  
-    // Calculate draw time...
-    uint32_t milStart = millis();
+void loop()
+{
 
-    myOLED.bitmap(iconX, iconY, QW_BMP_TRUCK);
-    myOLED.display();
+  // Calculate draw time...
+  uint32_t milStart = millis();
 
-    //Move the icon
-    iconX += iconXChangeAmount;
-    iconY += iconYChangeAmount;
+  myOLED.bitmap(iconX, iconY, QW_BMP_TRUCK);
+  myOLED.display();
 
-    if(iconX + QW_BMP_TRUCK.width >= width)    
-      iconXChangeAmount *= -1; //Change direction
-    
-    if(iconX == 0)
-      iconXChangeAmount *= -1; //Change direction
+  // Move the icon
+  iconX += iconXChangeAmount;
+  iconY += iconYChangeAmount;
 
+  if (iconX + QW_BMP_TRUCK.width >= width)
+    iconXChangeAmount *= -1; // Change direction
 
-    if(iconY + QW_BMP_TRUCK.height >= height)    
-      iconYChangeAmount *= -1; //Change direction
+  if (iconX == 0)
+    iconXChangeAmount *= -1; // Change direction
 
-    if(iconY == 0)
-      iconYChangeAmount *= -1; //Change direction
+  if (iconY + QW_BMP_TRUCK.height >= height)
+    iconYChangeAmount *= -1; // Change direction
 
-    draw_total_time += millis() - milStart;
-    n_draws++;
+  if (iconY == 0)
+    iconYChangeAmount *= -1; // Change direction
 
-    // output framerate?
-    if(n_draws % 120 == 0){
+  draw_total_time += millis() - milStart;
+  n_draws++;
 
-        Serial.println(((float)draw_total_time)/n_draws);
+  // output framerate?
+  if (n_draws % 120 == 0)
+  {
 
-        if(n_draws > 1000){ // reset after a bit...
-            n_draws = 0;
-            draw_total_time=0;
-        }
+    Serial.println(((float)draw_total_time) / n_draws);
+
+    if (n_draws > 1000)
+    { // reset after a bit...
+      n_draws = 0;
+      draw_total_time = 0;
     }
+  }
 }
-

@@ -1,7 +1,7 @@
 
 
 // Example-06_Clock.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -11,15 +11,15 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
-// Written by 
+//
+//
+// Written by
 //      Jim Lindblom @ SparkFun Electronics
 //      Original Creation Date: October 27, 2014
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -51,7 +51,7 @@
 //
 // >> Overview <<
 //
-// Draws a clock face on the OLED display. This is a port of the demo for the original Micro OLED library. 
+// Draws a clock face on the OLED display. This is a port of the demo for the original Micro OLED library.
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 // >>> SELECT THE CONNECTED DEVICE FOR THIS EXAMPLE <<<
@@ -76,15 +76,15 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
 
@@ -116,7 +116,7 @@ QwiicFont *pFont;
 
 void setup()
 {
-    delay(500);   //Give display time to power on
+    delay(500); // Give display time to power on
 
     // Serial on!
     Serial.begin(115200);
@@ -127,10 +127,12 @@ void setup()
     Serial.println(String(deviceName));
 
     // Initalize the OLED device and related graphics system
-    if(!myOLED.begin()){
+    if (!myOLED.begin())
+    {
 
         Serial.println(" - Device Begin Failed");
-        while(1);
+        while (1)
+            ;
     }
 
     Serial.println("- Begin Success");
@@ -147,7 +149,8 @@ void setup()
 void loop()
 {
     // Check if we need to update seconds, minutes, hours:
-    if (lastDraw + CLOCK_SPEED < millis()){
+    if (lastDraw + CLOCK_SPEED < millis())
+    {
 
         lastDraw = millis();
         // Add a second, update minutes/hours if necessary:
@@ -158,9 +161,9 @@ void loop()
 
         drawFace();                        // Draw the face to the buffer
         drawArms(hours, minutes, seconds); // Draw arms to the buffer
-    
-        myOLED.display();                    // Draw the memory buffer
-  }
+
+        myOLED.display(); // Draw the memory buffer
+    }
 }
 
 void initClockVariables()
@@ -187,19 +190,21 @@ void initClockVariables()
 // and hours if necessary.
 void updateTime()
 {
-    seconds++;         // Increment seconds
-    if (seconds >= 60){ // If seconds overflows (>=60)
+    seconds++; // Increment seconds
+    if (seconds >= 60)
+    { // If seconds overflows (>=60)
 
-        seconds = 0;       // Set seconds back to 0
-        minutes++;         // Increment minutes
+        seconds = 0; // Set seconds back to 0
+        minutes++;   // Increment minutes
 
-        if(minutes >= 60){ // If minutes overflows (>=60)
+        if (minutes >= 60)
+        { // If minutes overflows (>=60)
 
-            minutes = 0;     // Set minutes back to 0
-            hours++;         // Increment hours
+            minutes = 0; // Set minutes back to 0
+            hours++;     // Increment hours
 
-            if(hours >= 12) // If hours overflows (>=12)
-                hours = 0; // Set hours back to 0
+            if (hours >= 12) // If hours overflows (>=12)
+                hours = 0;   // Set hours back to 0
         }
     }
 }
@@ -216,13 +221,13 @@ void drawArms(int h, int m, int s)
     m -= 15;
     s -= 15;
 
-    if(h <= 0)
+    if (h <= 0)
         h += 12;
-  
-    if(m < 0)
+
+    if (m < 0)
         m += 60;
-  
-    if(s < 0)
+
+    if (s < 0)
         s += 60;
 
     // Calculate and draw new lines:
@@ -236,7 +241,7 @@ void drawArms(int h, int m, int s)
     m = map(m, 0, 60, 0, 360);                  // map the 0-60, to "360 degrees"
     mx = M_LENGTH * cos(PI * ((float)m) / 180); // woo trig!
     my = M_LENGTH * sin(PI * ((float)m) / 180); // woo trig!
-    
+
     // draw the minute hand
     myOLED.line(MIDDLE_X, MIDDLE_Y, MIDDLE_X + mx, MIDDLE_Y + my);
 
@@ -246,7 +251,7 @@ void drawArms(int h, int m, int s)
     h = map(h, 0, 60, 0, 360);                  // map the 0-60, to "360 degrees"
     hx = H_LENGTH * cos(PI * ((float)h) / 180); // woo trig!
     hy = H_LENGTH * sin(PI * ((float)h) / 180); // woo trig!
-    
+
     // draw the hour hand:
     myOLED.line(MIDDLE_X, MIDDLE_Y, MIDDLE_X + hx, MIDDLE_Y + hy);
 }

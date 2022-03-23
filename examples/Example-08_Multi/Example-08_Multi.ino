@@ -1,5 +1,5 @@
 // Example-08_Multi.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,14 +9,14 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Updated from example writtin by Paul Clark @ SparkFun Electronics
 // Original Creation Date: December 11th, 2020
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -75,32 +75,30 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
-
 
 int width;
 int height;
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
-// 
+//
 // Standard Arduino setup routine
 
 void setup()
 {
-    
-    delay(500);   //Give display time to power on
+
+    delay(500); // Give display time to power on
     Serial.begin(115200);
 
     Serial.println("\n\r-----------------------------------");
@@ -108,17 +106,18 @@ void setup()
     Serial.print("Running Test #2 on: ");
     Serial.println(String(deviceName));
 
-    if(!myOLED.begin()){
+    if (!myOLED.begin())
+    {
 
         Serial.println("- Device Begin Failed");
-        while(1);
+        while (1)
+            ;
     }
 
     Serial.println("- Begin Successful");
 
     width = myOLED.getWidth();
     height = myOLED.getHeight();
-
 
     randomSeed(analogRead(A0) + analogRead(A1));
 }
@@ -127,9 +126,10 @@ void setup()
 //
 void pixelExample()
 {
-    //printTitle("Pixels", 1);
+    // printTitle("Pixels", 1);
     myOLED.erase();
-    for(int i = 0; i < 512; i++){
+    for (int i = 0; i < 512; i++)
+    {
         myOLED.pixel(random(width), random(height));
         myOLED.display();
         delay(10);
@@ -140,17 +140,19 @@ void pixelExample()
 void lineExample()
 {
     int middleX = width / 2;
-    int middleY = height/ 2;
+    int middleY = height / 2;
     int xEnd, yEnd;
     int lineWidth = min(middleX, middleY);
 
-    //printTitle("Lines!", 1);
+    // printTitle("Lines!", 1);
     myOLED.erase();
     int deg;
 
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++)
+    {
 
-        for (deg = 0; deg < 360; deg += 15){
+        for (deg = 0; deg < 360; deg += 15)
+        {
 
             xEnd = lineWidth * cos(deg * PI / 180.0);
             yEnd = lineWidth * sin(deg * PI / 180.0);
@@ -159,22 +161,23 @@ void lineExample()
             myOLED.display();
             delay(10);
         }
-    
-        for(deg = 0; deg < 360; deg += 15){
+
+        for (deg = 0; deg < 360; deg += 15)
+        {
 
             xEnd = lineWidth * cos(deg * PI / 180.0);
             yEnd = lineWidth * sin(deg * PI / 180.0);
 
             myOLED.line(middleX, middleY, middleX + xEnd, middleY + yEnd, 0);
             myOLED.display();
-        delay(10);
+            delay(10);
         }
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void shapeExample()
 {
-    //printTitle("Shapes!", 0);
+    // printTitle("Shapes!", 0);
 
     // Silly pong demo. It takes a lot of work to fake pong...
     int paddleW = 3;  // Paddle width
@@ -183,51 +186,55 @@ void shapeExample()
     // Paddle 0 (left) position coordinates
     int paddle0_Y = (height / 2) - (paddleH / 2);
     int paddle0_X = 2;
-    
+
     // Paddle 1 (right) position coordinates
-    int paddle1_Y = ( height / 2) - (paddleH / 2);
+    int paddle1_Y = (height / 2) - (paddleH / 2);
     int paddle1_X = width - 3 - paddleW;
     int ball_rad = 4; // Ball radius
-    
+
     // Ball position coordinates
     int ball_X = paddle0_X + paddleW + ball_rad;
-    int ball_Y = random(1 + ball_rad, height - ball_rad); //paddle0_Y + ball_rad;
-    int ballVelocityX = 1;                                             // Ball left/right velocity
-    int ballVelocityY = 1;                                             // Ball up/down velocity
-    int paddle0Velocity = -1;                                          // Paddle 0 velocity
-    int paddle1Velocity = 1;                                           // Paddle 1 velocity
+    int ball_Y = random(1 + ball_rad, height - ball_rad); // paddle0_Y + ball_rad;
+    int ballVelocityX = 1;                                // Ball left/right velocity
+    int ballVelocityY = 1;                                // Ball up/down velocity
+    int paddle0Velocity = -1;                             // Paddle 0 velocity
+    int paddle1Velocity = 1;                              // Paddle 1 velocity
 
     // Draw the Pong Field
     myOLED.erase();
-    
+
     // Draw an outline of the screen:
-    myOLED.rectangle(0, 0, width-1,  height);
-    
+    myOLED.rectangle(0, 0, width - 1, height);
+
     // Draw the center line
-    myOLED.rectangleFill( width/ 2 - 1, 0, 2, height);
+    myOLED.rectangleFill(width / 2 - 1, 0, 2, height);
 
-    bool firstLoop = true; 
+    bool firstLoop = true;
 
-    while((ball_X - ball_rad > 1) && (ball_X + ball_rad <  width - 2)){
+    while ((ball_X - ball_rad > 1) && (ball_X + ball_rad < width - 2))
+    {
 
-        if(!firstLoop){
+        if (!firstLoop)
+        {
 
             // Erase the old ball. In XOR mode, so just draw old values again!
             // Draw the Paddles:
             myOLED.rectangleFill(paddle0_X, paddle0_Y, paddleW, paddleH);
             myOLED.rectangleFill(paddle1_X, paddle1_Y, paddleW, paddleH);
             // Draw the ball: - use rect - xor and circle fails b/c of circle algorithm overdraws
-            myOLED.rectangleFill(ball_X, ball_Y, ball_rad, ball_rad);   
+            myOLED.rectangleFill(ball_X, ball_Y, ball_rad, ball_rad);
         }
         // Increment ball's position
         ball_X += ballVelocityX;
         ball_Y += ballVelocityY;
 
         // Check if the ball is colliding with the left paddle
-        if (ball_X - ball_rad < paddle0_X + paddleW){
-            
+        if (ball_X - ball_rad < paddle0_X + paddleW)
+        {
+
             // Check if ball is within paddle's height
-            if((ball_Y > paddle0_Y) && (ball_Y < paddle0_Y + paddleH)){
+            if ((ball_Y > paddle0_Y) && (ball_Y < paddle0_Y + paddleH))
+            {
 
                 ball_X++;                       // Move ball over one to the right
                 ballVelocityX = -ballVelocityX; // Change velocity
@@ -235,18 +242,21 @@ void shapeExample()
         }
 
         // Check if the ball hit the right paddle
-        if(ball_X + ball_rad > paddle1_X){
+        if (ball_X + ball_rad > paddle1_X)
+        {
 
             // Check if ball is within paddle's height
-            if((ball_Y > paddle1_Y) && (ball_Y < paddle1_Y + paddleH)){
+            if ((ball_Y > paddle1_Y) && (ball_Y < paddle1_Y + paddleH))
+            {
 
                 ball_X--;                       // Move ball over one to the left
                 ballVelocityX = -ballVelocityX; // change velocity
             }
         }
-    
+
         // Check if the ball hit the top or bottom
-        if((ball_Y <= 1) || (ball_Y >= (height - ball_rad - 1))){
+        if ((ball_Y <= 1) || (ball_Y >= (height - ball_rad - 1)))
+        {
 
             // Change up/down velocity direction
             ballVelocityY = -ballVelocityY;
@@ -255,13 +265,13 @@ void shapeExample()
         // Move the paddles up and down
         paddle0_Y += paddle0Velocity;
         paddle1_Y += paddle1Velocity;
-    
+
         // Change paddle 0's direction if it hit top/bottom
-        if((paddle0_Y <= 1) || (paddle0_Y > height - 2 - paddleH))
+        if ((paddle0_Y <= 1) || (paddle0_Y > height - 2 - paddleH))
             paddle0Velocity = -paddle0Velocity;
-    
+
         // Change paddle 1's direction if it hit top/bottom
-        if((paddle1_Y <= 1) || (paddle1_Y > height - 2 - paddleH))
+        if ((paddle1_Y <= 1) || (paddle1_Y > height - 2 - paddleH))
             paddle1Velocity = -paddle1Velocity;
 
         // Draw the Paddles:
@@ -274,9 +284,10 @@ void shapeExample()
         // Actually draw everything on the screen:
         myOLED.display();
 
-        // Once the first loop is done, switch to XOR mode. So we just update our 
-        // moving parts 
-        if(firstLoop){
+        // Once the first loop is done, switch to XOR mode. So we just update our
+        // moving parts
+        if (firstLoop)
+        {
             firstLoop = false;
             myOLED.setDrawMode(grROPXOR);
         }
@@ -290,8 +301,7 @@ void shapeExample()
 
 void loop()
 {
-  pixelExample();  // Run the pixel example function
-  lineExample();  // Then the line example function
-  shapeExample(); // Then the shape example
+    pixelExample(); // Run the pixel example function
+    lineExample();  // Then the line example function
+    shapeExample(); // Then the shape example
 }
-

@@ -1,5 +1,5 @@
 // qwiic_oledmicro.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -43,48 +43,45 @@
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-// Implementation for the Qwiic Micro OLED Device 
+// Implementation for the Qwiic Micro OLED Device
 
 #pragma once
-
 
 #include "qwiic_grssd1306.h"
 
 //////////////////////////////////////////////////////////////////
 // Set the defaults for the SparkFun Qwiic MicroOLED
 
-#define kOLEDMicroWidth     64
-#define kOLEDMicroHeight    48
+#define kOLEDMicroWidth 64
+#define kOLEDMicroHeight 48
 
 // The viewport x is off by 2 on this device - starts at value 2
-#define kOLEDMicroXOffset    2   
-#define kOLEDMicroYOffset    0   
+#define kOLEDMicroXOffset 2
+#define kOLEDMicroYOffset 0
 
 // Parameters for this device
-#define kOLEDMicroPinConfig  0x12
-#define kOLEDMicroPreCharge  0xF1
-#define kOLEDMicroVCOM       0x40
+#define kOLEDMicroPinConfig 0x12
+#define kOLEDMicroPreCharge 0xF1
+#define kOLEDMicroVCOM 0x40
 
 #define kOLEDMicroDefaultAddress 0x3D
 #define kOLEDMicroAltAddress 0x3C
 
-class QwOLEDMicro : public QwGrSSD1306 {
-
+class QwOLEDMicro : public QwGrSSD1306
+{
 
 public:
-
-    // Constructor - setup the viewport and default address for this device. 
-    QwOLEDMicro() : 
-        QwGrSSD1306(kOLEDMicroXOffset, kOLEDMicroYOffset, kOLEDMicroWidth, kOLEDMicroHeight)
-        {
-            default_address =kOLEDMicroDefaultAddress;
-        };
+    // Constructor - setup the viewport and default address for this device.
+    QwOLEDMicro() : QwGrSSD1306(kOLEDMicroXOffset, kOLEDMicroYOffset, kOLEDMicroWidth, kOLEDMicroHeight)
+    {
+        default_address = kOLEDMicroDefaultAddress;
+    };
 
     // set up the specific device settings
-    bool init(void){
+    bool init(void)
+    {
 
-        set_buffer(_graphicsBuffer); // The buffer to use 
+        set_buffer(_graphicsBuffer); // The buffer to use
 
         set_comm_pins(kOLEDMicroPinConfig);
         set_pre_charge(kOLEDMicroPreCharge);
@@ -95,7 +92,6 @@ public:
     };
 
 private:
-    // Graphics buffer for this device. 
-    uint8_t _graphicsBuffer[kOLEDMicroWidth * kOLEDMicroHeight/8];
-
+    // Graphics buffer for this device.
+    uint8_t _graphicsBuffer[kOLEDMicroWidth * kOLEDMicroHeight / 8];
 };

@@ -1,6 +1,6 @@
 
 // Example-04_Text.ino
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -10,12 +10,12 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -81,116 +81,118 @@
 
 #if defined(TRANSPARENT)
 QwiicTransparentOLED myOLED;
-const char * deviceName = "Transparent OLED";
+const char *deviceName = "Transparent OLED";
 
 #elif defined(NARROW)
 QwiicNarrowOLED myOLED;
-const char * deviceName = "Narrow OLED";
+const char *deviceName = "Narrow OLED";
 
 #else
 QwiicMicroOLED myOLED;
-const char * deviceName = "Micro OLED";
+const char *deviceName = "Micro OLED";
 
 #endif
 
 // An array of fonts to loop over
-QwiicFont * demoFonts[] = {
+QwiicFont *demoFonts[] = {
     &QW_FONT_5X7,
     &QW_FONT_8X16,
     &QW_FONT_31X48,
     &QW_FONT_LARGENUM,
-    &QW_FONT_7SEGMENT
-};
-uint8_t nFONTS = sizeof(demoFonts)/sizeof(demoFonts[0]);
+    &QW_FONT_7SEGMENT};
+uint8_t nFONTS = sizeof(demoFonts) / sizeof(demoFonts[0]);
 uint8_t iFont = 0;
 
 // Some vars for the title.
 uint8_t xTitle, yTitle;
 String strTitle = "<<Font>>";
-QwiicFont * pFntTitle = &QW_FONT_5X7;
+QwiicFont *pFntTitle = &QW_FONT_5X7;
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
 void setup()
 {
 
-    delay(500);   //Give display time to power on
+    delay(500); // Give display time to power on
     Serial.begin(115200);
 
     Serial.println("\n\r-----------------------------------");
     Serial.print("Example #4 on: ");
     Serial.println(String(deviceName));
 
-    if(!myOLED.begin()){
+    if (!myOLED.begin())
+    {
 
         Serial.println("- Device Begin Failed");
-        while(1);
+        while (1)
+            ;
     }
 
     Serial.println("- Begin Successful");
 
-    // Position to use for the time/banner displayed before each font 
+    // Position to use for the time/banner displayed before each font
 
     // starting x position - width minus string length (font width * number of characters) / 2
-    xTitle = (myOLED.getWidth() - (pFntTitle->width +1)* strTitle.length())/2;
+    xTitle = (myOLED.getWidth() - (pFntTitle->width + 1) * strTitle.length()) / 2;
 
-    yTitle = (myOLED.getHeight() - pFntTitle->height)/2;
-
+    yTitle = (myOLED.getHeight() - pFntTitle->height) / 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // writeFontChars()
 //
-// For the current font, write out all it's characters 
+// For the current font, write out all it's characters
 
-void writeFontChars(){
+void writeFontChars()
+{
 
     // get the font
     QwiicFont *pFont = myOLED.getFont();
 
     // how many chars can a screen handle? (x * y)
-    uint16_t screenChars = myOLED.getWidth()/(pFont->width+1);     // X
-    uint8_t nY = myOLED.getHeight()/pFont->height;  // Y
+    uint16_t screenChars = myOLED.getWidth() / (pFont->width + 1); // X
+    uint8_t nY = myOLED.getHeight() / pFont->height;               // Y
 
     screenChars *= (nY == 0 ? 1 : nY); // need at least 1 row
 
     // Loop over the characters in the font.
-    for(int i=0; i < pFont->n_chars; i++){
+    for (int i = 0; i < pFont->n_chars; i++)
+    {
 
-        if( i % screenChars == 0){  // next page 
+        if (i % screenChars == 0)
+        { // next page
             delay(400);
             myOLED.erase();
-            myOLED.setCursor(0,0);
+            myOLED.setCursor(0, 0);
         }
 
-        // if the character is a carriage return, send a blank - otherwise the 
+        // if the character is a carriage return, send a blank - otherwise the
         // write routine will perform a CR and lead to a confusing display.
-        myOLED.write( (i + pFont->start != '\n') ? i+pFont->start : ' '); 
+        myOLED.write((i + pFont->start != '\n') ? i + pFont->start : ' ');
 
         myOLED.display(); // show the added char
 
         delay(10);
     }
-
 }
 ////////////////////////////////////////////////////////////////////////////////////
 // write_title()
 //
 // Simple title for a font
 
-void write_title(){
+void write_title()
+{
 
     // Set title font font
     myOLED.setFont(pFntTitle);
 
     myOLED.erase();
 
-    // Draw the text 
+    // Draw the text
     myOLED.text(xTitle, yTitle, strTitle);
 
     // There's nothing on the screen yet - Now send the graphics to the device
     myOLED.display();
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -209,8 +211,7 @@ void loop()
     myOLED.setFont(demoFonts[iFont]);
 
     // Write out the full font char set
-    writeFontChars();    
+    writeFontChars();
 
     delay(2000);
-
 }
