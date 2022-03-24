@@ -6,63 +6,63 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-QwiicTransparentOLED    KEYWORD1
-QwiicNarrowOLED         KEYWORD1
-QwiicMicroOLED          KEYWORD1
-QwiicFont               KEYWORD1
-grRasterOp_t            KEYWORD1
+QwiicTransparentOLED	KEYWORD1
+QwiicNarrowOLED	KEYWORD1
+QwiicMicroOLED	KEYWORD1
+QwiicFont	KEYWORD1
+grRasterOp_t	KEYWORD1
 
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin           KEYWORD2
-getWidth        KEYWORD2
-getHeight       KEYWORD2
-display         KEYWORD2
-erase           KEYWORD2
-invert          KEYWORD2
-scrollRight     KEYWORD2
-scrollLeft      KEYWORD2
-scrollVertRight KEYWORD2
-scrollVertLeft  KEYWORD2
-scrollStop      KEYWORD2
-flipVertical    KEYWORD2
-flipHorizontal  KEYWORD2
-setFont         KEYWORD2
-getFont         KEYWORD2
-setDrawMode     KEYWORD2
-getDrawMode     KEYWORD2
-pixel           KEYWORD2
-line            KEYWORD2
-rectangle       KEYWORD2
-rectangleFill   KEYWORD2
-circle          KEYWORD2
-circleFill      KEYWORD2
-bitmap          KEYWORD2
-text            KEYWORD2
-setCursor       KEYWORD2
-setColor        KEYWORD2
-getColor        KEYWORD2
-write           KEYWORD2
+begin	KEYWORD2
+getWidth	KEYWORD2
+getHeight	KEYWORD2
+display	KEYWORD2
+erase	KEYWORD2
+invert	KEYWORD2
+scrollRight	KEYWORD2
+scrollLeft	KEYWORD2
+scrollVertRight	KEYWORD2
+scrollVertLeft	KEYWORD2
+scrollStop	KEYWORD2
+flipVertical	KEYWORD2
+flipHorizontal	KEYWORD2
+setFont	KEYWORD2
+getFont	KEYWORD2
+setDrawMode	KEYWORD2
+getDrawMode	KEYWORD2
+pixel	KEYWORD2
+line	KEYWORD2
+rectangle	KEYWORD2
+rectangleFill	KEYWORD2
+circle	KEYWORD2
+circleFill	KEYWORD2
+bitmap	KEYWORD2
+text	KEYWORD2
+setCursor	KEYWORD2
+setColor	KEYWORD2
+getColor	KEYWORD2
+write	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-grROPCopy       LITERAL1
-grROPNotCopy    LITERAL1
-grROPNot        LITERAL1
-grROPXOR        LITERAL1
-grROPBlack      LITERAL1
-grROPWhite      LITERAL1
+grROPCopy	LITERAL1
+grROPNotCopy	LITERAL1
+grROPNot	LITERAL1
+grROPXOR	LITERAL1
+grROPBlack	LITERAL1
+grROPWhite	LITERAL1
 
-SCROLL_INTERVAL_5_FRAMES    LITERAL1
-SCROLL_INTERVAL_64_FRAMES   LITERAL1
-SCROLL_INTERVAL_128_FRAMES  LITERAL1
-SCROLL_INTERVAL_256_FRAMES  LITERAL1
-SCROLL_INTERVAL_3_FRAMES    LITERAL1
-SCROLL_INTERVAL_4_FRAMES    LITERAL1
-SCROLL_INTERVAL_25_FRAMES   LITERAL1
-SCROLL_INTERVAL_2_FRAMES    LITERAL1
+SCROLL_INTERVAL_5_FRAMES	LITERAL1
+SCROLL_INTERVAL_64_FRAMES	LITERAL1
+SCROLL_INTERVAL_128_FRAMES	LITERAL1
+SCROLL_INTERVAL_256_FRAMES	LITERAL1
+SCROLL_INTERVAL_3_FRAMES	LITERAL1
+SCROLL_INTERVAL_4_FRAMES	LITERAL1
+SCROLL_INTERVAL_25_FRAMES	LITERAL1
+SCROLL_INTERVAL_2_FRAMES	LITERAL1

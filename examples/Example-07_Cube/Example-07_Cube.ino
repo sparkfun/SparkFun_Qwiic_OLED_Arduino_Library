@@ -1,97 +1,46 @@
-// Example-07_Cube.ino
-//
-// This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
-//
-// SparkFun sells these at its website: www.sparkfun.com
-//
-// Do you like this library? Help support SparkFun. Buy a board!
-//
-//   Micro OLED             https://www.sparkfun.com/products/14532
-//   Transparent OLED       https://www.sparkfun.com/products/15173
-//   "Narrow" OLED          https://www.sparkfun.com/products/17153
-//
-//
-// Written Jim Lindblom @ SparkFun Electronics
-//  Original Creation Date: October 27, 2014
-//
-// This library configures and draws graphics to OLED boards that use the
-// SSD1306 display hardware. The library only supports I2C.
-//
-// Repository:
-//     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
-//
-// Documentation:
-//     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
-//
-//
-// SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
-//
-// SPDX-License-Identifier: MIT
-//
-//    The MIT License (MIT)
-//
-//    Copyright (c) 2022 SparkFun Electronics
-//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-//    associated documentation files (the "Software"), to deal in the Software without restriction,
-//    including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-//    and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
-//    do so, subject to the following conditions:
-//    The above copyright notice and this permission notice shall be included in all copies or substantial
-//    portions of the Software.
-//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-//    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-// Example 7 for the SparkFun Qwiic OLED Arduino Library
-//
-// >> Overview <<
-//
-// This demo draws a rotating 3D cube
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-// >>> SELECT THE CONNECTED DEVICE FOR THIS EXAMPLE <<<
-//
+/*
+  Example-07_Cube.ino
+
+  This demo draws a rotating 3D cube
+
+  This library configures and draws graphics to OLED boards that use the
+  SSD1306 display hardware. The library only supports I2C.
+
+  SparkFun sells these at its website: www.sparkfun.com
+
+  Do you like this library? Help support SparkFun. Buy a board!
+
+   Micro OLED             https://www.sparkfun.com/products/14532
+   Transparent OLED       https://www.sparkfun.com/products/15173
+   "Narrow" OLED          https://www.sparkfun.com/products/17153
+
+  Written by
+      Jim Lindblom @ SparkFun Electronics
+      Original Creation Date: October 27, 2014
+
+  Repository:
+     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
+
+  Documentation:
+     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
+
+  SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
+*/
+#include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
+
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
-//
-// The default is Micro OLED
 
-#define MICRO
-//#define NARROW
-//#define TRANSPARENT
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-#include <stdint.h>
-
-// Include the SparkFun qwiic OLED Library
-#include <SparkFun_Qwiic_OLED.h>
-
-// What device is being used in this demo
-
-#if defined(TRANSPARENT)
-QwiicTransparentOLED myOLED;
-const char *deviceName = "Transparent OLED";
-
-#elif defined(NARROW)
-QwiicNarrowOLED myOLED;
-const char *deviceName = "Narrow OLED";
-
-#else
 QwiicMicroOLED myOLED;
-const char *deviceName = "Micro OLED";
-
-#endif
+// QwiicTransparentOLED myOLED;
+// QwiicNarrowOLED myOLED;
 
 int width;
 int height;
 
-uint32_t draw_total_time;
-uint32_t n_draws;
+// For simple frame rate calculations
+long drawTotalTime = 0;
+int numberOfDraws = 0;
 
 float d = 3;
 float px[] = {-d, d, d, -d, -d, d, d, -d};
@@ -107,58 +56,42 @@ float r[3] = {0};
 // This is the number of ms between draws.
 #define ROTATION_SPEED 00
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// setup()
-//
-// Standard Arduino setup routine
-
 void setup()
 {
-    delay(500); // Give display time to power on
     Serial.begin(115200);
+    Serial.println("Running OLED example");
 
-    Serial.println("\n\r-----------------------------------");
+    Wire.begin();
+    // Wire.setClock(400000); //Optionally increase I2C bus speed to 400kHz
 
-    Serial.print("Running Test #2 on: ");
-    Serial.println(String(deviceName));
-
-    if (!myOLED.begin())
+    // Initalize the OLED device and related graphics system
+    if (myOLED.begin() == false)
     {
-
-        Serial.println("- Device Begin Failed");
-        while (1)
+        Serial.println("Device begin failed. Freezing...");
+        while (true)
             ;
     }
-
-    Serial.println("- Begin Successful");
+    Serial.println("Begin success");
 
     width = myOLED.getWidth();
     height = myOLED.getHeight();
 
-    // for frame rate calc
-    draw_total_time = 0;
-    n_draws = 0;
+    // For frame rate calc
+    drawTotalTime = 0;
+    numberOfDraws = 0;
 
-    // set a template for our framerate display
+    // Set a template for our framerate display
     Serial.print("- Frame Rate: 00.00");
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// loop
-
 void loop()
 {
-    // just draw the cube - as fast as we can!
+    // Draw the cube - as fast as we can!
     drawCube();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// drawCube()
-//
-
 void drawCube()
 {
-
     r[0] = r[0] + PI / 180.0; // Add a degree
     r[1] = r[1] + PI / 180.0; // Add a degree
     r[2] = r[2] + PI / 180.0; // Add a degree
@@ -174,7 +107,6 @@ void drawCube()
 
     for (int i = 0; i < 8; i++)
     {
-
         px2 = px[i];
         py2 = cos(r[0]) * py[i] - sin(r[0]) * pz[i];
         pz2 = sin(r[0]) * py[i] + cos(r[0]) * pz[i];
@@ -191,13 +123,12 @@ void drawCube()
         p2y[i] = height / 2 + ay * SHAPE_SIZE / az;
     }
 
-    // Calculate draw time...
-    uint32_t milStart = millis();
+    // Calculate draw time
+    uint32_t startTime = millis();
 
     myOLED.erase();
     for (int i = 0; i < 3; i++)
     {
-
         myOLED.line(p2x[i], p2y[i], p2x[i + 1], p2y[i + 1]);
         myOLED.line(p2x[i + 4], p2y[i + 4], p2x[i + 5], p2y[i + 5]);
         myOLED.line(p2x[i], p2y[i], p2x[i + 4], p2y[i + 4]);
@@ -209,20 +140,16 @@ void drawCube()
     myOLED.display();
 
     // Write out our frame rate
-    draw_total_time += millis() - milStart;
-    n_draws++;
+    drawTotalTime += millis() - startTime;
+    numberOfDraws++;
 
-    // output framerate?
-    if (n_draws % 120 == 0)
+    // Output framerate once every 120 frames
+    if (numberOfDraws % 120 == 0)
     {
-        // backspace over old number
-        Serial.print("\b\b\b\b\b"); // backspace over old number
-        Serial.print(((float)draw_total_time) / n_draws);
+        Serial.print(" Frame rate: ");
+        Serial.println(numberOfDraws / (float)drawTotalTime * 1000.0);
 
-        if (n_draws > 1000)
-        { // reset after a bit...
-            n_draws = 0;
-            draw_total_time = 0;
-        }
+        numberOfDraws = 0;
+        drawTotalTime = 0;
     }
 }

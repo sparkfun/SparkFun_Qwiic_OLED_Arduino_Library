@@ -1,99 +1,95 @@
+/*
+  Example-01_Hello.ino
 
-// Example-02_Shapes.ino
-//
-// This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
-//
-// SparkFun sells these at its website: www.sparkfun.com
-//
-// Do you like this library? Help support SparkFun. Buy a board!
-//
-//   Micro OLED             https://www.sparkfun.com/products/14532
-//   Transparent OLED       https://www.sparkfun.com/products/15173
-//   "Narrow" OLED          https://www.sparkfun.com/products/17153
-//
-//
-// Written by Kirk Benell @ SparkFun Electronics, March 2022
-//
-// This library configures and draws graphics to OLED boards that use the
-// SSD1306 display hardware. The library only supports I2C.
-//
-// Repository:
-//     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
-//
-// Documentation:
-//     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
-//
-//
-// SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
-//
-// SPDX-License-Identifier: MIT
-//
-//    The MIT License (MIT)
-//
-//    Copyright (c) 2022 SparkFun Electronics
-//    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-//    associated documentation files (the "Software"), to deal in the Software without restriction,
-//    including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-//    and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
-//    do so, subject to the following conditions:
-//    The above copyright notice and this permission notice shall be included in all copies or substantial
-//    portions of the Software.
-//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-//    NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-// Example 2 for the SparkFun Qwiic OLED Arduino Library
-//
-// >> Overview <<
-//
-// This demo shows the various methods available for drawing shapes using the OLED library
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-// >>> SELECT THE CONNECTED DEVICE FOR THIS EXAMPLE <<<
-//
+  This demo shows the various methods available for drawing shapes using the OLED library
+
+  This library configures and draws graphics to OLED boards that use the
+  SSD1306 display hardware. The library only supports I2C.
+
+  SparkFun sells these at its website: www.sparkfun.com
+
+  Do you like this library? Help support SparkFun. Buy a board!
+
+   Micro OLED             https://www.sparkfun.com/products/14532
+   Transparent OLED       https://www.sparkfun.com/products/15173
+   "Narrow" OLED          https://www.sparkfun.com/products/17153
+
+  Written by Kirk Benell @ SparkFun Electronics, March 2022
+
+  Repository:
+     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
+
+  Documentation:
+     https://sparkfun.github.io/SparkFun_Qwiic_OLED_Arduino_Library/
+
+  SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
+*/
+
+#include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
+
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
-//
-// The default is Micro OLED
 
-#define MICRO
-//#define NARROW
-//#define TRANSPARENT
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-#include <stdint.h>
-
-// Include the SparkFun qwiic OLED Library
-#include <SparkFun_Qwiic_OLED.h>
-
-// What device is being used in this demo
-
-#if defined(TRANSPARENT)
-QwiicTransparentOLED myOLED;
-const char *deviceName = "Transparent OLED";
-
-#elif defined(NARROW)
-QwiicNarrowOLED myOLED;
-const char *deviceName = "Narrow OLED";
-
-#else
 QwiicMicroOLED myOLED;
-const char *deviceName = "Micro OLED";
-
-#endif
+// QwiicTransparentOLED myOLED;
+// QwiicNarrowOLED myOLED;
 
 // Global variables - used to stash our screen size
 
 int width;
 int height;
 
+void setup()
+{
+    Serial.begin(115200);
+    Serial.println("Running OLED example");
+
+    Wire.begin();
+
+    // Initalize the OLED device and related graphics system
+    if (myOLED.begin() == false)
+    {
+        Serial.println("Device begin failed. Freezing...");
+        while (true)
+            ;
+    }
+    Serial.println("Begin success");
+
+    // save device dims for the test routines
+    width = myOLED.getWidth();
+    height = myOLED.getHeight();
+}
+
+void loop()
+{
+    // Loop over our test functions
+    for (int i = 0; i < 7; i++)
+    {
+        myOLED.erase();
+
+        if (i == 0)
+            lineTest1();
+        else if (i == 1)
+            lineTest2();
+        else if (i == 2)
+            lineTestVertical();
+        else if (i == 3)
+            rectangleTest();
+        else if (i == 4)
+            rectangleTestMove();
+        else if (i == 5)
+            rectangleFillTest();
+        else if (i == 6)
+            circleTest();
+
+        myOLED.display();
+
+        delay(1000);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-// line_test_1()
+// lineTest1()
 //
 // This test draws a horizontal line on the screen, moving it from the
 // top of the screen to the bottom.
@@ -106,9 +102,8 @@ int height;
 // of the display updates also decreases.  A longer line, results in more data being
 // sent to the display.
 
-void line_test_1(void)
+void lineTest1(void)
 {
-
     int x, y, i;
 
     int mid = width / 2;
@@ -131,15 +126,14 @@ void line_test_1(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// line_test_2()
+// lineTest2()
 //
 // This test draws a series of lines bursting out from the corner of the display.
 //
 // It demostrates the abilty of the library to draw arbitray straight lines.
 
-void line_test_2(void)
+void lineTest2(void)
 {
-
     for (int i = 0; i < width; i += 6)
     {
         myOLED.line(0, 0, i, height - 1);
@@ -155,7 +149,7 @@ void line_test_2(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// line_test_vert()
+// lineTestVertIterative()
 //
 // Draws a series of vertical lines, some horz lines and two diag lines.
 //
@@ -163,9 +157,9 @@ void line_test_2(void)
 // vertical lines functions.
 //
 // Iterator function - called to animate graphic
-void line_test_vert_iter(uint8_t y0, uint8_t y1)
-{
 
+void lineTestVerticalIterative(uint8_t y0, uint8_t y1)
+{
     for (int i = 0; i < width; i += 8)
         myOLED.line(i, y0, i, y1);
 
@@ -180,16 +174,15 @@ void line_test_vert_iter(uint8_t y0, uint8_t y1)
 }
 
 // Entry point for test
-void line_test_vert(void)
+void lineTestVertical(void)
 {
-
     int mid = height / 2;
 
     for (int i = 0; i < height; i += 4)
     {
 
         myOLED.erase();
-        line_test_vert_iter(mid - i / 2, mid + i / 2);
+        lineTestVerticalIterative(mid - i / 2, mid + i / 2);
         myOLED.display();
         delay(10);
     }
@@ -199,20 +192,19 @@ void line_test_vert(void)
 // rect_test()
 //
 // Simple - draw a rectangle test
-void rect_test(void)
-{
 
+void rectangleTest(void)
+{
     myOLED.rectangle(4, 4, width - 8, height - 8);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// rect_test_move()
+// rectangleTestMove()
 //
 // Draws a rectangle, then moves it across the screen
 //
-void rect_test_move(void)
+void rectangleTestMove(void)
 {
-
     float steps = height;
     float xinc = width / steps;
     float yinc = height / steps;
@@ -222,7 +214,6 @@ void rect_test_move(void)
 
     for (int i = 0; i < steps; i++)
     {
-
         // Draw the rectangle and send it to device
         myOLED.rectangle(x, y, side, side);
         myOLED.display(); // sends erased rect and new rect pixels to device
@@ -236,14 +227,13 @@ void rect_test_move(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// rect_fill_test()
+// rectangleFillTest()
 //
 // Draws two filled rectangles, switches to XOR draw mode and overwrites them
 // with another rectangle
 
-void rect_fill_test(void)
+void rectangleFillTest(void)
 {
-
     myOLED.rectangleFill(4, 4, width / 2 - 8, height - 8);
 
     myOLED.rectangleFill(width / 2 + 4, 4, width / 2 - 8, height - 8);
@@ -254,13 +244,12 @@ void rect_fill_test(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// circle_test()
+// circleTest()
 //
 // Draw a series of circles - filled and not filled
-void circle_test(void)
+void circleTest(void)
 {
-
-    // Lets draw some circles that fit on the device
+    // Let's draw some circles that fit on the device
     myOLED.circle(width / 4, height / 2, height / 3);
 
     myOLED.circleFill(width - width / 4, height / 2, height / 3);
@@ -268,72 +257,4 @@ void circle_test(void)
     myOLED.circle(4, height / 2, height / 3);
 
     myOLED.circleFill(width - width / 2, height / 2, height / 4);
-}
-
-// Make an array of function pointers - used to hold the list of tests to run.
-//
-// Makes the loop call to each test function simple.
-//
-// testing function table
-typedef void (*testFn)(void);
-
-static const testFn testFunctions[] = {
-    line_test_1,
-    line_test_2,
-    line_test_vert,
-    rect_test,
-    rect_test_move,
-    rect_fill_test,
-    circle_test};
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// setup()
-//
-// Standard Arduino setup routine
-
-void setup()
-{
-    delay(500); // Give display time to power on
-    Serial.begin(115200);
-
-    Serial.println("\n\r-----------------------------------");
-
-    Serial.print("Running Test #2 on: ");
-    Serial.println(String(deviceName));
-
-    if (!myOLED.begin())
-    {
-
-        Serial.println("- Device Begin Failed");
-        while (1)
-            ;
-    }
-
-    Serial.println("- Begin Successful");
-
-    // save device dims for the test routines
-    width = myOLED.getWidth();
-    height = myOLED.getHeight();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// loop()
-//
-// Standard Arduino loop function.
-
-void loop()
-{
-
-    // Just loop over our test functions
-    for (uint8_t i = 0; i < sizeof(testFunctions) / sizeof(testFunctions[0]); i++)
-    {
-
-        myOLED.erase();
-
-        testFunctions[i](); // next function
-
-        myOLED.display();
-
-        delay(1000);
-    }
 }
