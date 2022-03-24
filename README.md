@@ -29,7 +29,7 @@ A full library use overview, API reference guide and key example walk through ar
 
 The SparkFun Qwiic OLED Library is between 40% and 450% faster. The original Micro OLED library had a max output of ~75 frames per second. This library automatically only updates *what changed* we can reach more than 300 frames per second. What does that look like? 
 
-[link text](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4)
+https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4
 
 [![Comparison of displays](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4)](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4)
 
