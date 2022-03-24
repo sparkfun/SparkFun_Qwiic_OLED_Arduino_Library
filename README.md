@@ -55,7 +55,7 @@ Above, the OLED on the right is running the original Micro OLED library at 75fps
 
 ## Supported Products
 
-* [LCD-14532](https://www.sparkfun.com/products/13003) - SparkFun Micro OLED Breakout
+* [LCD-13003](https://www.sparkfun.com/products/13003) - SparkFun Micro OLED Breakout
 * [LCD-14532](https://www.sparkfun.com/products/14532) - SparkFun Micro OLED Breakout (Qwiic)
 * [LCD-17153](https://www.sparkfun.com/products/17153) - SparkFun Qwiic OLED Display (0.91 in, 128x32)
 * [LCD-15173](https://www.sparkfun.com/products/15173) - SparkFun Transparent Graphical OLED Breakout (Qwiic) 
