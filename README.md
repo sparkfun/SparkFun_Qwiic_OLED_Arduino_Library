@@ -29,15 +29,11 @@ A full library use overview, API reference guide and key example walk through ar
 
 The SparkFun Qwiic OLED Library is between 40% and 450% faster. The original Micro OLED library had a max output of ~75 frames per second. This library automatically only updates *what changed* we can reach more than 300 frames per second. What does that look like? 
 
-https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4
-
-[![Comparison of displays](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4)](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Truck_New_vs_Old.mp4)
+https://user-images.githubusercontent.com/117102/160000377-b2de6d3f-a90f-42da-bd95-2a301c817c80.mp4
 
 Above, the OLED on the right is running the original Micro OLED library at 75fps. On the left the display is more than 348 frames per second. In real life it's quite smooth; the camera is not able to keep up. This is all over 400kHz I2C.
 
-[link text](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Clock_New_vs_Old.mp4)
-
-[![Comparison of displays](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Clock_New_vs_Old.mp4)](https://cdn.sparkfun.com/assets/learn_tutorials/2/1/8/8/OLED_Lib_Clock_New_vs_Old.mp4)
+https://user-images.githubusercontent.com/117102/160000390-47a318ac-4158-4988-8831-44f7b9d32f01.mp4
 
 Above, the OLED on the right is running the original Micro OLED library at 75fps. On the left the display is more than 107 frames per second because the clock takes up a lot of the display, but not all of it. This is all over 400kHz I2C.
 
