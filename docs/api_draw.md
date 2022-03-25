@@ -58,6 +58,44 @@ QwiicFont * getFont(void)
 | :--- | :--- | :--- |
 | return value | `QwiicFont*` | A pointer to the current font. See `setFont()` for font object details.|
 
+### getFontName()
+
+This method returns the height in pixels of a provided String based on the current device font.
+
+```c++
+String getFontName(void)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| return value | String | The name of the current font.|
+
+### getStringWidth()
+
+This method returns the width in pixels of a provided String based on the current device font.
+
+```c++
+unsigned int getStringWidth(String text)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| text | `String` | The string used to determine width |
+| return value | `unsigned int` | The width of the provide string, as determined using the current font.|
+
+### getStringHeight()
+
+This method returns the height in pixels of a provided String based on the current device font.
+
+```c++
+unsigned int getStringHeight(String text)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| text | `String` | The string used to determine height |
+| return value | `unsigned int` | The height of the provide string, as determined using the current font.|
+
 ### setDrawMode()
 This method sets the current draw mode for the library. The draw mode determines how pixels are set on the screen during drawing operations. 
 

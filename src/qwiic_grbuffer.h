@@ -175,11 +175,14 @@ public:
     // Lifecycle
     virtual bool init(void);
 
-    // current font methods
+    // Font methods
     void init_font(void);
     void set_font(QwFont &font);
     void set_font(const QwFont *font);
     QwFont *get_font(void);
+
+    // Returns the size of a string - in pixels - using current font
+    bool get_string_size(const char *text, uint16_t &width, uint16_t &height);
 
     // Public Interface - Graphics interface
     void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = 1);

@@ -30,6 +30,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #define FONT_5X7_START        0
 #define FONT_5X7_NCHAR        255
 #define FONT_5X7_MAP_WIDTH    1275
+#define FONT_5X7_NAME         "5 x 7"
 
 // Standard ASCII 5x7 font
 #if defined(ARDUINO_ARCH_MBED)

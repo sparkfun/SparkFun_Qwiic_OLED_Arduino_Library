@@ -22,9 +22,6 @@
 
 #include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
 
-// Add in our font descriptor -- so we can center the text on the scren
-#include <res/qw_fnt_5x7.h>
-
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
 
@@ -56,13 +53,14 @@ void setup()
 
     String hello = "hello"; // our message
 
-    // Center our message on the screen. Use our Font Descriptor: QW_FONT_5X7, the default
-    // font of the system.
+    // Center our message on the screen. Get the screen size of the "hello" string,
+    // calling the getStringWidth() and getStringHeight() methods on the oled
 
-    // starting x position - width minus string length (font width * number of characters) / 2
-    int x0 = (myOLED.getWidth() - QW_FONT_5X7.width * hello.length()) / 2;
+    // starting x position - screen width minus string width  / 2
+    int x0 = (myOLED.getWidth() - myOLED.getStringWidth(hello)) / 2;
 
-    int y0 = (myOLED.getHeight() - QW_FONT_5X7.height) / 2;
+    // starting y position - screen height minus string height / 2 
+    int y0 = (myOLED.getHeight() - myOLED.getStringHeight(hello)) / 2;
 
     // Draw the text - color of black (0)
     myOLED.text(x0, y0, hello, 0);

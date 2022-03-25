@@ -65,7 +65,8 @@ public:
                                               FONT_31X48_HEIGHT,
                                               FONT_31X48_START, 
                                               FONT_31X48_NCHAR, 
-                                              FONT_31X48_MAP_WIDTH){}
+                                              FONT_31X48_MAP_WIDTH,
+                                              FONT_31X48_NAME){}
 
 };
 

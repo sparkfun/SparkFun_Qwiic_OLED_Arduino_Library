@@ -65,7 +65,8 @@ public:
                                                     FONT_LARGENUM_HEIGHT,
                                                     FONT_LARGENUM_START, 
                                                     FONT_LARGENUM_NCHAR, 
-                                                    FONT_LARGENUM_MAP_WIDTH){}
+                                                    FONT_LARGENUM_MAP_WIDTH,
+                                                    FONT_LARGENUM_NAME){}
 
 };
 
