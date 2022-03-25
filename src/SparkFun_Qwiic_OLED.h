@@ -403,6 +403,66 @@ public:
     }
 
     ///////////////////////////////////////////////////////////////////////
+    // getFontName()
+    //
+    // This method returns the name of the current font for the device.
+
+    String getFontName(void)
+    {
+        QwiicFont *pFont = _device.get_font();
+
+        if(!pFont)
+            return String("");
+
+        return String(pFont->name);
+    }
+    ///////////////////////////////////////////////////////////////////////
+    // getStringWidth()
+    //
+    // Returns the width of the provide string using the current font.
+    //
+    // Parameter    Description
+    // ---------    -----------------------------
+    //  text        The string used to determine width
+    //  retval      The width of the provide string, as determined using the current font.
+
+    unsigned int getStringWidth(String &text)
+    {
+        return getStringWidth(text.c_str());
+    }
+    unsigned int getStringWidth(const char *text)
+    {
+
+        uint16_t height, width;
+
+        return (_device.get_string_size(text, width, height) ? width : 0);
+
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    // getStringHeight()
+    //
+    // Returns the height of the provide string using the current font.
+    //
+    // Parameter    Description
+    // ---------    -----------------------------
+    //  text        The string used to determine height
+    //  retval      The height of the provide string, as determined using the current font.
+
+    unsigned int getStringHeight(String &text)
+    {
+        return getStringHeight(text.c_str());
+    }
+
+    unsigned int getStringHeight(const char *text)
+    {
+
+        uint16_t height, width;
+
+        return (_device.get_string_size(text, width, height) ? height : 0);
+
+    }
+    ///////////////////////////////////////////////////////////////////////
     // setDrawMode()
     //
     // This method sets the current draw mode for the library. The draw mode
@@ -700,7 +760,7 @@ public:
 
         QwiicFont *pFont = _device.get_font();
 
-        if (!pFont) // no Font?! No dice?
+        if (!pFont) // no Font?! No dice
             return 0;
 
         switch (theChar)

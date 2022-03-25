@@ -129,7 +129,7 @@ void setup()
     }
     Serial.println("Begin success");
 
-    yoffset = (myOLED.getHeight() - myOLED.getFont()->height) / 2;
+    yoffset = (myOLED.getHeight() - myOLED.getStringHeight("a")) / 2;
 
     delay(1000);
 }

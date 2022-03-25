@@ -65,7 +65,8 @@ public:
                                             FONT_8X16_HEIGHT,
                                             FONT_8X16_START, 
                                             FONT_8X16_NCHAR, 
-                                            FONT_8X16_MAP_WIDTH){}
+                                            FONT_8X16_MAP_WIDTH,
+                                            FONT_8X16_NAME){}
 
 };
 

@@ -65,7 +65,8 @@ public:
                                           FONT_5X7_HEIGHT,
                                           FONT_5X7_START, 
                                           FONT_5X7_NCHAR, 
-                                          FONT_5X7_MAP_WIDTH){}
+                                          FONT_5X7_MAP_WIDTH,
+                                          FONT_5X7_NAME){}
 
 };
 

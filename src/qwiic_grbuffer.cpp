@@ -163,7 +163,7 @@ bool QwGrBufferDevice::init(void)
     return init_draw_functions();
 }
 ////////////////////////////////////////////////////////////////////////////////////
-// Font things
+// Font related things
 ////////////////////////////////////////////////////////////////////////////////////
 // init_font()
 //
@@ -212,6 +212,36 @@ void QwGrBufferDevice::set_font(const QwFont *font)
         _currFont = (QwFont *)font;
     else if (!_currFont) // null passed, we have no default set - init font.
         init_font();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// get_string_size()
+//
+// Return the size (width, height) in pixels of the given string using the current font
+
+bool QwGrBufferDevice::get_string_size(const char *text, uint16_t &width, uint16_t &height)
+{
+
+    if(!_currFont) // no font?
+        init_font();
+
+    // no font, no text - no dice
+    if(!_currFont || !text)
+        return false; 
+
+    int sLen = strlen(text);
+
+    width = sLen * _currFont->width;
+
+    // The 5x7 font width is off by one - historical - was same in orig lib, which fonts
+    // are used. 
+    if(_currFont == &QW_FONT_5X7)
+        width += sLen;
+
+    height = (sLen  > 0 ? _currFont->height : 0 );
+
+    return true;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

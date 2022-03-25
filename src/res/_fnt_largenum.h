@@ -31,6 +31,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #define FONT_LARGENUM_START        48
 #define FONT_LARGENUM_NCHAR        11
 #define FONT_LARGENUM_MAP_WIDTH    132
+#define FONT_LARGENUM_NAME         "Large Number"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM

@@ -65,7 +65,8 @@ public:
                                                     FONT_7SEG_HEIGHT,
                                                     FONT_7SEG_START, 
                                                     FONT_7SEG_NCHAR, 
-                                                    FONT_7SEG_MAP_WIDTH){}
+                                                    FONT_7SEG_MAP_WIDTH,
+                                                    FONT_7SEG_NAME){}
 
 };
 

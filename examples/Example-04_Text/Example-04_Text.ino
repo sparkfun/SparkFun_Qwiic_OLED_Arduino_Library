@@ -52,7 +52,6 @@ int nFONTS = sizeof(demoFonts) / sizeof(demoFonts[0]);
 int iFont = 0;
 
 // Some vars for the title.
-int xTitle, yTitle;
 String strTitle = "<<Font>>";
 QwiicFont *pFntTitle = &QW_FONT_5X7;
 
@@ -72,24 +71,18 @@ void setup()
     }
     Serial.println("Begin success");
 
-    // Position to use for the time/banner displayed before each font
-
-    // starting x position - width minus string length (font width * number of characters) / 2
-    xTitle = (myOLED.getWidth() - (pFntTitle->width + 1) * strTitle.length()) / 2;
-
-    yTitle = (myOLED.getHeight() - pFntTitle->height) / 2;
 }
 
 void loop()
 {
-    // Write out a title
-    writeTitle();
-
-    delay(1000);
-
     // next font for display
     iFont = (iFont + 1) % nFONTS;
     myOLED.setFont(demoFonts[iFont]);
+
+    // Write font name to screen
+    writeTitle();
+
+    delay(1000);
 
     // Write out the full font char set
     writeFontChars();
@@ -101,16 +94,16 @@ void loop()
 void writeFontChars()
 {
     // get the font
-    QwiicFont *pFont = myOLED.getFont();
+    QwiicFont * currFont = myOLED.getFont();
 
     // how many chars can a screen handle? (x * y)
-    uint16_t screenChars = myOLED.getWidth() / (pFont->width + 1); // X
-    uint8_t nY = myOLED.getHeight() / pFont->height;               // Y
+    uint16_t screenChars = myOLED.getWidth() / (currFont->width + 1); // X
+    uint8_t nY = myOLED.getHeight() / currFont->height;               // Y
 
     screenChars *= (nY == 0 ? 1 : nY); // need at least 1 row
 
     // Loop over the characters in the font.
-    for (int i = 0; i < pFont->n_chars; i++)
+    for (int i = 0; i < currFont->n_chars; i++)
     {
 
         if (i % screenChars == 0)
@@ -122,7 +115,7 @@ void writeFontChars()
 
         // if the character is a carriage return, send a blank - otherwise the
         // write routine will perform a CR and lead to a confusing display.
-        myOLED.write((i + pFont->start != '\n') ? i + pFont->start : ' ');
+        myOLED.write((i + currFont->start != '\n') ? i + currFont->start : ' ');
 
         myOLED.display(); // show the added char
 
@@ -133,8 +126,27 @@ void writeFontChars()
 // Simple title for a font
 void writeTitle()
 {
+
+    // Get the current font name
+    String strTitle = myOLED.getFontName();
+
+    // save our current font, then switch to font for title
+    QwiicFont * currFont = myOLED.getFont();
+   
     // Set title font font
     myOLED.setFont(pFntTitle);
+
+    // Position to use for the time/banner displayed before each font
+
+    // Get the width of the title in screen size
+    int width = myOLED.getStringWidth(strTitle);
+
+    // if the string is wider than the screen, set x at 0, otherwise center text
+
+    int xTitle = (width >= myOLED.getWidth() ? 0 : (myOLED.getWidth() - width) / 2);
+
+    // starting y position - width minus string height / 2. No need to chech height, 5x7 font fits everything
+    int yTitle = (myOLED.getHeight() - myOLED.getStringHeight(strTitle)) / 2;
 
     myOLED.erase();
 
@@ -143,4 +155,6 @@ void writeTitle()
 
     // There's nothing on the screen yet - Now send the graphics to the device
     myOLED.display();
+
+    myOLED.setFont(currFont);
 }

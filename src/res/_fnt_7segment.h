@@ -31,6 +31,7 @@ https://github.com/emil01/SparkFun_Micro_OLED_Arduino_Library/
 #define FONT_7SEG_START        46
 #define FONT_7SEG_NCHAR        13
 #define FONT_7SEG_MAP_WIDTH    130
+#define FONT_7SEG_NAME         "7 Segment"
 
 #if defined(ARDUINO_ARCH_MBED)
 	// ARDUINO_ARCH_MBED (APOLLO3 v2) does not support or require pgmspace.h / PROGMEM
