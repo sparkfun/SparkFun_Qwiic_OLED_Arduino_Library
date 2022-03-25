@@ -19,7 +19,7 @@
    <td><a href="https://www.sparkfun.com/products/18996"><img src="https://cdn.sparkfun.com//assets/parts/1/8/5/7/8/18996-smo__l_Display__0.91_in__128x32_-01.jpg"></a></td>
   </tr>
   <tr align="center">
-    <td><a href="https://www.sparkfun.com/products/18442">SparkFun Micro OLED Breakout (Qwiic) (LCD-14532)</a></td>
+    <td><a href="https://www.sparkfun.com/products/14532">SparkFun Micro OLED Breakout (Qwiic) (LCD-14532)</a></td>
     <td><a href="https://www.sparkfun.com/products/17153">SparkFun Qwiic OLED Display (0.91 in, 128x32) (LCD-17153)</a></td>
     <td><a href="https://www.sparkfun.com/products/15173">SparkFun Transparent Graphical OLED Breakout (Qwiic) (LCD-15173)</a></td>
     <td><a href="https://www.sparkfun.com/products/18996">smôl OLED Display (0.91 in, 128x32) (SPX-18996)</a></td>
