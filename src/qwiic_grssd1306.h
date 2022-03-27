@@ -77,8 +77,7 @@
 //      - Black     - Set value to always be black
 //      - White     - set value to always be white
 
-typedef enum gr_op_funcs_
-{
+typedef enum gr_op_funcs_ {
     grROPCopy = 0,
     grROPNotCopy = 1,
     grROPNot = 2,
@@ -146,8 +145,7 @@ typedef enum gr_op_funcs_
 
 #define kMaxPageNumber 8
 
-typedef struct
-{
+typedef struct{
     int16_t xmin;
     int16_t xmax;
 } pageState_t;
@@ -156,8 +154,7 @@ typedef struct
 // QwGrSSD1306
 // A buffer graphics device to support the SSD1306 graphics hardware
 
-class QwGrSSD1306 : public QwGrBufferDevice
-{
+class QwGrSSD1306 : public QwGrBufferDevice {
 
 public:
     QwGrSSD1306();                            // default constructor - always called
@@ -183,12 +180,11 @@ public:
     // default address of the device - expect the sub to fill in.
     uint8_t default_address;
 
-    void set_raster_op(grRasterOp_t rop)
-    {
+    void set_raster_op(grRasterOp_t rop){
         _rop = rop;
     }
-    grRasterOp_t get_raster_op(void)
-    {
+
+    grRasterOp_t get_raster_op(void){
         return _rop;
     }
     // screen control

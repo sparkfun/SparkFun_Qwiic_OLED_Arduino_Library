@@ -82,8 +82,7 @@ typedef QwBitmap QwiicBitmap;
 // Define the template and fill in the interface methods in-line.
 
 template <typename SSD1306DeviceType>
-class QwiicOLEDBaseClass : public Print
-{ // NOTE: implementing Arduino Print
+class QwiicOLEDBaseClass : public Print { // NOTE: implementing Arduino Print
 private:
     // our device driver
     SSD1306DeviceType _device;
@@ -111,8 +110,7 @@ public:
     //  address     optional. I2C Address. If not provided, the default address is used.
     //  retval      true on success, false on startup failure
 
-    bool begin(TwoWire &wirePort = Wire, uint8_t address = kNoAddressSet)
-    {
+    bool begin(TwoWire &wirePort = Wire, uint8_t address = kNoAddressSet){
 
         // defaults for Arduino Print
         setCursor(0, 0);
@@ -129,8 +127,7 @@ public:
         // Want to start cursor at Y height of the current font, if we have a font.
         //
         // Get our font height ... a default font is set during init ...
-        if (bStatus)
-        {
+        if(bStatus){
             QwiicFont *pFont = _device.get_font();
             if (pFont)
                 _cursorY = pFont->height;
@@ -148,8 +145,7 @@ public:
     //  ---------   -----------------------------
     //  retval      The width in pixels of the connected OLED device
 
-    uint8_t getWidth(void)
-    {
+    uint8_t getWidth(void){
         return _device.get_width();
     }
 
@@ -162,8 +158,7 @@ public:
     //  ---------   -----------------------------
     //  retval      The height in pixels of the connected OLED device
 
-    uint8_t getHeight(void)
-    {
+    uint8_t getHeight(void){
         return _device.get_height();
     }
 
@@ -175,8 +170,7 @@ public:
     //
     // To display any graphics, this method must be called.
 
-    void display(void)
-    {
+    void display(void){
         _device.display();
     }
 
@@ -187,8 +181,7 @@ public:
     // The erase update isn't sent to the device until the next display() call
     // on the device.
 
-    void erase(void)
-    {
+    void erase(void){
         _device.erase();
     }
 
@@ -202,8 +195,7 @@ public:
     // ---------    -----------------------------
     // bInvert      true - the screen is inverted. false - the screen is set to normal
 
-    void invert(bool bInvert)
-    {
+    void invert(bool bInvert){
         _device.invert(bInvert);
     }
 
@@ -217,8 +209,7 @@ public:
     // ---------    -----------------------------
     // bFlip        true - the screen is flipped vertically. false - the screen is set to normal
 
-    void flipVertical(bool bFlip)
-    {
+    void flipVertical(bool bFlip){
         _device.flip_vert(bFlip);
     }
 
@@ -232,8 +223,7 @@ public:
     // ---------    -----------------------------
     // bFlip        true - the screen is flipped horizontally. false - the screen is set to normal
 
-    void flipHorizontal(bool bFlip)
-    {
+    void flipHorizontal(bool bFlip){
         _device.flip_horz(bFlip);
     }
 
@@ -243,8 +233,7 @@ public:
     // If the device is in a scrolling mode, calling this method stops the scroll,
     // and restores the device to normal display operation. This action is performed immediately.
 
-    void scrollStop(void)
-    {
+    void scrollStop(void){
         _device.scroll_stop();
     }
 
@@ -275,8 +264,7 @@ public:
     //  SCROLL_INTERVAL_128_FRAMES      128
     //  SCROLL_INTERVAL_256_FRAMES      256
 
-    void scrollRight(uint8_t start, uint8_t stop, uint8_t interval)
-    {
+    void scrollRight(uint8_t start, uint8_t stop, uint8_t interval){
         _device.scroll(SCROLL_RIGHT, start, stop, interval);
     }
 
@@ -294,8 +282,7 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval)
-    {
+    void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval){
         _device.scroll(SCROLL_VERT_RIGHT, start, stop, interval);
     }
 
@@ -313,8 +300,7 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
-    {
+    void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval){
         _device.scroll(SCROLL_LEFT, start, stop, interval);
     }
 
@@ -332,8 +318,7 @@ public:
     // stop         The stop/end page address of the scroll - valid values are 0 thru 7
     // interval     The time interval between scroll step - values listed in scrollRight()
 
-    void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval)
-    {
+    void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval){
         _device.scroll(SCROLL_VERT_LEFT, start, stop, interval);
     }
 
@@ -379,12 +364,10 @@ public:
     //     int myFontWidth = QW_FONT_31X48.width;
     //
 
-    void setFont(QwiicFont &theFont)
-    {
+    void setFont(QwiicFont &theFont){
         _device.set_font(theFont);
     }
-    void setFont(const QwiicFont *theFont)
-    {
+    void setFont(const QwiicFont *theFont){
         _device.set_font(theFont);
     }
 
@@ -397,8 +380,7 @@ public:
     // ---------    -----------------------------
     //  retval      A pointer to the current font. See setFont() for font object details.
 
-    QwiicFont *getFont(void)
-    {
+    QwiicFont *getFont(void){
         return _device.get_font();
     }
 
@@ -407,8 +389,7 @@ public:
     //
     // This method returns the name of the current font for the device.
 
-    String getFontName(void)
-    {
+    String getFontName(void){
         QwiicFont *pFont = _device.get_font();
 
         if(!pFont)
@@ -426,10 +407,10 @@ public:
     //  text        The string used to determine width
     //  retval      The width of the provide string, as determined using the current font.
 
-    unsigned int getStringWidth(String &text)
-    {
+    unsigned int getStringWidth(String &text){
         return getStringWidth(text.c_str());
     }
+
     unsigned int getStringWidth(const char *text)
     {
 
@@ -449,13 +430,11 @@ public:
     //  text        The string used to determine height
     //  retval      The height of the provide string, as determined using the current font.
 
-    unsigned int getStringHeight(String &text)
-    {
+    unsigned int getStringHeight(String &text){
         return getStringHeight(text.c_str());
     }
 
-    unsigned int getStringHeight(const char *text)
-    {
+    unsigned int getStringHeight(const char *text){
 
         uint16_t height, width;
 
@@ -484,8 +463,7 @@ public:
     //  grROPBlack      A value of 0, or black is drawn to the destination
     //  grROPWhite      A value of 1, or black is drawn to the destination
 
-    void setDrawMode(grRasterOp_t rop)
-    {
+    void setDrawMode(grRasterOp_t rop){
         _device.set_raster_op(rop);
     }
 
@@ -499,8 +477,7 @@ public:
     // ---------    -----------------------------
     //  retval      The current aster operation (ROP) of the graphics system.
 
-    grRasterOp_t getDrawMode(void)
-    {
+    grRasterOp_t getDrawMode(void){
         return _device.get_raster_op();
     }
 
@@ -518,8 +495,7 @@ public:
     //  y           The Y coordinate of the pixel to set
     //  clr         optional The color value to set the pixel. This defaults to white (1).
 
-    void pixel(uint8_t x, uint8_t y, uint8_t clr = COLOR_WHITE)
-    {
+    void pixel(uint8_t x, uint8_t y, uint8_t clr = COLOR_WHITE){
         _device.pixel(x, y, clr);
     }
 
@@ -539,8 +515,7 @@ public:
     // y1           The end Y coordinate of the line
     // clr          optional The color value to draw the line. This defaults to white (1).
 
-    void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = COLOR_WHITE)
-    {
+    void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = COLOR_WHITE){
         _device.line(x0, y0, x1, y1, clr);
     }
 
@@ -557,8 +532,7 @@ public:
     // height       The height of the rectangle
     // clr          optional The color value to draw the rectangle. This defaults to white (1).
 
-    void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE)
-    {
+    void rectangle(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE){
         _device.rectangle(x0, y0, width, height, clr);
     }
 
@@ -575,8 +549,7 @@ public:
     // height       The height of the rectangle
     // clr          optional The color value to draw the filled rectangle. This defaults to white (1).
 
-    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE)
-    {
+    void rectangleFill(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr = COLOR_WHITE){
         _device.rectangle_fill(x0, y0, width, height, clr);
     }
 
@@ -592,8 +565,7 @@ public:
     // radius       The radius of the circle
     // clr          optional The color value to draw the circle. This defaults to white (1).
 
-    void circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE)
-    {
+    void circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE) {
         _device.circle(x0, y0, radius, clr);
     }
 
@@ -609,8 +581,7 @@ public:
     // radius       The radius of the circle
     // clr          optional The color value to draw the circle. This defaults to white (1).
 
-    void circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE)
-    {
+    void circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr = COLOR_WHITE){
         _device.circle_fill(x0, y0, radius, clr);
     }
 
@@ -632,8 +603,7 @@ public:
     // bmp_height   The height of the bitmap
 
     void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-                uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height)
-    {
+                uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height){
         _device.bitmap(x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
     }
 
@@ -665,8 +635,7 @@ public:
     // y0           The Y coordinate to place the bitmap - upper left corner
     // bitmap       A bitmap object
 
-    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap &bitmap)
-    {
+    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap &bitmap){
         _device.bitmap(x0, y0, bitmap);
     }
 
@@ -682,13 +651,11 @@ public:
     // text         The string to draw on the screen
     // clr          optional The color value to draw the text. This defaults to white (1).
 
-    void text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr = COLOR_WHITE)
-    {
+    void text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr = COLOR_WHITE){
         _device.text(x0, y0, text, clr);
     }
 
-    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr = COLOR_WHITE)
-    {
+    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr = COLOR_WHITE){
 
         _device.text(x0, y0, text.c_str(), clr);
     }
@@ -709,10 +676,9 @@ public:
     // x            The X coordinate of the cursor
     // y            The Y coordinate of the cursor
 
-    void setCursor(uint8_t x, uint8_t y)
-    {
+    void setCursor(uint8_t x, uint8_t y){
 
-        if (x < 0 || x >= _device.get_width() || y < 0 || y >= _device.get_height())
+        if(x < 0 || x >= _device.get_width() || y < 0 || y >= _device.get_height())
             return;
 
         _cursorX = x;
@@ -729,8 +695,7 @@ public:
     // ---------    -----------------------------
     //  clr         The color to set. 0 = black, > 0 = white
 
-    void setColor(uint8_t clr)
-    {
+    void setColor(uint8_t clr){
         _color = (clr > 0 ? COLOR_WHITE : COLOR_BLACK);
     }
 
@@ -744,8 +709,7 @@ public:
     // ---------    -----------------------------
     //  retval      The current color. 0 = black, > 0 = white
 
-    uint8_t getColor(void)
-    {
+    uint8_t getColor(void){
         return _color;
     }
 
@@ -755,16 +719,14 @@ public:
     // For the Arduino Print interface
     //
 
-    virtual size_t write(uint8_t theChar)
-    {
+    virtual size_t write(uint8_t theChar){
 
         QwiicFont *pFont = _device.get_font();
 
-        if (!pFont) // no Font?! No dice
+        if(!pFont) // no Font?! No dice
             return 0;
 
-        switch (theChar)
-        {
+        switch (theChar){
         case '\n': // Carriage return
             _cursorX = 0;
             _cursorY += pFont->height;
@@ -777,14 +739,13 @@ public:
 
             _cursorX += pFont->width + 1;
 
-            if (_cursorX > _device.get_width() - pFont->width)
-            { // overflow
+            if(_cursorX > _device.get_width() - pFont->width){ // overflow
                 _cursorX = 0;
                 _cursorY += pFont->height;
             }
             break;
         }
-        if (_cursorY >= _device.get_height()) // check for overflow
+        if(_cursorY >= _device.get_height()) // check for overflow
             _cursorY = 0;
 
         return 1;
@@ -794,17 +755,14 @@ public:
 ///////////////////////////////////////////////////////////////////////
 // For our actual implementations - just subclass from the above Arduino template
 
-class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro>
-{
+class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro> {
     // nothing here - see above
 };
 
-class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow>
-{
+class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow> {
     // nothing here - see above
 };
 
-class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>
-{
+class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent> {
     // nothing here - see above
 };

@@ -56,8 +56,7 @@
 #include "res/qwiic_resdef.h"
 
 // RECT!
-struct QwRect
-{
+struct QwRect{
     uint16_t x;
     uint16_t y;
     uint16_t width;
@@ -91,8 +90,7 @@ extern const uint8_t byte_bits[8];
 //
 // Seperated out to enable easy vtable access and method dispatch short circuiting
 
-class _QwIDraw
-{
+class _QwIDraw {
 
     // Pixel Methods
     virtual void draw_pixel(uint8_t x, uint8_t y, uint8_t clr) {} // A subclass must implement this
@@ -125,8 +123,7 @@ typedef void (*QwDrawBitmapFn)(void *, uint8_t, uint8_t, uint8_t, uint8_t, uint8
 typedef void (*QwDrawTextFn)(void *, uint8_t, uint8_t, const char *, uint8_t);
 
 // Define the vtable struct for IDraw
-struct _QwIDraw_vtable
-{
+struct _QwIDraw_vtable {
     QwDrawPntFn draw_pixel;
     QwDrawTwoPntFn draw_line;
     QwDrawTwoPntFn draw_line_horz;
@@ -152,14 +149,12 @@ public:
     // Constructors
     QwGrBufferDevice() : _currFont{nullptr} {};
     QwGrBufferDevice(uint8_t width, uint8_t height) : QwGrBufferDevice(0, 0, width, height){};
-    QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height)
-    {
+    QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
         set_viewport(x0, y0, width, height);
     };
 
     // Buffer location on the device
-    void set_viewport(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height)
-    {
+    void set_viewport(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height){
         _viewport.x = x0;
         _viewport.y = y0;
         _viewport.width = width;

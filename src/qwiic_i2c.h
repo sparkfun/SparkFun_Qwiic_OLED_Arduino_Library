@@ -55,8 +55,7 @@
 
 #include <Wire.h>
 
-class QwI2C
-{
+class QwI2C{
 
 public:
     QwI2C(void);

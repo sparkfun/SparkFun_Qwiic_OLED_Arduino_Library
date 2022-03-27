@@ -62,19 +62,16 @@
 
 #define kOLEDNarrowDefaultAddress 0x3C
 
-class QwOLEDNarrow : public QwGrSSD1306
-{
+class QwOLEDNarrow : public QwGrSSD1306{
 
 public:
     // Constructor - setup the viewport and default address for this device.
-    QwOLEDNarrow() : QwGrSSD1306(kOLEDNarrowWidth, kOLEDNarrowHeight)
-    {
+    QwOLEDNarrow() : QwGrSSD1306(kOLEDNarrowWidth, kOLEDNarrowHeight){
         default_address = kOLEDNarrowDefaultAddress;
     };
 
     // set up the specific values
-    bool init(void)
-    {
+    bool init(void){
 
         set_buffer(_graphicsBuffer);
 

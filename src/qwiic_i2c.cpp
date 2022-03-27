@@ -71,8 +71,7 @@ const static uint16_t kChunkSize = kMaxTransferBuffer - 1;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 
-QwI2C::QwI2C(void)
-{
+QwI2C::QwI2C(void){
 
     _i2cPort = nullptr;
 }
@@ -82,25 +81,21 @@ QwI2C::QwI2C(void)
 // Methods to init/setup this device. The caller can provide a Wire Port, or this class
 // will use the default
 
-bool QwI2C::init(TwoWire &wirePort)
-{
+bool QwI2C::init(TwoWire &wirePort){
 
     // if we don't have a wire port already
-    if (!_i2cPort)
-    {
+    if(!_i2cPort)
         _i2cPort = &wirePort;
-    }
 
     return true;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-bool QwI2C::init(void)
-{
+bool QwI2C::init(void){
 
     // do we already have a wire port?
-    if (!_i2cPort)
+    if(!_i2cPort)
         return init(Wire); // no wire, send in Wire
 
     return true;
@@ -110,8 +105,7 @@ bool QwI2C::init(void)
 // ping()
 //
 // Is a device connected?
-bool QwI2C::ping(uint8_t i2c_address)
-{
+bool QwI2C::ping(uint8_t i2c_address){
 
     _i2cPort->beginTransmission(i2c_address);
     return _i2cPort->endTransmission() == 0;
@@ -122,8 +116,7 @@ bool QwI2C::ping(uint8_t i2c_address)
 //
 // Write a byte to a register
 
-bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataToWrite)
-{
+bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataToWrite){
 
     _i2cPort->beginTransmission(i2c_address);
     _i2cPort->write(offset);
@@ -135,15 +128,13 @@ bool QwI2C::writeRegisterByte(uint8_t i2c_address, uint8_t offset, uint8_t dataT
 //
 // Write a block of data to a device. This routine will chunk over the data if needed
 
-int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length)
-{
+int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *data, uint16_t length){
 
     uint16_t nSent;
     uint16_t nRemaining = length;
     uint16_t nToWrite;
 
-    while (nRemaining > 0)
-    {
+    while(nRemaining > 0){
 
         _i2cPort->beginTransmission(i2c_address);
         _i2cPort->write(offset);
@@ -155,7 +146,7 @@ int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *dat
         data += nSent;          // move up to remaining data in buffer
 
         // only release bus if we've sent all data
-        if (_i2cPort->endTransmission(nRemaining <= 0))
+        if(_i2cPort->endTransmission(nRemaining <= 0))
             return -1; // the client didn't ACK
     }
 

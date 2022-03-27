@@ -71,14 +71,12 @@ class QwOLEDTransparent : public QwGrSSD1306
 
 public:
     // Constructor - setup the viewport and default address for this device.
-    QwOLEDTransparent() : QwGrSSD1306(kOLEDTransXOffset, kOLEDTransYOffset, kOLEDTransWidth, kOLEDTransHeight)
-    {
+    QwOLEDTransparent() : QwGrSSD1306(kOLEDTransXOffset, kOLEDTransYOffset, kOLEDTransWidth, kOLEDTransHeight){
         default_address = kOLEDTransDefaultAddress;
     };
 
     // set up the specific device settings
-    bool init(void)
-    {
+    bool init(void){
 
         set_buffer(_graphicsBuffer); // The buffer to use
 
