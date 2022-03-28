@@ -241,31 +241,8 @@ bool QwGrSSD1306::init(void)
     if(!this->QwGrBufferDevice::init())
         return false; // something isn't right
 
-    // Start the device setup - sending commands to device. See command defs in header, and
-    // device datasheet
-    send_dev_command(kCmdDisplayOff);
-
-    send_dev_command(kCmdSetDisplayClockDiv, 0x80);
-    send_dev_command(kCmdSetMultiplex, _viewport.height - 1);
-    send_dev_command(kCmdSetDisplayOffset, 0x0);
-
-    send_dev_command(kCmdSetStartLine | 0x0);
-    send_dev_command(kCmdChargePump, 0x14);
-    send_dev_command(kCmdMemoryMode, 0b10); // Page Addressing mode - see data sheet
-
-    send_dev_command(kCmdNormalDisplay);
-    send_dev_command(kCmdDisplayAllOnResume);
-    send_dev_command(kCmdSegRemap | 0x1);
-
-    send_dev_command(kCmdComScanDec);
-    send_dev_command(kCmdSetComPins, _initHWComPins);
-    send_dev_command(kCmdSetContrast, _initContrast);
-
-    send_dev_command(kCmdSetPreCharge, _initPreCharge);
-    send_dev_command(kCmdSetVComDeselect, _initVCOMDeselect);
-    send_dev_command(kCmdDeactivateScroll);
-
-    send_dev_command(kCmdDisplayOn);
+    // setup the oled device
+    setup_oled_device();
 
     // Finish up setting up this object
 
@@ -276,6 +253,33 @@ bool QwGrSSD1306::init(void)
     init_buffers();
 
     _isInit = true; // we're ready to rock
+
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// reset()
+//
+// Return the OLED system to its initial state
+//
+// Returns true on success, false on failure
+
+bool QwGrSSD1306::reset(void){
+
+    // If we are not in an init state, just call init
+    if(!_isInit)
+        return init();
+
+    // is the device connected?
+    if(!_i2cBus->ping(_i2c_address))
+        return false;
+
+    // setup oled
+    setup_oled_device();
+
+    // Init internal/drawing buffers and device screen buffer
+
+    init_buffers();
 
     return true;
 }
@@ -310,6 +314,41 @@ void QwGrSSD1306::set_contrast(uint8_t contrast){
         send_dev_command(kCmdSetContrast, contrast);
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+// setup_oled_device()
+//
+// Method sends the init/setup commands to the OLED device, placing 
+// it in a state for use by this driver/library.
+
+void QwGrSSD1306::setup_oled_device(void){
+
+    // Start the device setup - sending commands to device. See command defs in header, and
+    // device datasheet
+    send_dev_command(kCmdDisplayOff);
+
+    send_dev_command(kCmdSetDisplayClockDiv, 0x80);
+    send_dev_command(kCmdSetMultiplex, _viewport.height - 1);
+    send_dev_command(kCmdSetDisplayOffset, 0x0);
+
+    send_dev_command(kCmdSetStartLine | 0x0);
+    send_dev_command(kCmdChargePump, 0x14);
+    send_dev_command(kCmdMemoryMode, 0b10); // Page Addressing mode - see data sheet
+
+    send_dev_command(kCmdNormalDisplay);
+    send_dev_command(kCmdDisplayAllOnResume);
+    send_dev_command(kCmdSegRemap | 0x1);
+
+    send_dev_command(kCmdComScanDec);
+    send_dev_command(kCmdSetComPins, _initHWComPins);
+    send_dev_command(kCmdSetContrast, _initContrast);
+
+    send_dev_command(kCmdSetPreCharge, _initPreCharge);
+    send_dev_command(kCmdSetVComDeselect, _initVCOMDeselect);
+    send_dev_command(kCmdDeactivateScroll);
+
+    send_dev_command(kCmdDisplayOn);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // set_comm_bus()
 //
@@ -508,6 +547,19 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint
     send_dev_command(kCmdActivateScroll);
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+// display_power()
+//
+// Used to set the power of the screen.
+
+void QwGrSSD1306::display_power(bool enable){
+
+
+    if(!_isInit)
+        return;
+
+    send_dev_command( (enable ? kCmdDisplayOn : kCmdDisplayOff));
+}
 ////////////////////////////////////////////////////////////////////////////////////
 // Drawing Methods
 ////////////////////////////////////////////////////////////////////////////////////

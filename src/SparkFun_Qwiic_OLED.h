@@ -163,6 +163,16 @@ public:
     }
 
     ///////////////////////////////////////////////////////////////////////
+    // reset()
+    //
+    // When called, the system and OLED are reset back to an initial state
+    //
+
+    void reset(void){
+        _device.reset();
+    }
+
+    ///////////////////////////////////////////////////////////////////////
     // display()
     //
     // When called, any pending display updates are sent to the connected OLED
@@ -322,6 +332,21 @@ public:
         _device.scroll(SCROLL_VERT_LEFT, start, stop, interval);
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    // displayPower()
+    //
+    // Used to turn the OLED display on an off. 
+    //
+    // Default value is on.
+    //
+    // Parameter    Description
+    // ---------    -----------------------------
+    // enable       Turn the display on or off - default is on
+
+    void displayPower(bool enable=true){
+
+        _device.display_power(enable);
+    }
     ///////////////////////////////////////////////////////////////////////
     // setFont()
     //

@@ -167,6 +167,7 @@ public:
     // Device setup
     virtual bool init(void);
     bool is_initialized(void) { return _isInit; };
+    bool reset(void);
 
     // method to set the communication bus this object should use
     void set_comm_bus(QwI2C &theBus, uint8_t id_bus);
@@ -195,6 +196,8 @@ public:
     // screen scrolling
     void scroll_stop(void);
     void scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval = SCROLL_INTERVAL_2_FRAMES);
+
+    void display_power(bool enable=true);
 
 protected:
     // Subclasses of this class define the specifics of the device, including size.
@@ -231,6 +234,7 @@ private:
     void init_buffers(void); // clear graphics and screen buffer
     void clear_screen_buffer(void);
     void resend_graphics(void);
+    void setup_oled_device(void);
 
     // device communication methods
     void send_dev_command(uint8_t command);
