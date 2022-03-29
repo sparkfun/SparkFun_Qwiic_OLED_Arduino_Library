@@ -2,6 +2,8 @@
 
 Methods to setup the device, get device information and change display options.
 
+## Initialization
+
 ### begin()
 This method is called to initialize the OLED library and connection to the OLED device. This method must be called before calling any graphics methods. 
 
@@ -14,6 +16,18 @@ bool begin(TwoWire &wirePort, uint8_t address)
 | `wirePort` | `TwoWire` | **optional**. The Wire port. If not provided, the default port is used|
 | `address` | `uint8_t` | **optional**. I2C Address. If not provided, the default address is used.|
 | return value | `bool` | ```true``` on success, ```false``` on startup failure |
+
+### reset()
+When called, this method reset the library state and OLED device to their intial state. Helpful to reset the OLED after waking up a system from a sleep state.
+
+```C++ 
+void reset()
+```
+
+| Parameter | Type | Description |
+| :------------ | :---------- | :---------------------------------------------- |
+| return value | `bool` | ```true``` on success, ```false``` on startup failure |
+
 
 ## Geometry
 
@@ -73,3 +87,15 @@ void flipHorizontal(bool bFlip)
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | ```bFlip``` | `bool` | ```true``` - the screen is flipped horizontally. ```false``` - the screen is set to normal |
+
+### displayPower()
+Used to turn the OLED display on or off. 
+
+```c++
+void displayPower(bool bEnable)
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| ```bEnable``` | `bool` | ```true``` - the OLED display is powered on (default). ```false``` - the OLED dsiplay is powered off. |
+
