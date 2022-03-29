@@ -167,9 +167,12 @@ public:
     //
     // When called, the system and OLED are reset back to an initial state
     //
+    //  Parameter   Description
+    //  ---------   -----------------------------    
+    //  retval      true on success, false on  failure    
 
-    void reset(void){
-        _device.reset();
+    bool reset(void){
+        return _device.reset();
     }
 
     ///////////////////////////////////////////////////////////////////////
