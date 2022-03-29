@@ -18,9 +18,11 @@ grRasterOp_t	KEYWORD1
 #######################################
 
 begin	KEYWORD2
+reset	KEYWORD2
 getWidth	KEYWORD2
 getHeight	KEYWORD2
 display	KEYWORD2
+displayPower	KEYWORD2
 erase	KEYWORD2
 invert	KEYWORD2
 scrollRight	KEYWORD2
