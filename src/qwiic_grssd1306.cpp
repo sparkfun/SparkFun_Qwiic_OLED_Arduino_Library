@@ -356,10 +356,6 @@ void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
     if(clearDisplay)    
         sendDevCommand(kCmdDisplayOff);
 
-    send_dev_command(kCmdSetDisplayClockDiv, 0x80);
-    send_dev_command(kCmdSetMultiplex, _viewport.height - 1);
-    send_dev_command(kCmdSetDisplayOffset, 0x0);
-
     sendDevCommand(kCmdSetDisplayClockDiv, 0x80);
     sendDevCommand(kCmdSetMultiplex, m_viewport.height - 1);
     sendDevCommand(kCmdSetDisplayOffset, 0x0);
