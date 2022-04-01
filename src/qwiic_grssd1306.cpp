@@ -291,7 +291,7 @@ bool QwGrSSD1306::init(void)
 //
 // Returns true on success, false on failure
 
-bool QwGrSSD1306::reset(void)
+bool QwGrSSD1306::reset(bool clearDisplay)
 {
     // If we are not in an init state, just call init
     if (!m_isInitialized)
@@ -302,11 +302,11 @@ bool QwGrSSD1306::reset(void)
         return false;
 
     // setup oled
-    setupOLEDDevice();
+    setupOLEDDevice(clearDisplay);
 
     // Init internal/drawing buffers and device screen buffer
-
-    initBuffers();
+    if(clearDisplay)
+        initBuffers();
 
     return true;
 }
@@ -349,11 +349,16 @@ void QwGrSSD1306::setContrast(uint8_t contrast)
 // Method sends the init/setup commands to the OLED device, placing
 // it in a state for use by this driver/library.
 
-void QwGrSSD1306::setupOLEDDevice(void)
+void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
 {
     // Start the device setup - sending commands to device. See command defs in
     // header, and device datasheet
-    sendDevCommand(kCmdDisplayOff);
+    if(clearDisplay)    
+        sendDevCommand(kCmdDisplayOff);
+
+    send_dev_command(kCmdSetDisplayClockDiv, 0x80);
+    send_dev_command(kCmdSetMultiplex, _viewport.height - 1);
+    send_dev_command(kCmdSetDisplayOffset, 0x0);
 
     sendDevCommand(kCmdSetDisplayClockDiv, 0x80);
     sendDevCommand(kCmdSetMultiplex, m_viewport.height - 1);
@@ -375,7 +380,8 @@ void QwGrSSD1306::setupOLEDDevice(void)
     sendDevCommand(kCmdSetVComDeselect, m_initVCOMDeselect);
     sendDevCommand(kCmdDeactivateScroll);
 
-    sendDevCommand(kCmdDisplayOn);
+    if(clearDisplay)
+        sendDevCommand(kCmdDisplayOn);
 }
 ////////////////////////////////////////////////////////////////////////////////////
 // setCommBus()

@@ -166,8 +166,9 @@ public:
 
     // Device setup
     virtual bool init(void);
+
     bool isInitialized(void) { return m_isInitialized; };
-    bool reset(void);
+    bool reset(bool clearDisplay = true);
 
     // method to set the communication bus this object should use
     void setCommBus(QwI2C& theBus, uint8_t id_bus);
@@ -236,7 +237,7 @@ private:
     void initBuffers(void); // clear graphics and screen buffer
     void clearScreenBuffer(void);
     void resendGraphics(void);
-    void setupOLEDDevice(void);
+    void setupOLEDDevice(bool clearDisplay = true);
 
     // device communication methods
     void sendDevCommand(uint8_t command);

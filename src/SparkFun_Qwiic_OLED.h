@@ -172,11 +172,12 @@ public:
     //
     //  Parameter   Description
     //  ---------   -----------------------------
+    //  clearDisplay true - clear the internal buffers during reset    
     //  retval      true on success, false on  failure
 
-    bool reset(void)
+    bool reset(bool clearDisplay)
     {
-        return m_device.reset();
+        return m_device.reset(clearDisplay);
     }
 
     ///////////////////////////////////////////////////////////////////////
