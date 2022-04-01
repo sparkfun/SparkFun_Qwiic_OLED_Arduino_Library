@@ -1,5 +1,5 @@
 // qwiic_resdef.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -43,17 +43,14 @@
 //    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
-
 //
 // Define resource objects/structures to manage fonts and bitmaps
 
 //
 #pragma once
 
-// NOTE: The way I'm including the font/resource defines, some platforms have 
-//       include file issues 
+// NOTE: The way I'm including the font/resource defines, some platforms have
+//       include file issues
 
 #include "qw_pgm_arduino.h"
 
@@ -61,10 +58,10 @@
 
 ////////////////////////////////////////////////////////////////////////
 // Notes  Template singletons for managing resources
-////////////////////////////////////////////////////////////////////////        
+////////////////////////////////////////////////////////////////////////
 //
-// The common use/storage of bitmap and font data is creating a static 
-// array and placing it in a header file. 
+// The common use/storage of bitmap and font data is creating a static
+// array and placing it in a header file.
 //
 // This pattern is fine for simple uses, where the bitmap is only included
 // in a single file. BUT if the bitmap header is included in multiple files,
@@ -82,15 +79,15 @@
 //          - attributes as public instance vars
 //          - Define a constructor that init's the instance vars
 //          - Resource data access via virtual accessor - make it const
-//          
-//      - Create a template that subclasses the resource class, and defines a singleton 
+//
+//      - Create a template that subclasses the resource class, and defines a singleton
 //          - It ensures only once of these classes is ever created.
 //
 //      - In a seperate header file - one for each resource, define the resource
 //          - For example - for a bitmap - the data array, #defines for width and height
 //          - The data array is declard as const static
 //
-//      - In another header file - create a subclass of our singleton 
+//      - In another header file - create a subclass of our singleton
 //          ex:
 //            class QwBMPTruck final : public bitmapSingleton<QwBMPTruck> {
 //
@@ -113,7 +110,7 @@
 //              method of the singleton, getting access to the object that contains the data of the resource
 //              ex:
 //                  #define QW_BMP_TRUCK QwBMPTruck::instance()
-//              
+//
 //              To the user, they just have a bitmap, referenced as QW_BMP_TRUCK and can do the following
 //                  ex:
 //                      uint8_t width = QW_BMP_TRUCK.width;
@@ -123,74 +120,86 @@
 //                  ex:
 //                      const uint8_t * pData = QW_BMP_TRUCK.data();
 //
-//  It shoulds complicated - it isn't. Just look at examples in ths folder and copy when 
+//  It shoulds complicated - it isn't. Just look at examples in ths folder and copy when
 //  adding new resources.
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Simple Bitmap class definition
 
-class QwBitmap{
+class QwBitmap {
 
 public:
-    uint8_t           width;
-    uint8_t           height;
-    virtual const uint8_t * data(void){return nullptr;};    
+    uint8_t width;
+    uint8_t height;
+    virtual const uint8_t* data(void) { return nullptr; };
 
 protected:
-    QwBitmap(uint8_t w, uint8_t h): width{w}, height{h}{}
+    QwBitmap(uint8_t w, uint8_t h)
+        : width { w }
+        , height { h }
+    {
+    }
 };
 
 // Template that creates a singleton for bitmaps.
-template<typename T>
+template <typename T>
 class bmpSingleton : public QwBitmap {
 public:
-    static T& instance(void){
+    static T& instance(void)
+    {
         static T instance;
         return instance;
     }
 
     bmpSingleton(const bmpSingleton&) = delete;
-    bmpSingleton& operator= (const bmpSingleton) = delete;
+    bmpSingleton& operator=(const bmpSingleton) = delete;
 
 protected:
-    bmpSingleton() {}
+    bmpSingleton() { }
     using QwBitmap::QwBitmap; // inherit contructor
-};      
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Font things - class to hold font attributes
 
-class QwFont{
+class QwFont {
 
 public:
-    uint8_t           width;
-    uint8_t           height;
-    uint8_t           start;
-    uint8_t           n_chars;
-    uint16_t          map_width;
-    const char      * name;
+    uint8_t width;
+    uint8_t height;
+    uint8_t start;
+    uint8_t n_chars;
+    uint16_t map_width;
+    const char* name;
 
-    virtual const uint8_t * data(void){return nullptr;};
+    virtual const uint8_t* data(void) { return nullptr; };
 
 protected:
-    QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w, const char *f_name):
-            width{w}, height{h}, start{st_chr}, n_chars{n_chr}, map_width{m_w}, name{f_name}{}
+    QwFont(uint8_t w, uint8_t h, uint8_t st_chr, uint8_t n_chr, uint16_t m_w, const char* f_name)
+        : width { w }
+        , height { h }
+        , start { st_chr }
+        , n_chars { n_chr }
+        , map_width { m_w }
+        , name { f_name }
+    {
+    }
 };
 
-
 // Template that creates a singleton for bitmaps.
-template<typename T>
+template <typename T>
 class fontSingleton : public QwFont {
 public:
-    static T& instance(void){
+    static T& instance(void)
+    {
         static T instance;
         return instance;
     }
 
     fontSingleton(const fontSingleton&) = delete;
-    fontSingleton& operator= (const fontSingleton) = delete;
+    fontSingleton& operator=(const fontSingleton) = delete;
 
 protected:
-    fontSingleton() {}
+    fontSingleton() { }
     using QwFont::QwFont; // inherit constructor
-};      
+};

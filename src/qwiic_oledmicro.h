@@ -67,22 +67,24 @@
 #define kOLEDMicroDefaultAddress 0x3D
 #define kOLEDMicroAltAddress 0x3C
 
-class QwOLEDMicro : public QwGrSSD1306{
+class QwOLEDMicro : public QwGrSSD1306 {
 
 public:
     // Constructor - setup the viewport and default address for this device.
-    QwOLEDMicro() : QwGrSSD1306(kOLEDMicroXOffset, kOLEDMicroYOffset, kOLEDMicroWidth, kOLEDMicroHeight){
+    QwOLEDMicro()
+        : QwGrSSD1306(kOLEDMicroXOffset, kOLEDMicroYOffset, kOLEDMicroWidth, kOLEDMicroHeight)
+    {
         default_address = kOLEDMicroDefaultAddress;
     };
 
     // set up the specific device settings
-    bool init(void){
+    bool init(void)
+    {
+        setBuffer(m_graphicsBuffer); // The buffer to use
 
-        set_buffer(_graphicsBuffer); // The buffer to use
-
-        set_comm_pins(kOLEDMicroPinConfig);
-        set_pre_charge(kOLEDMicroPreCharge);
-        set_vcom_deselect(kOLEDMicroVCOM);
+        setCommPins(kOLEDMicroPinConfig);
+        setPreCharge(kOLEDMicroPreCharge);
+        setVcomDeselect(kOLEDMicroVCOM);
 
         // Call the super class to do all the work
         return this->QwGrSSD1306::init();
@@ -90,5 +92,5 @@ public:
 
 private:
     // Graphics buffer for this device.
-    uint8_t _graphicsBuffer[kOLEDMicroWidth * kOLEDMicroHeight / 8];
+    uint8_t m_graphicsBuffer[kOLEDMicroWidth * kOLEDMicroHeight / 8];
 };

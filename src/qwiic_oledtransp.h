@@ -66,23 +66,25 @@
 
 #define kOLEDTransDefaultAddress 0x3C
 
-class QwOLEDTransparent : public QwGrSSD1306
-{
+class QwOLEDTransparent : public QwGrSSD1306 {
 
 public:
     // Constructor - setup the viewport and default address for this device.
-    QwOLEDTransparent() : QwGrSSD1306(kOLEDTransXOffset, kOLEDTransYOffset, kOLEDTransWidth, kOLEDTransHeight){
+    QwOLEDTransparent()
+        : QwGrSSD1306(kOLEDTransXOffset, kOLEDTransYOffset, kOLEDTransWidth, kOLEDTransHeight)
+    {
         default_address = kOLEDTransDefaultAddress;
     };
 
     // set up the specific device settings
-    bool init(void){
+    bool init(void)
+    {
 
-        set_buffer(_graphicsBuffer); // The buffer to use
+        setBuffer(m_graphicsBuffer); // The buffer to use
 
-        set_comm_pins(kOLEDTransPinConfig);
-        set_pre_charge(kOLEDTransPreCharge);
-        set_vcom_deselect(kOLEDTransVCOM);
+        setCommPins(kOLEDTransPinConfig);
+        setPreCharge(kOLEDTransPreCharge);
+        setVcomDeselect(kOLEDTransVCOM);
 
         // Call the super class to do all the work
         return this->QwGrSSD1306::init();
@@ -90,5 +92,5 @@ public:
 
 private:
     // Graphics buffer for this device.
-    uint8_t _graphicsBuffer[kOLEDTransWidth * kOLEDTransHeight / 8];
+    uint8_t m_graphicsBuffer[kOLEDTransWidth * kOLEDTransHeight / 8];
 };

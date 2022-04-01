@@ -1,5 +1,5 @@
 // qw_fnt_largenum.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -45,29 +45,30 @@
 
 #pragma once
 
-
 #include "qwiic_resdef.h"
 
 class QwFontLargeNum final : public fontSingleton<QwFontLargeNum> {
 
 public:
-    const uint8_t * data(void){
-
+    const uint8_t* data(void)
+    {
         // include font data (static const), and attribute defines.
         // Doing this here makes the data variable a static (aka only one instance ever)
-        // variable in this method. 
+        // variable in this method.
 #include "_fnt_largenum.h"
 
         return fontlargenum_data;
     }
 
-    QwFontLargeNum(): fontSingleton<QwFontLargeNum>(FONT_LARGENUM_WIDTH, 
-                                                    FONT_LARGENUM_HEIGHT,
-                                                    FONT_LARGENUM_START, 
-                                                    FONT_LARGENUM_NCHAR, 
-                                                    FONT_LARGENUM_MAP_WIDTH,
-                                                    FONT_LARGENUM_NAME){}
-
+    QwFontLargeNum()
+        : fontSingleton<QwFontLargeNum>(FONT_LARGENUM_WIDTH,
+            FONT_LARGENUM_HEIGHT,
+            FONT_LARGENUM_START,
+            FONT_LARGENUM_NCHAR,
+            FONT_LARGENUM_MAP_WIDTH,
+            FONT_LARGENUM_NAME)
+    {
+    }
 };
 
 #define QW_FONT_LARGENUM QwFontLargeNum::instance()

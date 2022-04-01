@@ -1,5 +1,5 @@
 // qw_fnt_7segment.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -45,29 +45,30 @@
 
 #pragma once
 
-
 #include "qwiic_resdef.h"
 
 class QwFont7Segment final : public fontSingleton<QwFont7Segment> {
 
 public:
-    const uint8_t * data(void){
-
+    const uint8_t* data(void)
+    {
         // include font data (static const), and attribute defines.
         // Doing this here makes the data variable a static (aka only one instance ever)
-        // variable in this method. 
+        // variable in this method.
 #include "_fnt_7segment.h"
 
         return segment7_data;
     }
 
-    QwFont7Segment(): fontSingleton<QwFont7Segment>(FONT_7SEG_WIDTH, 
-                                                    FONT_7SEG_HEIGHT,
-                                                    FONT_7SEG_START, 
-                                                    FONT_7SEG_NCHAR, 
-                                                    FONT_7SEG_MAP_WIDTH,
-                                                    FONT_7SEG_NAME){}
-
+    QwFont7Segment()
+        : fontSingleton<QwFont7Segment>(FONT_7SEG_WIDTH,
+            FONT_7SEG_HEIGHT,
+            FONT_7SEG_START,
+            FONT_7SEG_NCHAR,
+            FONT_7SEG_MAP_WIDTH,
+            FONT_7SEG_NAME)
+    {
+    }
 };
 
 #define QW_FONT_7SEGMENT QwFont7Segment::instance()
