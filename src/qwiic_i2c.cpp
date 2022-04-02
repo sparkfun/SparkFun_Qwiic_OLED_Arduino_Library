@@ -146,7 +146,7 @@ int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t *dat
         data += nSent;          // move up to remaining data in buffer
 
         // only release bus if we've sent all data
-        if(_i2cPort->endTransmission(nRemaining <= 0))
+        if(_i2cPort->endTransmission())
             return -1; // the client didn't ACK
     }
 
