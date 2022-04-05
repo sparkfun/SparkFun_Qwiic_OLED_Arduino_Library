@@ -145,7 +145,7 @@ typedef enum gr_op_funcs_ {
 
 #define kMaxPageNumber 8
 
-typedef struct{
+typedef struct {
     int16_t xmin;
     int16_t xmax;
 } pageState_t;
@@ -157,7 +157,7 @@ typedef struct{
 class QwGrSSD1306 : public QwGrBufferDevice {
 
 public:
-    QwGrSSD1306();                            // default constructor - always called
+    QwGrSSD1306(); // default constructor - always called
     using QwGrBufferDevice::QwGrBufferDevice; // inherit constructors
 
     // Public draw methods
@@ -166,105 +166,108 @@ public:
 
     // Device setup
     virtual bool init(void);
-    bool is_initialized(void) { return _isInit; };
+
+    bool isInitialized(void) { return m_isInitialized; };
     bool reset(bool clearDisplay = true);
 
     // method to set the communication bus this object should use
-    void set_comm_bus(QwI2C &theBus, uint8_t id_bus);
+    void setCommBus(QwI2C& theBus, uint8_t id_bus);
 
     // Set the current color/pixel write operation
-    void set_color(uint8_t color);
+    void setColor(uint8_t color);
 
     // Settings/operational methods
-    void set_contrast(uint8_t);
+    void setContrast(uint8_t);
 
     // default address of the device - expect the sub to fill in.
     uint8_t default_address;
 
-    void set_raster_op(grRasterOp_t rop){
-        _rop = rop;
+    void setRasterOp(grRasterOp_t rop)
+    {
+        m_rop = rop;
     }
 
-    grRasterOp_t get_raster_op(void){
-        return _rop;
+    grRasterOp_t rasterOp(void)
+    {
+        return m_rop;
     }
     // screen control
     void invert(bool);
-    void flip_vert(bool);
-    void flip_horz(bool);
+    void flipVert(bool);
+    void flipHorz(bool);
 
     // screen scrolling
-    void scroll_stop(void);
+    void stopScroll(void);
     void scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval = SCROLL_INTERVAL_2_FRAMES);
 
-    void display_power(bool enable=true);
+    void displayPower(bool enable = true);
 
 protected:
     // Subclasses of this class define the specifics of the device, including size.
     // Subclass needs to define the graphics buffer array - stack based - and pass in
-    void set_buffer(uint8_t *pBuffer);
+    void setBuffer(uint8_t* pBuffer);
 
     ///////////////////////////////////////////////////////////////////////////
     // Internal, fast draw routines - this are used in the overall
     // draw interface (_QwIDraw) for this object/device/system.
     //
     // >> Pixels <<
-    void draw_pixel(uint8_t x, uint8_t y, uint8_t clr);
+    void drawPixel(uint8_t x, uint8_t y, uint8_t clr);
 
     // >> Fast Lines <<
-    void draw_line_horz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
-    void draw_line_vert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
+    void drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
+    void drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr);
 
     // fast rect fill
-    void draw_rect_filled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr);
+    void drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr);
 
     // >> Fast Bitmap <<
-    void draw_bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-                     uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height);
+    void drawBitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
+        uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height);
 
     ///////////////////////////////////////////////////////////////////////////
     // configuration methods for sub-classes. Settings unique to a device
-    void set_comm_pins(uint8_t);
-    void set_pre_charge(uint8_t);
-    void set_vcom_deselect(uint8_t);
+    void setCommPins(uint8_t);
+    void setPreCharge(uint8_t);
+    void setVcomDeselect(uint8_t);
 
 private:
     // Internal buffer management methods
-    bool set_screenbuffer_address(uint8_t page, uint8_t column);
-    void init_buffers(void); // clear graphics and screen buffer
-    void clear_screen_buffer(void);
-    void resend_graphics(void);
-    void setup_oled_device(bool clearDisplay = true);
+    bool setScreenBufferAddress(uint8_t page, uint8_t column);
+    void initBuffers(void); // clear graphics and screen buffer
+    void clearScreenBuffer(void);
+    void resendGraphics(void);
+    void setupOLEDDevice(bool clearDisplay = true);
 
     // device communication methods
-    void send_dev_command(uint8_t command);
-    void send_dev_command(uint8_t command, uint8_t value);
-    void send_dev_command(uint8_t *commands, uint8_t n);
-    void send_dev_data(uint8_t *pData, uint8_t nData);
+    void sendDevCommand(uint8_t command);
+    void sendDevCommand(uint8_t command, uint8_t value);
+    void sendDevCommand(uint8_t* commands, uint8_t n);
+    void sendDevData(uint8_t* pData, uint8_t nData);
 
     /////////////////////////////////////////////////////////////////////////////
     // instance vars
 
     // Buffer variables
-    uint8_t *_pBuffer;                      // Pointer to the graphics buffer
-    uint8_t _nPages;                        // number of pages for current device
-    pageState_t _pageState[kMaxPageNumber]; // page state descriptors
-    pageState_t _pageErase[kMaxPageNumber]; // keep track of erase boundaries
-    bool _pendingErase;
+    uint8_t* m_pBuffer; // Pointer to the graphics buffer
+    uint8_t m_nPages; // number of pages for current device
+    pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
+    pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
+    bool m_pendingErase;
 
     // display variables
-    uint8_t _color;    // current color (really 0 or 1)
-    grRasterOp_t _rop; // current raster operation code
+    uint8_t m_color; // current color (really 0 or 1)
+    grRasterOp_t m_rop; // current raster operation code
 
     // I2C  things
-    QwI2C *_i2cBus;       // pointer to our i2c bus object
-    uint8_t _i2c_address; // address of the device
+    QwI2C* m_i2cBus; // pointer to our i2c bus object
+    uint8_t m_i2cAddress; // address of the device
 
     // Stash values for settings that are unique to each device.
-    uint8_t _initHWComPins;
-    uint8_t _initPreCharge;
-    uint8_t _initVCOMDeselect;
-    uint8_t _initContrast;
+    uint8_t m_initHWComPins;
+    uint8_t m_initPreCharge;
+    uint8_t m_initVCOMDeselect;
+    uint8_t m_initContrast;
 
-    bool _isInit; // general init flag
+    bool m_isInitialized; // general init flag
 };

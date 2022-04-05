@@ -1,5 +1,5 @@
 // qw_bmp_sparkun.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -45,21 +45,23 @@
 
 #pragma once
 
-
 #include "qwiic_resdef.h"
 
 class QwBMPSparkFun final : public bmpSingleton<QwBMPSparkFun> {
 
 public:
-    const uint8_t * data(void){
+    const uint8_t* data(void)
+    {
 
 #include "_bmp_sparkfun.h"
 
         return bmp_sparkfun_data;
     }
 
-    QwBMPSparkFun(): bmpSingleton<QwBMPSparkFun>(BMP_SPARKFUN_WIDTH, BMP_SPARKFUN_HEIGHT){}
-
+    QwBMPSparkFun()
+        : bmpSingleton<QwBMPSparkFun>(BMP_SPARKFUN_WIDTH, BMP_SPARKFUN_HEIGHT)
+    {
+    }
 };
 
 #define QW_BMP_SPARKFUN QwBMPSparkFun::instance()

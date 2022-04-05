@@ -1,5 +1,5 @@
 // qw_fnt_31x48.h
-// 
+//
 // This is a library written for SparkFun Qwiic OLED boards that use the SSD1306.
 //
 // SparkFun sells these at its website: www.sparkfun.com
@@ -9,13 +9,13 @@
 //   Micro OLED             https://www.sparkfun.com/products/14532
 //   Transparent OLED       https://www.sparkfun.com/products/15173
 //   "Narrow" OLED          https://www.sparkfun.com/products/17153
-// 
-// 
+//
+//
 // Written by Kirk Benell @ SparkFun Electronics, March 2022
 //
-// This library configures and draws graphics to OLED boards that use the 
+// This library configures and draws graphics to OLED boards that use the
 // SSD1306 display hardware. The library only supports I2C.
-// 
+//
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
 //
@@ -45,29 +45,30 @@
 
 #pragma once
 
-
 #include "qwiic_resdef.h"
 
 class QwFont31x48 final : public fontSingleton<QwFont31x48> {
 
 public:
-    const uint8_t * data(void){
-
+    const uint8_t* data(void)
+    {
         // include font data (static const), and attribute defines.
         // Doing this here makes the data variable a static (aka only one instance ever)
-        // variable in this method. 
+        // variable in this method.
 #include "_fnt_31x48.h"
 
         return font31x48_data;
     }
 
-    QwFont31x48(): fontSingleton<QwFont31x48>(FONT_31X48_WIDTH, 
-                                              FONT_31X48_HEIGHT,
-                                              FONT_31X48_START, 
-                                              FONT_31X48_NCHAR, 
-                                              FONT_31X48_MAP_WIDTH,
-                                              FONT_31X48_NAME){}
-
+    QwFont31x48()
+        : fontSingleton<QwFont31x48>(FONT_31X48_WIDTH,
+            FONT_31X48_HEIGHT,
+            FONT_31X48_START,
+            FONT_31X48_NCHAR,
+            FONT_31X48_MAP_WIDTH,
+            FONT_31X48_NAME)
+    {
+    }
 };
 
 #define QW_FONT_31X48 QwFont31x48::instance()
