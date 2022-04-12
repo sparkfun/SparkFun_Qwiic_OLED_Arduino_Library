@@ -145,8 +145,13 @@ int QwI2C::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, uint8_t* dat
         nRemaining -= nToWrite; // Note - use nToWrite, not nSent, or lock on esp32
         data += nSent; // move up to remaining data in buffer
 
+#if defined(ARDUINO_ARCH_ESP32)
+     // if we are on ESP32, release bus no matter what
+     if (m_i2cPort->endTransmission())
+#else
         // only release bus if we've sent all data
-        if (m_i2cPort->endTransmission())
+     if (m_i2cPort->endTransmission(nRemaining <= 0))
+#endif
             return -1; // the client didn't ACK
     }
 
