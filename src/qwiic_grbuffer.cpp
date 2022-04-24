@@ -66,6 +66,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <avr/pgmspace.h>
 
 // default font
 #include "res/qw_fnt_5x7.h"
