@@ -48,10 +48,11 @@
 
 #pragma once
 
-#if defined(ARDUINO_ARCH_MBED)
-
+#if defined(TARGET_Apollo3)
+// do nothing
 #elif defined(__AVR__) || defined(__arm__) || defined(__ARDUINO_ARC__)
 	#include <avr/pgmspace.h>
+
 #else
 	#include <pgmspace.h>
 #endif
