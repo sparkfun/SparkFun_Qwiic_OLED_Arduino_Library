@@ -40,3 +40,5 @@ uint8_t getColor(void)
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | return value| `uint8_t` | The current color|
+
+
