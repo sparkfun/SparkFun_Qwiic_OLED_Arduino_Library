@@ -9,6 +9,9 @@
 	<a href="https://twitter.com/intent/follow?screen_name=sparkfun">
         	<img src="https://img.shields.io/twitter/follow/sparkfun.svg?style=social&logo=twitter"
            	 alt="follow on Twitter"></a>
+	<a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/issues" alt="Issues">
+		<img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/actions/workflows/mkdocs.yml/badge.svg" /></a>
+	
 </p>
 
 <table class="table table-hover table-striped table-bordered">
