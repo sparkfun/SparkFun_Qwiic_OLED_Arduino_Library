@@ -46,7 +46,7 @@
 // Class provide an abstract interface to the I2C device
 
 #include "qwiic_i2c.h"
-#include <Arduino.h>
+
 
 // What is the max buffer size for this platform.
 

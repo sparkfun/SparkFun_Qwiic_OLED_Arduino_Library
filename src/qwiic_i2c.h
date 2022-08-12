@@ -53,6 +53,7 @@
 //
 // This class is focused on Aurduino..
 
+#include <Arduino.h>
 #include <Wire.h>
 
 class QwI2C {
