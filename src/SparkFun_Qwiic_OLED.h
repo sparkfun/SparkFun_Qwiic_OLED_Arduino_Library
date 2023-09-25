@@ -52,6 +52,7 @@
 #include "qwiic_oledmicro.h"
 #include "qwiic_olednarrow.h"
 #include "qwiic_oledtransp.h"
+#include "qwiic_oled_1in3.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -829,5 +830,9 @@ class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow> {
 };
 
 class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent> {
+    // nothing here - see above
+};
+
+class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3> {
     // nothing here - see above
 };
