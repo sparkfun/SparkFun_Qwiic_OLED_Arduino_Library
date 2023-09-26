@@ -63,6 +63,7 @@
 #define kOLED1in3PinConfig 0x12
 #define kOLED1in3PreCharge 0xF1
 #define kOLED1in3VCOM 0x40
+#define kOLED1in3Contrast 0xCF
 
 #define kOLED1in3DefaultAddress 0x3D
 #define kOLED1in3AltAddress 0x3C
@@ -86,6 +87,7 @@ public:
         setCommPins(kOLED1in3PinConfig);
         setPreCharge(kOLED1in3PreCharge);
         setVcomDeselect(kOLED1in3VCOM);
+        setContrast(kOLED1in3Contrast);
 
         // Call the super class to do all the work
         return this->QwGrSSD1306::init();

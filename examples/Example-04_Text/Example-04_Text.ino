@@ -33,6 +33,7 @@
 QwiicMicroOLED myOLED;
 // QwiicTransparentOLED myOLED;
 // QwiicNarrowOLED myOLED;
+// Qwiic1in3OLED myOLED;
 
 // Fonts
 #include <res/qw_fnt_5x7.h>

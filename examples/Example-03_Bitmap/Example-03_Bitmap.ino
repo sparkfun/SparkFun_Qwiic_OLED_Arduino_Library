@@ -33,6 +33,7 @@
 QwiicMicroOLED myOLED;
 // QwiicTransparentOLED myOLED;
 // QwiicNarrowOLED myOLED;
+// Qwiic1in3OLED myOLED;
 
 // Let's draw a truck - use our built in bitmap
 #include "res/qw_bmp_truck.h"

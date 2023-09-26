@@ -33,6 +33,7 @@
 QwiicMicroOLED myOLED;
 // QwiicTransparentOLED myOLED;
 // QwiicNarrowOLED myOLED;
+// Qwiic1in3OLED myOLED;
 
 // Global variables - used to stash our screen size
 

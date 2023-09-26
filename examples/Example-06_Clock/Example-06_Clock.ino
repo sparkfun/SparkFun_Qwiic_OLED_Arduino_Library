@@ -35,6 +35,7 @@
 QwiicMicroOLED myOLED;
 // QwiicTransparentOLED myOLED;
 // QwiicNarrowOLED myOLED;
+// Qwiic1in3OLED myOLED;
 
 // Use these variables to set the initial time
 int hours = 11;

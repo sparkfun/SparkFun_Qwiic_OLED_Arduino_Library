@@ -26,6 +26,7 @@ The user selects from one of the following classes:
 | `QwiicMicroOLED` | [SparkFun Qwiic Micro OLED ]( https://www.sparkfun.com/products/14532)| 
 | `QwiicNarrowOLED` | [SparkFun Qwiic OLED Display (128x32) ]( https://www.sparkfun.com/products/17153)| 
 | `QwiicTransparentOLED` | [SparkFun Transparent Graphical OLED]( https://www.sparkfun.com/products/15173)| 
+| `Qwiic1in3OLED` | [SparkFun Qwiic OLED 1.3" Display (128x32) ]( https://www.sparkfun.com/products/23453)| 
 
 The Example code supports all of the SparkFun Qwiic OLED boards. To select the board being used, uncomment the `#define` for the demo board. 
 
