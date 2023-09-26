@@ -26,7 +26,7 @@
   SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).
 */
 
-#include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_Graphic_OLED
+#include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_OLED
 
 // The Library supports three different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
