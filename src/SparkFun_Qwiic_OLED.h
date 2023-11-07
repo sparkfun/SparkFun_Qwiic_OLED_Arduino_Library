@@ -53,6 +53,7 @@
 #include "qwiic_olednarrow.h"
 #include "qwiic_oledtransp.h"
 #include "qwiic_oled_1in3.h"
+#include "qwiic_oled_custom.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -84,9 +85,10 @@ typedef QwBitmap QwiicBitmap;
 
 template <typename SSD1306DeviceType>
 class QwiicOLEDBaseClass : public Print { // NOTE: implementing Arduino Print
-private:
+public:
     // our device driver
     SSD1306DeviceType m_device;
+private:
     QwI2C m_i2cBus; // our i2c object
 
     // for the Aruduino print functionaliyt
@@ -834,5 +836,9 @@ class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent> {
 };
 
 class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3> {
+    // nothing here - see above
+};
+
+class QwiicCustomOLED : public QwiicOLEDBaseClass<QwOLEDCustom> {
     // nothing here - see above
 };
