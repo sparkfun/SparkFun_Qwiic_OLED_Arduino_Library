@@ -78,7 +78,11 @@ public:
         default_address = kOLEDCustomDefaultDefaultAddress;
     };
 
-    ~QwOLEDCustom(){if (m_graphicsBuffer != nullptr) delete m_graphicsBuffer;};
+    ~QwOLEDCustom()
+    {
+        if (m_graphicsBuffer != nullptr)
+            delete[] m_graphicsBuffer;
+    };
 
     // set up the specific device settings
     bool init(void)
@@ -90,8 +94,9 @@ public:
         setVcomDeselect(vcomDeselect);
         setContrast(contrast);
 
-        if (m_graphicsBuffer == nullptr)
-            m_graphicsBuffer = new uint8_t[(uint16_t)displayWidth * (uint16_t)displayHeight / 8];
+        if (m_graphicsBuffer != nullptr)
+            delete[] m_graphicsBuffer;
+        m_graphicsBuffer = new uint8_t[(uint16_t)displayWidth * (uint16_t)displayHeight / 8];
         setBuffer(m_graphicsBuffer); // The buffer to use
 
         // Call the super class to do all the work
