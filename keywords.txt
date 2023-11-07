@@ -10,6 +10,7 @@ QwiicTransparentOLED	KEYWORD1
 QwiicNarrowOLED	KEYWORD1
 QwiicMicroOLED	KEYWORD1
 Qwiic1in3OLED	KEYWORD1
+QwiicCustomOLED	KEYWORD1
 QwiicFont	KEYWORD1
 grRasterOp_t	KEYWORD1
 
