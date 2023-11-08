@@ -81,38 +81,50 @@ public:
     ~QwOLEDCustom()
     {
         if (m_graphicsBuffer != nullptr)
+        {
             delete[] m_graphicsBuffer;
+            m_graphicsBuffer = nullptr;
+        }
     };
 
     // set up the specific device settings
     bool init(void)
     {
-        setViewport(xOffset, yOffset, displayWidth, displayHeight);
+        this->QwGrSSD1306::setViewport(m_xOffset, m_yOffset, m_displayWidth, m_displayHeight);
 
-        setCommPins(pinConfig);
-        setPreCharge(preCharge);
-        setVcomDeselect(vcomDeselect);
-        setContrast(contrast);
+        this->QwGrSSD1306::setCommPins(m_pinConfig);
+        this->QwGrSSD1306::setPreCharge(m_preCharge);
+        this->QwGrSSD1306::setVcomDeselect(m_vcomDeselect);
+        this->QwGrSSD1306::setContrast(m_contrast);
 
         if (m_graphicsBuffer != nullptr)
             delete[] m_graphicsBuffer;
-        m_graphicsBuffer = new uint8_t[(uint16_t)displayWidth * (uint16_t)displayHeight / 8];
-        setBuffer(m_graphicsBuffer); // The buffer to use
+        m_graphicsBuffer = new uint8_t[(uint16_t)m_displayWidth * (uint16_t)m_displayHeight / 8];
+        this->QwGrSSD1306::setBuffer(m_graphicsBuffer); // The buffer to use
 
         // Call the super class to do all the work
         return this->QwGrSSD1306::init();
     };
 
-    uint8_t xOffset = kOLEDCustomDefaultXOffset;
-    uint8_t yOffset = kOLEDCustomDefaultYOffset;
-    uint8_t displayWidth = kOLEDCustomDefaultWidth;
-    uint8_t displayHeight = kOLEDCustomDefaultHeight;
-    uint8_t pinConfig =  kOLEDCustomDefaultPinConfig;
-    uint8_t preCharge = kOLEDCustomDefaultPreCharge;
-    uint8_t vcomDeselect = kOLEDCustomDefaultVCOM;
-    uint8_t contrast = kOLEDCustomDefaultContrast;
+    void setXOffset(uint8_t xOffset){ m_xOffset = xOffset; }
+    void setYOffset(uint8_t yOffset){ m_yOffset = yOffset; }
+    void setDisplayWidth(uint8_t displayWidth){ m_displayWidth = displayWidth; }
+    void setDisplayHeight(uint8_t displayHeight){ m_displayHeight = displayHeight; }
+    void setPinConfig(uint8_t pinConfig){ m_pinConfig = pinConfig; }
+    void setPreCharge(uint8_t preCharge){ m_preCharge = preCharge; }
+    void setVcomDeselect(uint8_t vcomDeselect){ m_vcomDeselect = vcomDeselect; }
+    void setContrast(uint8_t contrast){ m_contrast = contrast; }
 
-protected:
+private:
+    uint8_t m_xOffset = kOLEDCustomDefaultXOffset;
+    uint8_t m_yOffset = kOLEDCustomDefaultYOffset;
+    uint8_t m_displayWidth = kOLEDCustomDefaultWidth;
+    uint8_t m_displayHeight = kOLEDCustomDefaultHeight;
+    uint8_t m_pinConfig =  kOLEDCustomDefaultPinConfig;
+    uint8_t m_preCharge = kOLEDCustomDefaultPreCharge;
+    uint8_t m_vcomDeselect = kOLEDCustomDefaultVCOM;
+    uint8_t m_contrast = kOLEDCustomDefaultContrast;
+
     // Graphics buffer for this device.
     uint8_t *m_graphicsBuffer = nullptr;
 };
