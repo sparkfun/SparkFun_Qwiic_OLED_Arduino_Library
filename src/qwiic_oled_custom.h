@@ -81,7 +81,10 @@ public:
     ~QwOLEDCustom()
     {
         if (m_graphicsBuffer != nullptr)
+        {
             delete[] m_graphicsBuffer;
+            m_graphicsBuffer = nullptr;
+        }
     };
 
     // set up the specific device settings
