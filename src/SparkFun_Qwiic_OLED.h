@@ -85,7 +85,7 @@ typedef QwBitmap QwiicBitmap;
 
 template <typename SSD1306DeviceType>
 class QwiicOLEDBaseClass : public Print { // NOTE: implementing Arduino Print
-public:
+protected:
     // our device driver
     SSD1306DeviceType m_device;
 private:
@@ -840,5 +840,13 @@ class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3> {
 };
 
 class QwiicCustomOLED : public QwiicOLEDBaseClass<QwOLEDCustom> {
-    // nothing here - see above
+public:
+    void setXOffset(uint8_t xOffset){ m_device.setXOffset(xOffset); }
+    void setYOffset(uint8_t yOffset){ m_device.setYOffset(yOffset); }
+    void setDisplayWidth(uint8_t displayWidth){ m_device.setDisplayWidth(displayWidth); }
+    void setDisplayHeight(uint8_t displayHeight){ m_device.setDisplayHeight(displayHeight); }
+    void setPinConfig(uint8_t pinConfig){ m_device.setPinConfig(pinConfig); }
+    void setPreCharge(uint8_t preCharge){ m_device.setPreCharge(preCharge); }
+    void setVcomDeselect(uint8_t vcomDeselect){ m_device.setVcomDeselect(vcomDeselect); }
+    void setContrast(uint8_t contrast){ m_device.setContrast(contrast); }
 };

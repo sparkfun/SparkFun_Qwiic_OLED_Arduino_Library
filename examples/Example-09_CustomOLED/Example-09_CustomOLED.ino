@@ -28,7 +28,6 @@
 
 QwiicCustomOLED myOLED;
 
-
 void setup()
 {
     delay(1000);
@@ -40,14 +39,14 @@ void setup()
 
     // If desired, we can customize the OLED before we begin it.
     // Otherwise it will default to 128x64 (1.3" OLED).
-    myOLED.m_device.xOffset = 0; // Set the active area X offset. For the Micro 64x48, set this to 2
-    myOLED.m_device.yOffset = 0; // Set the active area Y offset
-    myOLED.m_device.displayWidth = 128; // Set the active area width
-    myOLED.m_device.displayHeight = 64; // Set the active area height
-    myOLED.m_device.pinConfig = 0x12; // Set COM Pins Hardware Configuration (DAh)
-    myOLED.m_device.preCharge = 0xF1; // Set Pre-charge Period (D9h)
-    myOLED.m_device.vcomDeselect = 0x40; // Set VCOMH Deselect Level (DBh)
-    myOLED.m_device.contrast = 0xCF; // Set Contrast Control for BANK0 (81h)
+    myOLED.setXOffset(0);         // Set the active area X offset. For the Micro 64x48, set this to 2
+    myOLED.setYOffset(0);         // Set the active area Y offset
+    myOLED.setDisplayWidth(128);  // Set the active area width. For the Micro 64x48, set this to 64
+    myOLED.setDisplayHeight(64);  // Set the active area height. For the Micro 64x48, set this to 48
+    myOLED.setPinConfig(0x12);    // Set COM Pins Hardware Configuration (DAh)
+    myOLED.setPreCharge(0xF1);    // Set Pre-charge Period (D9h)
+    myOLED.setVcomDeselect(0x40); // Set VCOMH Deselect Level (DBh)
+    myOLED.setContrast(0xCF);     // Set Contrast Control for BANK0 (81h). For the Micro 64x48, set this to 0x8F
 
     // Initalize the OLED device and related graphics system
     if (myOLED.begin(Wire, 0x3D) == false) // The TwoWire port and I2C address are set here
