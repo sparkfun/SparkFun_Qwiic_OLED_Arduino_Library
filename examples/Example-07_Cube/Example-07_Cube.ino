@@ -13,6 +13,7 @@
    Micro OLED             https://www.sparkfun.com/products/14532
    Transparent OLED       https://www.sparkfun.com/products/15173
    "Narrow" OLED          https://www.sparkfun.com/products/17153
+   Qwiic OLED 1.3in       https://www.sparkfun.com/products/23453
 
   Written by
       Jim Lindblom @ SparkFun Electronics

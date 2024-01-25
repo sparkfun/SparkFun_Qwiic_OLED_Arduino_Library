@@ -48,6 +48,13 @@ The SparkFun Qwiic OLED Arduino Library supports the following SparFun Products
            <a href="https://www.sparkfun.com/products/15173">SparkFun Transparent Graphical OLED Breakout (Qwiic)</a>
         </td>
     </tr>
+    <tr>
+        <td width="120" pad=10 style="vertical-align: middle;">
+            <a href="https://www.sparkfun.com/products/23453"><img src="https://cdn.sparkfun.com//assets/parts/2/3/7/6/0/23453-Qwiic-OLED-Feature-WithDisplay.jpg"></a></td>
+         <td style="text-align:left; vertical-align: middle; padding-left: 20px;font-weight: bold;">
+           <a href="https://www.sparkfun.com/products/23453">SparkFun Qwiic OLED (1.3in., 128x64)</a>
+        </td>
+    </tr>
 </table>
 
 
