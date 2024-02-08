@@ -12,7 +12,7 @@
 
    Micro OLED             https://www.sparkfun.com/products/14532
    Transparent OLED       https://www.sparkfun.com/products/15173
-   "Narrow" OLED          https://www.sparkfun.com/products/17153
+   "Narrow" OLED          https://www.sparkfun.com/products/24606
    Qwiic OLED 1.3in       https://www.sparkfun.com/products/23453
 
   Written by
@@ -29,13 +29,13 @@
 */
 #include <SparkFun_Qwiic_OLED.h> //http://librarymanager/All#SparkFun_Qwiic_OLED
 
-// The Library supports three different types of SparkFun boards. The demo uses the following
+// The Library supports four different types of SparkFun boards. The demo uses the following
 // defines to determine which device is being used. Uncomment the device being used for this demo.
 
 QwiicMicroOLED myOLED;
-// QwiicTransparentOLED myOLED;
-// QwiicNarrowOLED myOLED;
-// Qwiic1in3OLED myOLED;
+//QwiicTransparentOLED myOLED;
+//QwiicNarrowOLED myOLED;
+//Qwiic1in3OLED myOLED;
 
 int width;
 int height;
