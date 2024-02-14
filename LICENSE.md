@@ -30,7 +30,7 @@ No warranties are given. The license may not give you all of the permissions nec
 Code
 --------
 
-**SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).**
+**SparkFun code, firmware, and software is released under the [MIT License](http://opensource.org/licenses/MIT).**
 
 The MIT License (MIT)
 
