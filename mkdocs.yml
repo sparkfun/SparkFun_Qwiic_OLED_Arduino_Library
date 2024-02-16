@@ -139,7 +139,7 @@ plugins:
   - typeset
   - redirects:
       redirect_maps:
-          'index.md': 'qwiic_oled_arduino_library_page.md'
+          'index.md': 'introduction.md'
   # Add revision date
   - git-revision-date-localized:
       enable_creation_date: true
