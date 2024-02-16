@@ -19,7 +19,6 @@ All of our designs are open-source! Please help us make it better.
 * Our board design files are contained in the `Hardware` folder of their respective repositories:
 
 * [SparkFun Micro OLED Breakout (Qwiic)](https://github.com/sparkfun/Qwiic_Micro_OLED/tree/main/Hardware)
-* [SparkFun Qwiic OLED Display (0.91 in, 128x32)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/Hardware)
 * [SparkFun Transparent Graphical OLED Breakout (Qwiic)](https://github.com/sparkfun/Qwiic_Transparent_Graphical_OLED/tree/main/Hardware)
 * [SparkFun Qwiic OLED - (1.3in., 128x64)](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/tree/main/Hardware)
 
