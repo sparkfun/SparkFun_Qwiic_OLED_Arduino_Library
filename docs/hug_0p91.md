@@ -492,7 +492,7 @@ The Qwiic OLED (0.91", 128x32) uses the SparkFun QWIIC OLED Arduino Library. The
 
 Now that you've successfully got your OLED Display (0.9", 128x36) up and running, it's time to incorporate it into your own project! For more information, check out the resources below:
 
-* [Schematic (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p91_Schematic_v11.pdf?raw=true)
+* [Schematic (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p91_Schematic_v11.pdf)
 * [Eagle Files (ZIP)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p9in_v11.zip?raw=true)
 * [Board Dimensions (PNG)](https://raw.githubusercontent.com/sparkfun/SparkFun_Qwiic_OLED-0.91/main/docs/assets/img/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png)
 * [Datasheet (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/component_documentation/SPEC%20AMO091-12832BFG02-H14%20VER%20A.pdf._看图王.pdf) (0.91", 128x32, SSD1306)
