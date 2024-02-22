@@ -302,8 +302,8 @@ In this section, we will highlight the hardware and pins that are broken out on 
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_top.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_top.jpg?raw=true" width="600px" height="600px" alt="Top View"></a></td>
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_bottom.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_bottom.jpg?raw=true" width="600px" height="600px" alt="Bottom View"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_top.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_top.jpg?raw=true" width="600px" height="600px" alt="Top View"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_bottom.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_bottom.jpg?raw=true" width="600px" height="600px" alt="Bottom View"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>Top View</i></td>
@@ -321,7 +321,7 @@ The OLED screen has a pixel resolution of 128x32, a panel size of 30.0mm x 11.5m
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Highlighted.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Highlighted.jpg?raw=true" width="600px" height="600px" alt="OLED Highlighted"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Highlighted.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Highlighted.jpg?raw=true" width="600px" height="600px" alt="OLED Highlighted"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>OLED Highlighted</i></td>
@@ -347,7 +347,7 @@ Power is applied through the vertical Qwiic connectors on the back of the board.
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true" width="600px" height="600px" alt="Power"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true" width="600px" height="600px" alt="Power"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>Power</i></td>
@@ -369,7 +369,7 @@ There are two vertical Qwiic connectors populated on the back of the board. You 
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true" width="600px" height="600px" alt="Qwiic Connectors"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Qwiic_Connectors.jpg?raw=true" width="600px" height="600px" alt="Qwiic Connectors"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>Vertical Qwiic Connectors</i></td>
@@ -385,7 +385,7 @@ The address of the display is **0x3C**.
     <div style="text-align: center;">
       <table>
         <tr style="vertical-align:middle;">
-         <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/?raw=true" width="600px" height="600px" alt="I2C Test Points"></a></td>
+         <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Back_I2C_Test_Points.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Back_I2C_Test_Points.jpg?raw=true" width="600px" height="600px" alt="I2C Test Points"></a></td>
         </tr>
         <tr style="vertical-align:middle;">
          <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>I2C Test Points</i></td>
@@ -407,7 +407,7 @@ The board includes a 1x3 jumper on the back of the board.
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Jumpers.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Jumpers.jpg?raw=true" width="600px" height="600px" alt="Jumpers Highlighted"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Jumpers.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Jumpers.jpg?raw=true" width="600px" height="600px" alt="Jumpers Highlighted"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>Jumpers Highlighted</i></td>
@@ -424,7 +424,7 @@ Version 1.1 is a bit smaller than previous versions since the board includes ver
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png?raw=true" width="600px" height="600px" alt="Board Dimensions"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png?raw=true" width="600px" height="600px" alt="Board Dimensions"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>Board Dimensions</i></td>
@@ -447,7 +447,7 @@ Insert a Qwiic cable between your chosen microcontroller and Qwiic OLED. Then in
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Arduino_RedBoard_Plus.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Arduino_RedBoard_Plus.jpg?raw=true" width="600px" height="600px" alt="USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, Qwiic OLED (0.9 in., 12x32)"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Arduino_RedBoard_Plus.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display-Arduino_RedBoard_Plus.jpg?raw=true" width="600px" height="600px" alt="USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, Qwiic OLED (0.9 in., 12x32)"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><i>USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, Qwiic OLED (0.9 in., 12x32)</i></td>
@@ -466,8 +466,8 @@ Grab the board dimensions and cut out a rectangle in the enclosure. For users th
 <div style="text-align: center;">
   <table>
     <tr style="vertical-align:middle;">
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Qwiic_Cable.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Qwiic_Cable.jpg?raw=true" width="600px" height="600px" alt="5V Battery Pack, USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, and Qwiic OLED (0.9 in., 12x32), stuffed in a cardboard box."></a></td>
-     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Mounted.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Mounted.jpg?raw=true" width="600px" height="600px" alt="5V Battery Pack, USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, and Qwiic OLED (0.9 in., 12x32) Mounted"></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Qwiic_Cable.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Qwiic_Cable.jpg?raw=true" width="600px" height="600px" alt="5V Battery Pack, USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, and Qwiic OLED (0.9 in., 12x32), stuffed in a cardboard box."></a></td>
+     <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;"><a href="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Mounted.jpg?raw=true"><img src="https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/img/LCD-24606-Qwiic-OLED-Display_Enclosure_Mounted.jpg?raw=true" width="600px" height="600px" alt="5V Battery Pack, USB Cable, RedBoard Plus (ATMega328P), Qwiic Cable, and Qwiic OLED (0.9 in., 12x32) Mounted"></a></td>
     </tr>
     <tr style="vertical-align:middle;">
      <td style="text-align: center; border: solid 1px #cccccc; vertical-align: middle;" colspan="2"><i>Qwiic OLED Display Mounted in an Enclosure</i></td>
@@ -482,14 +482,20 @@ For a more durable enclosure, you could use wood, metal, or plastic. However, yo
 
 
 
+## Software
+
+The Qwiic OLED (0.91", 128x32) uses the SparkFun QWIIC OLED Arduino Library. The SparkFun Qwiic OLED Library's [Software Setup](../software/) has instructions and usage examples. Additionally, the full library API documentation is available in the SparkFun Qwiic OLED Library [API Reference](../api_device/) guide.
+
+
+
 ## Resources
 
 Now that you've successfully got your OLED Display (0.9", 128x36) up and running, it's time to incorporate it into your own project! For more information, check out the resources below:
 
-* [Schematic (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p91_Schematic_v11.pdf)
-* [Eagle Files (ZIP)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p9in_v11.zip?raw=true)
-* [Board Dimensions (PNG)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/assets/img/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png?raw=true)
-* [Datasheet (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/tree/main/docs/component_documentation/SPEC%20AMO091-12832BFG02-H14%20VER%20A.pdf._看图王.pdf) (0.91", 128x32, SSD1306)
+* [Schematic (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p91_Schematic_v11.pdf?raw=true)
+* [Eagle Files (ZIP)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/assets/board_files/SparkFun_Qwiic_OLED-0p9in_v11.zip?raw=true)
+* [Board Dimensions (PNG)](https://raw.githubusercontent.com/sparkfun/SparkFun_Qwiic_OLED-0.91/main/docs/assets/img/SparkFun_Qwiic_OLED-0p9in_Board_Dimensions.png)
+* [Datasheet (PDF)](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/blob/main/docs/component_documentation/SPEC%20AMO091-12832BFG02-H14%20VER%20A.pdf._看图王.pdf) (0.91", 128x32, SSD1306)
 * [ReadtheDocs: Qwiic_OLED_Display_Py](https://qwiic-oled-display-py.readthedocs.io/en/latest/)
 * [Qwiic OLED Display Python Package Repo](https://github.com/sparkfun/Qwiic_OLED_Display_Py)
 * [Github Hardware Repo](https://github.com/sparkfun/SparkFun_Qwiic_OLED-0.91/)
