@@ -240,6 +240,7 @@ nav:
   - Getting Started:
     - Introduction: introduction.md
     - Qwiic Micro OLED (0.66", 64x48): hug_micro_view.md
+    - Qwiic OLED (0.91", 128x32): hug_0p91.md
     - Qwiic Transparent Graphical OLED (1.51", 128x56): hug_transparent.md
     - Qwiic OLED (1.3", 128x64): hug_1p3.md
   - Software Setup: software.md

@@ -16,6 +16,8 @@ icon: fontawesome/solid/scroll
 ## Qwiic Transparent Graphical OLED (1.51", 128x56)
 --8<-- "./docs/hug_transparent.md"
 
+## Qwiic OLED (0.91", 128x32)
+--8<-- "./docs/hug_0p91.md"
 
 ## Qwiic OLED (1.3", 128x64)
 --8<-- "./docs/hug_1p3.md"
