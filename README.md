@@ -15,18 +15,18 @@
 
 <table class="table table-hover table-striped table-bordered">
   <tr align="center">
-   <td><a href="https://www.sparkfun.com/products/14532"><img src="https://cdn.sparkfun.com//assets/parts/1/2/6/2/1/SparkFun_Qwiic_OLED_Tennis.gif"></a></td>
-   <td><a href="https://www.sparkfun.com/products/17153"><img src="https://cdn.sparkfun.com//assets/parts/1/6/1/3/5/17153-SparkFun_Qwiic_OLED_Display__0.91_in__128x32_-05.jpg"></a></td>
-   <td><a href="https://www.sparkfun.com/products/15173"><img src="https://cdn.sparkfun.com//assets/parts/1/3/5/8/8/SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic__Hookup_Guide.gif"></a></td>
-   <td><a href="https://www.sparkfun.com/products/18996"><img src="https://cdn.sparkfun.com//assets/parts/1/8/5/7/8/18996-smo__l_Display__0.91_in__128x32_-01.jpg"></a></td>
-   <td><a href="https://www.sparkfun.com/products/23453"><img src="https://cdn.sparkfun.com//assets/parts/2/3/7/6/0/23453-Qwiic-OLED-Feature-WithDisplay.jpg"></a></td>
+   <td><a href="https://www.sparkfun.com/products/14532"><img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/2/6/2/1/SparkFun_Qwiic_OLED_Tennis.gif"></a></td>
+   <td><a href="https://www.sparkfun.com/products/24606"><img src="https://cdn.sparkfun.com/r/600-600/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Feature-Screen.jpg"></a></td>
+   <td><a href="https://www.sparkfun.com/products/18996"><img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/8/5/7/8/18996-smo__l_Display__0.91_in__128x32_-01.jpg"></a></td>
+   <td><a href="https://www.sparkfun.com/products/15173"><img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/3/5/8/8/SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic__Hookup_Guide.gif"></a></td>
+   <td><a href="https://www.sparkfun.com/products/23453"><img src="https://cdn.sparkfun.com/r/600-600/assets/parts/2/3/7/6/0/23453-Qwiic-OLED-Feature-WithDisplay.jpg"></a></td>
   </tr>
   <tr align="center">
-    <td><a href="https://www.sparkfun.com/products/14532">SparkFun Micro OLED Breakout (Qwiic) (LCD-14532)</a></td>
-    <td><a href="https://www.sparkfun.com/products/17153">SparkFun Qwiic OLED Display (0.91 in, 128x32) (LCD-17153)</a></td>
-    <td><a href="https://www.sparkfun.com/products/15173">SparkFun Transparent Graphical OLED Breakout (Qwiic) (LCD-15173)</a></td>
-    <td><a href="https://www.sparkfun.com/products/18996">smôl OLED Display (0.91 in, 128x32) (SPX-18996)</a></td>
-    <td><a href="https://www.sparkfun.com/products/23453">SparkFun Qwiic OLED - (1.3in., 128x64) (LCD-23453)</a></td>
+    <td><a href="https://www.sparkfun.com/products/14532">SparkFun Micro OLED Breakout (Qwiic)<br />[LCD-14532]</a></td>
+    <td><a href="https://www.sparkfun.com/products/17153">SparkFun Qwiic OLED Display (0.91 in, 128x32)<br />[LCD-24606]</a></td>
+    <td><a href="https://www.sparkfun.com/products/18996">smôl OLED Display (0.91 in, 128x32)<br />[SPX-18996]</a></td>
+    <td><a href="https://www.sparkfun.com/products/15173">SparkFun Transparent Graphical OLED Breakout (Qwiic)<br />[LCD-15173]</a></td>
+    <td><a href="https://www.sparkfun.com/products/23453">SparkFun Qwiic OLED - (1.3in., 128x64)<br />[LCD-23453]</a></td>
   </tr>
 </table>
 
@@ -59,12 +59,14 @@ Above, the OLED on the right is running the original Micro OLED library at 75fps
 
 ## Supported Products
 
-* [LCD-13003](https://www.sparkfun.com/products/13003) - SparkFun Micro OLED Breakout
+* [LCD-22495](https://www.sparkfun.com/products/22495) - SparkFun Micro OLED Breakout (Qwiic)
 * [LCD-14532](https://www.sparkfun.com/products/14532) - SparkFun Micro OLED Breakout (Qwiic)
+* [LCD-13003](https://www.sparkfun.com/products/13003) - SparkFun Micro OLED Breakout
+* [LCD-24606](https://www.sparkfun.com/products/24606) - SparkFun Qwiic OLED Display (0.91 in, 128x32)
 * [LCD-17153](https://www.sparkfun.com/products/17153) - SparkFun Qwiic OLED Display (0.91 in, 128x32)
-* [LCD-15173](https://www.sparkfun.com/products/15173) - SparkFun Transparent Graphical OLED Breakout (Qwiic) 
 * [SPX-18996](https://www.sparkfun.com/products/18996) - smôl OLED Display (0.91 in, 128x32)
-* [LCD-23453](https://www.sparkfun.com/products/23453) - SparkFun Qwiic OLED (1.3in., 128x64)
+* [LCD-15173](https://www.sparkfun.com/products/15173) - SparkFun Transparent Graphical OLED Breakout (Qwiic) 
+* [LCD-23453](https://www.sparkfun.com/products/23453) - SparkFun Qwiic OLED (1.3 in., 128x64)
 
 ### Supported Microcontrollers - Arduino Environment
 
