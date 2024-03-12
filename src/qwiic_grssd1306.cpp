@@ -880,7 +880,7 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
 
             if (remainingBits) // more data to add from the next byte in this column
                 bmp_data |= (pBitmap[bmp_width * (bmpPage + 1) + bmp_x] & bmp_mask[1])
-                    << (kByteNBits - remainingBits);
+                    << (neededBits - remainingBits);
 
             // Write the bmp data to the graphics buffer - using current write op.
             // Note, if the location in the buffer didn't start at bit 0, we shift
