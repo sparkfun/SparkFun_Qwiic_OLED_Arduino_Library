@@ -56,7 +56,8 @@
 #include "res/qwiic_resdef.h"
 
 // RECT!
-struct QwRect {
+struct QwRect
+{
     uint16_t x;
     uint16_t y;
     uint16_t width;
@@ -90,40 +91,62 @@ extern const uint8_t byte_bits[8];
 //
 // Seperated out to enable easy vtable access and method dispatch short circuiting
 
-class _QwIDraw {
+class _QwIDraw
+{
 
     // Pixel Methods
-    virtual void drawPixel(uint8_t x, uint8_t y, uint8_t clr) { } // A subclass must implement this
+    virtual void drawPixel(uint8_t x, uint8_t y, uint8_t clr)
+    {
+    } // A subclass must implement this
 
     // Line Methods
-    virtual void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr) { }
-    virtual void drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr) { }
-    virtual void drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr) { }
+    virtual void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+    {
+    }
+    virtual void drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+    {
+    }
+    virtual void drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+    {
+    }
 
     // Rectangles
-    virtual void drawRect(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr) { }
-    virtual void drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr) { }
+    virtual void drawRect(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
+    {
+    }
+    virtual void drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
+    {
+    }
 
     // Circles
-    virtual void drawCircle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr) { }
-    virtual void drawCircleFilled(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr) { }
+    virtual void drawCircle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr)
+    {
+    }
+    virtual void drawCircleFilled(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr)
+    {
+    }
 
     // Bitmaps
-    virtual void drawBitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-        uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height) { }
+    virtual void drawBitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t *pBitmap, uint8_t bmp_width,
+                            uint8_t bmp_height)
+    {
+    }
 
-    virtual void drawText(uint8_t x0, uint8_t y0, const char* text, uint8_t clr) { }
+    virtual void drawText(uint8_t x0, uint8_t y0, const char *text, uint8_t clr)
+    {
+    }
 };
 
 // Drawing fuction typedefs
-typedef void (*QwDrawPntFn)(void*, uint8_t, uint8_t, uint8_t);
-typedef void (*QwDrawTwoPntFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-typedef void (*QwDrawCircleFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t);
-typedef void (*QwDrawBitmapFn)(void*, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t*, uint8_t, uint8_t);
-typedef void (*QwDrawTextFn)(void*, uint8_t, uint8_t, const char*, uint8_t);
+typedef void (*QwDrawPntFn)(void *, uint8_t, uint8_t, uint8_t);
+typedef void (*QwDrawTwoPntFn)(void *, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+typedef void (*QwDrawCircleFn)(void *, uint8_t, uint8_t, uint8_t, uint8_t);
+typedef void (*QwDrawBitmapFn)(void *, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t *, uint8_t, uint8_t);
+typedef void (*QwDrawTextFn)(void *, uint8_t, uint8_t, const char *, uint8_t);
 
 // Define the vtable struct for IDraw
-struct _QwIDraw_vtable {
+struct _QwIDraw_vtable
+{
     QwDrawPntFn drawPixel;
     QwDrawTwoPntFn drawLine;
     QwDrawTwoPntFn drawLineHorz;
@@ -142,15 +165,14 @@ struct _QwIDraw_vtable {
 //  Buffer class - defines basics for a memory buffer drawing class. Note it subclasses
 //  from QwIDraw
 
-class QwGrBufferDevice : protected _QwIDraw {
+class QwGrBufferDevice : protected _QwIDraw
+{
 
-public:
+  public:
     // Constructors
-    QwGrBufferDevice()
-        : m_currentFont { nullptr } {};
-    QwGrBufferDevice(uint8_t width, uint8_t height)
-        : QwGrBufferDevice(0, 0, width, height) {};
-    QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height)
+    QwGrBufferDevice() : m_currentFont{nullptr} {};
+    QwGrBufferDevice(uint8_t width, uint8_t height) : QwGrBufferDevice(0, 0, width, height){};
+    QwGrBufferDevice(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height) : QwGrBufferDevice()
     {
         setViewport(x0, y0, width, height);
     };
@@ -164,23 +186,38 @@ public:
         m_viewport.height = height;
     };
 
-    QwRect viewport(void) { return m_viewport; };
-    uint16_t originX(void) { return m_viewport.x; };
-    uint16_t originY(void) { return m_viewport.y; };
-    uint16_t width(void) { return m_viewport.width; };
-    uint16_t height(void) { return m_viewport.height; };
+    QwRect viewport(void)
+    {
+        return m_viewport;
+    };
+    uint16_t originX(void)
+    {
+        return m_viewport.x;
+    };
+    uint16_t originY(void)
+    {
+        return m_viewport.y;
+    };
+    uint16_t width(void)
+    {
+        return m_viewport.width;
+    };
+    uint16_t height(void)
+    {
+        return m_viewport.height;
+    };
 
     // Lifecycle
     virtual bool init(void);
 
     // Font methods
     void initFont(void);
-    void setFont(QwFont& font);
-    void setFont(const QwFont* font);
-    QwFont* font(void);
+    void setFont(QwFont &font);
+    void setFont(const QwFont *font);
+    QwFont *font(void);
 
     // Returns the size of a string - in pixels - using current font
-    bool getStringSize(const char* text, uint16_t& width, uint16_t& height);
+    bool getStringSize(const char *text, uint16_t &width, uint16_t &height);
 
     // Public Interface - Graphics interface
     void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = 1);
@@ -193,22 +230,22 @@ public:
     void rectangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = 1);
     void rectangleFill(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr = 1);
 
-    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-        uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height);
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t *pBitmap, uint8_t bmp_width,
+                uint8_t bmp_height);
 
     // draw full bitmap
-    void bitmap(uint8_t x0, uint8_t y0, uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height);
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height);
 
     // Bitmap draw - using a bitmap object
-    void bitmap(uint8_t x0, uint8_t y0, QwBitmap& bitmap);
+    void bitmap(uint8_t x0, uint8_t y0, QwBitmap &bitmap);
 
-    void text(uint8_t x0, uint8_t y0, const char* text, uint8_t clr = 1);
+    void text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr = 1);
 
     // subclass interface
     virtual void display(void) = 0;
     virtual void erase(void) = 0;
 
-protected:
+  protected:
     QwRect m_viewport;
 
     // Internal, fast draw routines - These implement QwIDraw
@@ -230,14 +267,14 @@ protected:
     virtual void drawCircleFilled(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t clr);
 
     // Text
-    virtual void drawText(uint8_t x0, uint8_t y0, const char* text, uint8_t clr);
+    virtual void drawText(uint8_t x0, uint8_t y0, const char *text, uint8_t clr);
 
     // Our drawing interface - open to sub-classes ...
     _QwIDraw_vtable m_idraw;
 
     // Current Font
-    QwFont* m_currentFont;
+    QwFont *m_currentFont;
 
-private:
+  private:
     bool initDrawFunctions(void);
 };
