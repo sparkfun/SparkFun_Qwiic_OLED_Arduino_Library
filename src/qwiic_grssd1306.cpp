@@ -115,44 +115,48 @@
 // Define unique values just outside of the screen buffer (SSD1306) page range
 // (0 base) Note: A page  is 128 bits in length
 
-#define kPageMin -1 // outside bounds - low value
+#define kPageMin -1  // outside bounds - low value
 #define kPageMax 128 // outside bounds - high value
 
 // clean/ no settings in the page
 #define pageIsClean(_page_) (_page_.xmin == kPageMax)
 
 // Macro to reset page descriptor
-#define pageSetClean(_page_)  \
-    do {                        \
-        _page_.xmin = kPageMax; \
-        _page_.xmax = kPageMin; \
+#define pageSetClean(_page_)                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        _page_.xmin = kPageMax;                                                                                        \
+        _page_.xmax = kPageMin;                                                                                        \
     } while (false)
 
 // Macro to check and adjust record bounds based on a single location
-#define pageCheckBounds(_page_, _x_) \
-    do {                               \
-        if (_x_ < _page_.xmin)         \
-            _page_.xmin = _x_;         \
-        if (_x_ > _page_.xmax)         \
-            _page_.xmax = _x_;         \
+#define pageCheckBounds(_page_, _x_)                                                                                   \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_x_ < _page_.xmin)                                                                                         \
+            _page_.xmin = _x_;                                                                                         \
+        if (_x_ > _page_.xmax)                                                                                         \
+            _page_.xmax = _x_;                                                                                         \
     } while (false)
 
 // Macro to check and adjust record bounds using another page descriptor
-#define pageCheckBoundsDesc(_page_, _page2_) \
-    do {                                        \
-        if (_page2_.xmin < _page_.xmin)         \
-            _page_.xmin = _page2_.xmin;         \
-        if (_page2_.xmax > _page_.xmax)         \
-            _page_.xmax = _page2_.xmax;         \
+#define pageCheckBoundsDesc(_page_, _page2_)                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_page2_.xmin < _page_.xmin)                                                                                \
+            _page_.xmin = _page2_.xmin;                                                                                \
+        if (_page2_.xmax > _page_.xmax)                                                                                \
+            _page_.xmax = _page2_.xmax;                                                                                \
     } while (false)
 
 // Macro to check and adjust record bounds using bounds values
-#define pageCheckBoundsRange(_page_, _x0_, _x1_) \
-    do {                                            \
-        if (_x0_ < _page_.xmin)                     \
-            _page_.xmin = _x0_;                     \
-        if (_x1_ > _page_.xmax)                     \
-            _page_.xmax = _x1_;                     \
+#define pageCheckBoundsRange(_page_, _x0_, _x1_)                                                                       \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_x0_ < _page_.xmin)                                                                                        \
+            _page_.xmin = _x0_;                                                                                        \
+        if (_x1_ > _page_.xmax)                                                                                        \
+            _page_.xmax = _x1_;                                                                                        \
     } while (false)
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -183,55 +187,41 @@
 //      - Black     - Set value to always be black
 //      - White     - set value to always be white
 
-typedef void (*rasterOPsFn)(uint8_t* dest, uint8_t src, uint8_t mask);
+typedef void (*rasterOPsFn)(uint8_t *dest, uint8_t src, uint8_t mask);
 
 static const rasterOPsFn m_rasterOps[] = {
     // COPY
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = (~mask & *dst) | (src & mask);
-    },
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = (~mask & *dst) | (src & mask); },
     // NOT COPY
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = (~mask & *dst) | ((!src) & mask);
-    },
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = (~mask & *dst) | ((!src) & mask); },
     // NOT DEST
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = (~mask & *dst) | ((!(*dst)) & mask);
-    },
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = (~mask & *dst) | ((!(*dst)) & mask); },
     // XOR
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = (~mask & *dst) | ((*dst ^ src) & mask);
-    },
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = (~mask & *dst) | ((*dst ^ src) & mask); },
     // Always Black
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = ~mask & *dst;
-    },
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = ~mask & *dst; },
     // Always White
-    [](uint8_t* dst, uint8_t src, uint8_t mask) -> void {
-        *dst = mask | *dst;
-    }
-};
+    [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = mask | *dst; }};
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Constructor
+// setup defaults - called from constructors
 //
 // Just a bunch of member variable inits
 
-QwGrSSD1306::QwGrSSD1306()
-    : default_address { 0 }
-    , m_pBuffer { nullptr }
-    , m_color { 1 }
-    , m_rop { grROPCopy }
-    , m_i2cBus { nullptr }
-    , m_i2cAddress { 0 }
-    , m_initHWComPins { kDefaultPinConfig }
-    , m_initPreCharge { kDefaultPreCharge }
-    , m_initVCOMDeselect { kDefaultVCOMDeselect }
-    , m_initContrast { kDefaultContrast }
-    , m_isInitialized { false }
+void QwGrSSD1306::setupDefaults(void)
 {
+    default_address = {0};
+    m_pBuffer = {nullptr};
+    m_color = {1};
+    m_rop = {grROPCopy};
+    m_i2cBus = {nullptr};
+    m_i2cAddress = {0};
+    m_initHWComPins = {kDefaultPinConfig};
+    m_initPreCharge = {kDefaultPreCharge};
+    m_initVCOMDeselect = {kDefaultVCOMDeselect};
+    m_initContrast = {kDefaultContrast};
+    m_isInitialized = {false};
 }
-
 ////////////////////////////////////////////////////////////////////////////////////
 // init()
 //
@@ -274,7 +264,7 @@ bool QwGrSSD1306::init(void)
 
     // Number of pages used for this device?
     m_nPages = m_viewport.height / kByteNBits; // height / number of pixels per byte.
-                                             // TODO - support multiples != 8
+                                               // TODO - support multiples != 8
 
     // init the graphics buffers
     initBuffers();
@@ -305,7 +295,7 @@ bool QwGrSSD1306::reset(bool clearDisplay)
     setupOLEDDevice(clearDisplay);
 
     // Init internal/drawing buffers and device screen buffer
-    if(clearDisplay)
+    if (clearDisplay)
         initBuffers();
 
     return true;
@@ -353,7 +343,7 @@ void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
 {
     // Start the device setup - sending commands to device. See command defs in
     // header, and device datasheet
-    if(clearDisplay)    
+    if (clearDisplay)
         sendDevCommand(kCmdDisplayOff);
 
     sendDevCommand(kCmdSetDisplayClockDiv, 0x80);
@@ -376,7 +366,7 @@ void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
     sendDevCommand(kCmdSetVComDeselect, m_initVCOMDeselect);
     sendDevCommand(kCmdDeactivateScroll);
 
-    if(clearDisplay)
+    if (clearDisplay)
         sendDevCommand(kCmdDisplayOn);
 }
 ////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +376,7 @@ void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
 //
 // TODO -  In the *future*, generalize to match SDK
 
-void QwGrSSD1306::setCommBus(QwI2C& theBus, uint8_t id_bus)
+void QwGrSSD1306::setCommBus(QwI2C &theBus, uint8_t id_bus)
 {
     m_i2cBus = &theBus;
     m_i2cAddress = id_bus;
@@ -402,7 +392,7 @@ void QwGrSSD1306::setCommBus(QwI2C& theBus, uint8_t id_bus)
 // on_initialize() method.
 //
 //
-void QwGrSSD1306::setBuffer(uint8_t* pBuffer)
+void QwGrSSD1306::setBuffer(uint8_t *pBuffer)
 {
     if (pBuffer)
         m_pBuffer = pBuffer;
@@ -416,11 +406,12 @@ void QwGrSSD1306::setBuffer(uint8_t* pBuffer)
 void QwGrSSD1306::clearScreenBuffer(void)
 {
     // Clear out the screen buffer on the device
-    uint8_t emptyPage[kPageMax] = { 0 };
+    uint8_t emptyPage[kPageMax] = {0};
 
-    for (int i = 0; i < kMaxPageNumber; i++) {
-        setScreenBufferAddress(i, 0); // start of page
-        sendDevData((uint8_t*)emptyPage, kPageMax); // clear out page
+    for (int i = 0; i < kMaxPageNumber; i++)
+    {
+        setScreenBufferAddress(i, 0);                // start of page
+        sendDevData((uint8_t *)emptyPage, kPageMax); // clear out page
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////
@@ -438,7 +429,8 @@ void QwGrSSD1306::initBuffers(void)
         memset(m_pBuffer, 0, m_viewport.width * m_nPages);
 
     // Set page descs to "clean" state
-    for (i = 0; i < m_nPages; i++) {
+    for (i = 0; i < m_nPages; i++)
+    {
         pageSetClean(m_pageState[i]);
         pageSetClean(m_pageErase[i]);
     }
@@ -524,8 +516,7 @@ void QwGrSSD1306::stopScroll(void)
 //
 // Set scroll parametes on the device and start scrolling
 //
-void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop,
-    uint8_t interval)
+void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval)
 {
     // parameter sanity?
     if (stop < start)
@@ -533,18 +524,17 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop,
 
     // Setup a default command list
     uint8_t n_commands = 7;
-    uint8_t commands[7] = {
-        kCmdRightHorizontalScroll, // default scroll right
-        0x00, // dummy byte
-        start, // start page address
-        interval, // interval between scroll steps - in terms of frame fequency
-        stop, // end page address
-        0x00, // dummy byte for non vert, for vert it's scroll offset
-        0xFF
-    }; // Dummy byte for non vert - set to FFX, not used for vert.
+    uint8_t commands[7] = {kCmdRightHorizontalScroll, // default scroll right
+                           0x00,                      // dummy byte
+                           start,                     // start page address
+                           interval,                  // interval between scroll steps - in terms of frame fequency
+                           stop,                      // end page address
+                           0x00,                      // dummy byte for non vert, for vert it's scroll offset
+                           0xFF};                     // Dummy byte for non vert - set to FFX, not used for vert.
 
     // Which way to scroll
-    switch (scroll_type) {
+    switch (scroll_type)
+    {
     case SCROLL_RIGHT:
         break; // set in initializer of command array
     case SCROLL_LEFT:
@@ -560,9 +550,10 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop,
 
     // If we are scrolling vertically, modify the command list, and set the
     // vertical scroll area on display
-    if (scroll_type & SCROLL_VERTICAL) {
+    if (scroll_type & SCROLL_VERTICAL)
+    {
         commands[5] = 0x01; // set the scrolling offset
-        n_commands--; // don't use the last byte of command buffer
+        n_commands--;       // don't use the last byte of command buffer
 
         // Set on display scroll area
         sendDevCommand(kCmdSetVerticalScrollArea, 0x00);
@@ -610,7 +601,8 @@ void QwGrSSD1306::erase(void)
         return;
 
     // Cleanup the dirty parts of each page in the graphics buffer.
-    for (uint8_t i = 0; i < m_nPages; i++) {
+    for (uint8_t i = 0; i < m_nPages; i++)
+    {
         // m_pageState
         // The current "dirty" areas of the graphics [local] buffer.
         // Areas that haven't been sent to the screen/device but are
@@ -627,7 +619,7 @@ void QwGrSSD1306::erase(void)
 
         // clear out memory that is dirty on this page
         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
-            m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
+               m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
 
         // clear out any pending dirty range for this page - it's erased
         pageSetClean(m_pageState[i]);
@@ -654,12 +646,11 @@ void QwGrSSD1306::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 
     uint8_t bit = byte_bits[mod_byte(y)];
 
-    m_rasterOps[m_rop](
-        m_pBuffer + x + y / kByteNBits * m_viewport.width, // pixel offset
-        (clr ? bit : 0), bit); // which bit to set in byte
+    m_rasterOps[m_rop](m_pBuffer + x + y / kByteNBits * m_viewport.width, // pixel offset
+                       (clr ? bit : 0), bit);                             // which bit to set in byte
 
     pageCheckBounds(m_pageState[y / kByteNBits],
-        x); // update dirty range for page
+                    x); // update dirty range for page
 }
 ////////////////////////////////////////////////////////////////////////////////////
 // draw_line_horz()
@@ -667,8 +658,7 @@ void QwGrSSD1306::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 // Fast horizontal line drawing routine
 //
 
-void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-    uint8_t clr)
+void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 {
     // Basically we set a bit within a range in a page of our graphics buffer.
 
@@ -682,11 +672,11 @@ void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
     if (x1 >= m_viewport.width)
         x1 = m_viewport.width - 1;
 
-    uint8_t bit = byte_bits[mod_byte(y0)]; // bit to set
+    uint8_t bit = byte_bits[mod_byte(y0)];   // bit to set
     rasterOPsFn curROP = m_rasterOps[m_rop]; // current raster op
 
     // Get the start of this line in the graphics buffer
-    uint8_t* pBuffer = m_pBuffer + x0 + y0 / kByteNBits * m_viewport.width;
+    uint8_t *pBuffer = m_pBuffer + x0 + y0 / kByteNBits * m_viewport.width;
 
     // walk up x and set the target pixel using the pixel operator function
     for (int i = x0; i <= x1; i++, pBuffer++)
@@ -700,8 +690,7 @@ void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 //
 // Fast vertical line drawing routine - also supports fast filled rects
 //
-void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-    uint8_t clr)
+void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 {
     if (x0 >= m_viewport.width) // out of bounds
         return;
@@ -740,7 +729,8 @@ void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 
     rasterOPsFn curROP = m_rasterOps[m_rop]; // current raster op
 
-    for (int i = page0; i <= page1; i++) {
+    for (int i = page0; i <= page1; i++)
+    {
         startBit = mod_byte(y0); // start bit in this byte
 
         // last bit of this byte to set? Does the line end in this byte, or continue
@@ -748,21 +738,19 @@ void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
         endBit = y0 + kByteNBits - startBit > y1 ? mod_byte(y1) : kByteNBits - 1;
 
         // Set the bits from startBit to endBit
-        setBits = (0xFF >> ((kByteNBits - endBit) - 1))
-            << startBit; // what bits are being set in this byte
+        setBits = (0xFF >> ((kByteNBits - endBit) - 1)) << startBit; // what bits are being set in this byte
 
         // set the bits in the graphics buffer using the current byte operator
         // function
 
         // Note - We iterate over x to fill in a rect if specified.
         for (xinc = x0; xinc <= x1; xinc++)
-            curROP(m_pBuffer + i * m_viewport.width + xinc, (clr ? setBits : 0),
-                setBits);
+            curROP(m_pBuffer + i * m_viewport.width + xinc, (clr ? setBits : 0), setBits);
 
         y0 += endBit - startBit + 1; // increment Y0 to next page
 
         pageCheckBoundsRange(m_pageState[i], x0,
-            x1); // mark dirty range in page desc
+                             x1); // mark dirty range in page desc
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -770,8 +758,7 @@ void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
 //
 // Does the actual drawing/logic
 
-void QwGrSSD1306::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width,
-    uint8_t height, uint8_t clr)
+void QwGrSSD1306::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
 {
     uint8_t x1 = x0 + width - 1;
     uint8_t y1 = y0 + height - 1;
@@ -785,9 +772,8 @@ void QwGrSSD1306::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width,
 // Draw a 8 bit encoded (aka same y layout as this device) bitmap to the screen
 //
 
-void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
-    uint8_t dst_height, uint8_t* pBitmap,
-    uint8_t bmp_width, uint8_t bmp_height)
+void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t dst_height, uint8_t *pBitmap,
+                             uint8_t bmp_width, uint8_t bmp_height)
 {
     // some simple checks
     if (x0 >= m_viewport.width || y0 >= m_viewport.height || !bmp_width || !bmp_height)
@@ -836,7 +822,8 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
     //              current operator
 
     // Loop over the memory pages in the graphics buffer
-    for (int iPage = page0; iPage <= page1; iPage++) {
+    for (int iPage = page0; iPage <= page1; iPage++)
+    {
         // First, get the number of destination bits in the current page
         grStartBit = mod_byte(y0); // start bit
 
@@ -845,8 +832,7 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
         endBit = y0 + kByteNBits - grStartBit > y1 ? mod_byte(y1) : kByteNBits - 1;
 
         // Set the bits from startBit to endBit
-        grSetBits = (0xFF >> (kByteNBits - endBit - 1))
-            << grStartBit; // what bits are being set in this byte
+        grSetBits = (0xFF >> (kByteNBits - endBit - 1)) << grStartBit; // what bits are being set in this byte
 
         // how many bits of data do we need to transfer from the bitmap?
         neededBits = endBit - grStartBit + 1;
@@ -874,19 +860,18 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
 
         // we have the mask for the bmp - loop over the width of the copy region,
         // pulling out bmp data and writing it to the graphics buffer
-        for (bmp_x = 0; bmp_x < dst_width; bmp_x++) {
+        for (bmp_x = 0; bmp_x < dst_width; bmp_x++)
+        {
             // get data bits out of current bitmap location and shift if needed
             bmp_data = (pBitmap[bmp_width * bmpPage + bmp_x] & bmp_mask[0]) >> startBit;
 
             if (remainingBits) // more data to add from the next byte in this column
-                bmp_data |= (pBitmap[bmp_width * (bmpPage + 1) + bmp_x] & bmp_mask[1])
-                    << (neededBits - remainingBits);
+                bmp_data |= (pBitmap[bmp_width * (bmpPage + 1) + bmp_x] & bmp_mask[1]) << (neededBits - remainingBits);
 
             // Write the bmp data to the graphics buffer - using current write op.
             // Note, if the location in the buffer didn't start at bit 0, we shift
             // bmp_data
-            curROP(m_pBuffer + iPage * m_viewport.width + bmp_x + x0,
-                bmp_data << grStartBit, grSetBits);
+            curROP(m_pBuffer + iPage * m_viewport.width + bmp_x + x0, bmp_data << grStartBit, grSetBits);
         }
         // move up our y values (graphics buffer and bitmap) by the number of bits
         // transferred
@@ -894,7 +879,7 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width,
         bmp_y += neededBits;
 
         pageCheckBoundsRange(m_pageState[iPage], x0,
-            x0 + dst_width); // mark dirty range in page desc
+                             x0 + dst_width); // mark dirty range in page desc
     }
 }
 
@@ -946,7 +931,8 @@ void QwGrSSD1306::display()
 
     pageState_t transferRange;
 
-    for (int i = 0; i < m_nPages; i++) {
+    for (int i = 0; i < m_nPages; i++)
+    {
         // We keep the erase rect seperate from dirty rect. Make temp copy of
         // dirty rect page range, expand to include erase rect page range.
 
@@ -957,8 +943,8 @@ void QwGrSSD1306::display()
             pageCheckBoundsDesc(transferRange, m_pageErase[i]);
 
         if (pageIsClean(transferRange)) // both dirty and erase range for this
-                                          // page were null
-            continue; // next
+                                        // page were null
+            continue;                   // next
 
         // set the start address to write the updated data to the devices screen
         // buffer
@@ -966,7 +952,7 @@ void QwGrSSD1306::display()
 
         // send the dirty data to the device
         sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
-            transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
+                    transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
 
         // If we sent the erase bounds, zero out the erase bounds - this area is now
         // clear
@@ -999,13 +985,12 @@ void QwGrSSD1306::sendDevCommand(uint8_t command)
 //
 // send a single command and value to the device via the current bus object.
 
-void QwGrSSD1306::sendDevCommand(uint8_t* commands, uint8_t n_commands)
+void QwGrSSD1306::sendDevCommand(uint8_t *commands, uint8_t n_commands)
 {
     if (!commands || n_commands == 0)
         return;
 
-    m_i2cBus->writeRegisterRegion(m_i2cAddress, kDeviceSendCommand, commands,
-        n_commands);
+    m_i2cBus->writeRegisterRegion(m_i2cAddress, kDeviceSendCommand, commands, n_commands);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1016,7 +1001,7 @@ void QwGrSSD1306::sendDevCommand(uint8_t* commands, uint8_t n_commands)
 
 void QwGrSSD1306::sendDevCommand(uint8_t command, uint8_t value)
 {
-    uint8_t buffer[] = { command, value };
+    uint8_t buffer[] = {command, value};
 
     sendDevCommand(buffer, 2);
 }
@@ -1025,7 +1010,7 @@ void QwGrSSD1306::sendDevCommand(uint8_t command, uint8_t value)
 //
 // send a single command to the device via the current bus object
 
-void QwGrSSD1306::sendDevData(uint8_t* pData, uint8_t nData)
+void QwGrSSD1306::sendDevData(uint8_t *pData, uint8_t nData)
 {
     m_i2cBus->writeRegisterRegion(m_i2cAddress, kDeviceSendData, pData, nData);
 }

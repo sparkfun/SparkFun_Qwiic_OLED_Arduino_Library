@@ -77,7 +77,8 @@
 //      - Black     - Set value to always be black
 //      - White     - set value to always be white
 
-typedef enum gr_op_funcs_ {
+typedef enum gr_op_funcs_
+{
     grROPCopy = 0,
     grROPNotCopy = 1,
     grROPNot = 2,
@@ -145,7 +146,8 @@ typedef enum gr_op_funcs_ {
 
 #define kMaxPageNumber 8
 
-typedef struct {
+typedef struct
+{
     int16_t xmin;
     int16_t xmax;
 } pageState_t;
@@ -154,11 +156,23 @@ typedef struct {
 // QwGrSSD1306
 // A buffer graphics device to support the SSD1306 graphics hardware
 
-class QwGrSSD1306 : public QwGrBufferDevice {
+class QwGrSSD1306 : public QwGrBufferDevice
+{
+  private:
+    void setupDefaults(void);
 
-public:
-    QwGrSSD1306(); // default constructor - always called
-    using QwGrBufferDevice::QwGrBufferDevice; // inherit constructors
+  public:
+    QwGrSSD1306()
+    {
+        setupDefaults(); // default constructor - always called
+    }
+    QwGrSSD1306(uint8_t width, uint8_t height) : QwGrSSD1306(0, 0, width, height){};
+
+    // call super class
+    QwGrSSD1306(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height) : QwGrBufferDevice(x0, y0, width, height)
+    {
+        setupDefaults();
+    };
 
     // Public draw methods
     void display(void); // send graphics buffer to the devices screen buffer
@@ -167,11 +181,14 @@ public:
     // Device setup
     virtual bool init(void);
 
-    bool isInitialized(void) { return m_isInitialized; };
+    bool isInitialized(void)
+    {
+        return m_isInitialized;
+    };
     bool reset(bool clearDisplay = true);
 
     // method to set the communication bus this object should use
-    void setCommBus(QwI2C& theBus, uint8_t id_bus);
+    void setCommBus(QwI2C &theBus, uint8_t id_bus);
 
     // Set the current color/pixel write operation
     void setColor(uint8_t color);
@@ -202,10 +219,10 @@ public:
 
     void displayPower(bool enable = true);
 
-protected:
+  protected:
     // Subclasses of this class define the specifics of the device, including size.
     // Subclass needs to define the graphics buffer array - stack based - and pass in
-    void setBuffer(uint8_t* pBuffer);
+    void setBuffer(uint8_t *pBuffer);
 
     ///////////////////////////////////////////////////////////////////////////
     // Internal, fast draw routines - this are used in the overall
@@ -222,8 +239,8 @@ protected:
     void drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr);
 
     // >> Fast Bitmap <<
-    void drawBitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-        uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height);
+    void drawBitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t *pBitmap, uint8_t bmp_width,
+                    uint8_t bmp_height);
 
     ///////////////////////////////////////////////////////////////////////////
     // configuration methods for sub-classes. Settings unique to a device
@@ -231,7 +248,7 @@ protected:
     void setPreCharge(uint8_t);
     void setVcomDeselect(uint8_t);
 
-private:
+  private:
     // Internal buffer management methods
     bool setScreenBufferAddress(uint8_t page, uint8_t column);
     void initBuffers(void); // clear graphics and screen buffer
@@ -242,25 +259,25 @@ private:
     // device communication methods
     void sendDevCommand(uint8_t command);
     void sendDevCommand(uint8_t command, uint8_t value);
-    void sendDevCommand(uint8_t* commands, uint8_t n);
-    void sendDevData(uint8_t* pData, uint8_t nData);
+    void sendDevCommand(uint8_t *commands, uint8_t n);
+    void sendDevData(uint8_t *pData, uint8_t nData);
 
     /////////////////////////////////////////////////////////////////////////////
     // instance vars
 
     // Buffer variables
-    uint8_t* m_pBuffer; // Pointer to the graphics buffer
-    uint8_t m_nPages; // number of pages for current device
+    uint8_t *m_pBuffer;                      // Pointer to the graphics buffer
+    uint8_t m_nPages;                        // number of pages for current device
     pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
     pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
     bool m_pendingErase;
 
     // display variables
-    uint8_t m_color; // current color (really 0 or 1)
+    uint8_t m_color;    // current color (really 0 or 1)
     grRasterOp_t m_rop; // current raster operation code
 
     // I2C  things
-    QwI2C* m_i2cBus; // pointer to our i2c bus object
+    QwI2C *m_i2cBus;      // pointer to our i2c bus object
     uint8_t m_i2cAddress; // address of the device
 
     // Stash values for settings that are unique to each device.
