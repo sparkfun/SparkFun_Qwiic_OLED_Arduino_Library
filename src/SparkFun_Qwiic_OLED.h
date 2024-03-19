@@ -49,11 +49,11 @@
 // for the Qwiic OLED driver.
 
 // include the underlying SDK implementation headers for the OLED devices
+#include "qwiic_oled_1in3.h"
+#include "qwiic_oled_custom.h"
 #include "qwiic_oledmicro.h"
 #include "qwiic_olednarrow.h"
 #include "qwiic_oledtransp.h"
-#include "qwiic_oled_1in3.h"
-#include "qwiic_oled_custom.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -83,12 +83,13 @@ typedef QwBitmap QwiicBitmap;
 
 // Define the template and fill in the interface methods in-line.
 
-template <typename SSD1306DeviceType>
-class QwiicOLEDBaseClass : public Print { // NOTE: implementing Arduino Print
-protected:
+template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: implementing Arduino Print
+{
+  protected:
     // our device driver
     SSD1306DeviceType m_device;
-private:
+
+  private:
     QwI2C m_i2cBus; // our i2c object
 
     // for the Aruduino print functionaliyt
@@ -97,7 +98,7 @@ private:
 
     uint8_t m_color;
 
-public:
+  public:
     ///////////////////////////////////////////////////////////////////////
     // begin()
     //
@@ -113,7 +114,7 @@ public:
     //  address     optional. I2C Address. If not provided, the default address is used.
     //  retval      true on success, false on startup failure
 
-    bool begin(TwoWire& wirePort = Wire, uint8_t address = kNoAddressSet)
+    bool begin(TwoWire &wirePort = Wire, uint8_t address = kNoAddressSet)
     {
 
         // defaults for Arduino Print
@@ -122,8 +123,7 @@ public:
 
         m_i2cBus.init(wirePort);
 
-        m_device.setCommBus(m_i2cBus,
-            (address == kNoAddressSet ? m_device.default_address : address));
+        m_device.setCommBus(m_i2cBus, (address == kNoAddressSet ? m_device.default_address : address));
 
         // call init on the device
         bool bStatus = m_device.init();
@@ -131,8 +131,9 @@ public:
         // Want to start cursor at Y height of the current font, if we have a font.
         //
         // Get our font height ... a default font is set during init ...
-        if (bStatus) {
-            QwiicFont* pFont = m_device.font();
+        if (bStatus)
+        {
+            QwiicFont *pFont = m_device.font();
             if (pFont)
                 m_cursorY = pFont->height;
         }
@@ -175,7 +176,7 @@ public:
     //
     //  Parameter   Description
     //  ---------   -----------------------------
-    //  clearDisplay true - clear the internal buffers during reset    
+    //  clearDisplay true - clear the internal buffers during reset
     //  retval      true on success, false on  failure
 
     bool reset(bool clearDisplay)
@@ -411,11 +412,11 @@ public:
     //     int myFontWidth = QW_FONT_31X48.width;
     //
 
-    void setFont(QwiicFont& theFont)
+    void setFont(QwiicFont &theFont)
     {
         m_device.setFont(theFont);
     }
-    void setFont(const QwiicFont* theFont)
+    void setFont(const QwiicFont *theFont)
     {
         m_device.setFont(theFont);
     }
@@ -429,7 +430,7 @@ public:
     // ---------    -----------------------------
     //  retval      A pointer to the current font. See setFont() for font object details.
 
-    QwiicFont* getFont(void)
+    QwiicFont *getFont(void)
     {
         return m_device.font();
     }
@@ -441,7 +442,7 @@ public:
 
     String getFontName(void)
     {
-        QwiicFont* pFont = m_device.font();
+        QwiicFont *pFont = m_device.font();
 
         if (!pFont)
             return String("");
@@ -458,12 +459,12 @@ public:
     //  text        The string used to determine width
     //  retval      The width of the provide string, as determined using the current font.
 
-    unsigned int getStringWidth(String& text)
+    unsigned int getStringWidth(String &text)
     {
         return getStringWidth(text.c_str());
     }
 
-    unsigned int getStringWidth(const char* text)
+    unsigned int getStringWidth(const char *text)
     {
 
         uint16_t height, width;
@@ -481,12 +482,12 @@ public:
     //  text        The string used to determine height
     //  retval      The height of the provide string, as determined using the current font.
 
-    unsigned int getStringHeight(String& text)
+    unsigned int getStringHeight(String &text)
     {
         return getStringHeight(text.c_str());
     }
 
-    unsigned int getStringHeight(const char* text)
+    unsigned int getStringHeight(const char *text)
     {
 
         uint16_t height, width;
@@ -662,8 +663,7 @@ public:
     // bmp_width    The width of the bitmap
     // bmp_height   The height of the bitmap
 
-    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-        uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height)
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height)
     {
         m_device.bitmap(x0, y0, x1, y1, pBitmap, bmp_width, bmp_height);
     }
@@ -681,7 +681,7 @@ public:
     // bmp_width    The width of the bitmap
     // bmp_height   The height of the bitmap
 
-    void bitmap(uint8_t x0, uint8_t y0, uint8_t* pBitmap, uint8_t bmp_width, uint8_t bmp_height)
+    void bitmap(uint8_t x0, uint8_t y0, uint8_t *pBitmap, uint8_t bmp_width, uint8_t bmp_height)
     {
 
         m_device.bitmap(x0, y0, pBitmap, bmp_width, bmp_height);
@@ -697,7 +697,7 @@ public:
     // y0           The Y coordinate to place the bitmap - upper left corner
     // bitmap       A bitmap object
 
-    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap& bitmap)
+    void bitmap(uint8_t x0, uint8_t y0, QwiicBitmap &bitmap)
     {
         m_device.bitmap(x0, y0, bitmap);
     }
@@ -714,12 +714,12 @@ public:
     // text         The string to draw on the screen
     // clr          optional The color value to draw the text. This defaults to white (1).
 
-    void text(uint8_t x0, uint8_t y0, const char* text, uint8_t clr = COLOR_WHITE)
+    void text(uint8_t x0, uint8_t y0, const char *text, uint8_t clr = COLOR_WHITE)
     {
         m_device.text(x0, y0, text, clr);
     }
 
-    void text(uint8_t x0, uint8_t y0, String& text, uint8_t clr = COLOR_WHITE)
+    void text(uint8_t x0, uint8_t y0, String &text, uint8_t clr = COLOR_WHITE)
     {
 
         m_device.text(x0, y0, text.c_str(), clr);
@@ -789,12 +789,13 @@ public:
 
     virtual size_t write(uint8_t theChar)
     {
-        QwiicFont* pFont = m_device.font();
+        QwiicFont *pFont = m_device.font();
 
         if (!pFont) // no Font?! No dice
             return 0;
 
-        switch (theChar) {
+        switch (theChar)
+        {
         case '\n': // Carriage return
             m_cursorX = 0;
             m_cursorY += pFont->height;
@@ -802,12 +803,13 @@ public:
             break;
         default:
 
-            char buffer[2] = { theChar, '\0' }; // text() needs a c string
+            char buffer[2] = {theChar, '\0'}; // text() needs a c string
             m_device.text(m_cursorX, m_cursorY, buffer, m_color);
 
             m_cursorX += pFont->width + 1;
 
-            if (m_cursorX > m_device.width() - pFont->width) { // overflow
+            if (m_cursorX > m_device.width() - pFont->width)
+            { // overflow
                 m_cursorX = 0;
                 m_cursorY += pFont->height;
             }
@@ -823,30 +825,59 @@ public:
 ///////////////////////////////////////////////////////////////////////
 // For our actual implementations - just subclass from the above Arduino template
 
-class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro> {
+class QwiicMicroOLED : public QwiicOLEDBaseClass<QwOLEDMicro>
+{
     // nothing here - see above
 };
 
-class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow> {
+class QwiicNarrowOLED : public QwiicOLEDBaseClass<QwOLEDNarrow>
+{
     // nothing here - see above
 };
 
-class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent> {
+class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>
+{
     // nothing here - see above
 };
 
-class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3> {
+class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3>
+{
     // nothing here - see above
 };
 
-class QwiicCustomOLED : public QwiicOLEDBaseClass<QwOLEDCustom> {
-public:
-    void setXOffset(uint8_t xOffset){ m_device.setXOffset(xOffset); }
-    void setYOffset(uint8_t yOffset){ m_device.setYOffset(yOffset); }
-    void setDisplayWidth(uint8_t displayWidth){ m_device.setDisplayWidth(displayWidth); }
-    void setDisplayHeight(uint8_t displayHeight){ m_device.setDisplayHeight(displayHeight); }
-    void setPinConfig(uint8_t pinConfig){ m_device.setPinConfig(pinConfig); }
-    void setPreCharge(uint8_t preCharge){ m_device.setPreCharge(preCharge); }
-    void setVcomDeselect(uint8_t vcomDeselect){ m_device.setVcomDeselect(vcomDeselect); }
-    void setContrast(uint8_t contrast){ m_device.setContrast(contrast); }
+class QwiicCustomOLED : public QwiicOLEDBaseClass<QwOLEDCustom>
+{
+  public:
+    void setXOffset(uint8_t xOffset)
+    {
+        m_device.setXOffset(xOffset);
+    }
+    void setYOffset(uint8_t yOffset)
+    {
+        m_device.setYOffset(yOffset);
+    }
+    void setDisplayWidth(uint8_t displayWidth)
+    {
+        m_device.setDisplayWidth(displayWidth);
+    }
+    void setDisplayHeight(uint8_t displayHeight)
+    {
+        m_device.setDisplayHeight(displayHeight);
+    }
+    void setPinConfig(uint8_t pinConfig)
+    {
+        m_device.setPinConfig(pinConfig);
+    }
+    void setPreCharge(uint8_t preCharge)
+    {
+        m_device.setPreCharge(preCharge);
+    }
+    void setVcomDeselect(uint8_t vcomDeselect)
+    {
+        m_device.setVcomDeselect(vcomDeselect);
+    }
+    void setContrast(uint8_t contrast)
+    {
+        m_device.setContrast(contrast);
+    }
 };
