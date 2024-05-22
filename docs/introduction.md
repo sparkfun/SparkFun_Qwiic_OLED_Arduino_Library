@@ -38,7 +38,7 @@ A full [API Reference](../api_device) is also provided for the library.
 
 The SparkFun Qwiic OLED Arduino Library supports the following SparkFun products.
 
-<div class="grid cards hide col-4" markdown>
+<div class="grid cards col-4" markdown>
 <!-- ----------WHITE SPACE BETWEEN PRODUCTS---------- -->
 -   <a href="https://www.sparkfun.com/products/22495">
       <figure markdown>
@@ -70,7 +70,7 @@ The SparkFun Qwiic OLED Arduino Library supports the following SparkFun products
 <!-- ----------WHITE SPACE BETWEEN PRODUCTS---------- -->
 -   <a href="https://www.sparkfun.com/products/15173">
       <figure markdown>
-        <img src="https://cdn.sparkfun.com/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11-Blue.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Transparent Graphical OLED Breakout (Qwiic)">
+        <img src="https://cdn.sparkfun.com//assets/parts/1/3/5/8/8/15173-SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic_-01a.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Transparent Graphical OLED Breakout (Qwiic)">
       </figure>
     </a>
 
@@ -115,7 +115,7 @@ The following architectures are supported in the Arduino Library.
 
 Below are a few of those processors populated on Arduino boards from the [SparkFun catalog](https://www.sparkfun.com/categories/242). You will need to make sure to check the associated hookup guides for additional information about compatible cables, drivers, or board add-ons.
 
-<div class="grid cards hide col-4" markdown>
+<div class="grid cards col-4" markdown>
 <!-- ----------WHITE SPACE BETWEEN PRODUCTS---------- -->
 -   <a href="https://www.sparkfun.com/products/15574">
       <figure markdown>
