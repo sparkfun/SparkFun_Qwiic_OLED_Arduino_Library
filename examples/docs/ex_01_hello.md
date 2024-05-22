@@ -168,6 +168,9 @@ The last step is sending the graphics to the device. This is accomplished by cal
     myOLED.display();
 ```
 
-And that's it - the graphic is displayed on the OLED device.
+
+### What You Should See
+
+And that's it! Select the board and COM port for your development board. Then upload the code! The graphic should display on the OLED device.
 
 ![Hello!](img/ex01_hello.png "Hello")
