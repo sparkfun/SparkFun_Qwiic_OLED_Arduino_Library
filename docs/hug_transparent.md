@@ -699,6 +699,10 @@ You can use SPI to connect as many breakouts as you want. For N displays you wil
 
 The Transparent OLED Breakout (Qwiic) uses the SparkFun QWIIC OLED Arduino Library. The [SparkFun Qwiic OLED library Getting Started guide](software.md) has library setup instructions and usage examples. Additionally, the full library API documentation is available in the [SparkFun Qwiic OLED Library API Reference guide](api_device.md).
 
+<div style="text-align: center">
+    <a href="../api_device" class="md-button">SparkFun Qwiic OLED Library API Reference Guide</a>
+</div>
+
 
 
 ## Resources

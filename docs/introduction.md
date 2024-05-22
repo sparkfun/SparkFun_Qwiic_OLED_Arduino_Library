@@ -70,7 +70,7 @@ The SparkFun Qwiic OLED Arduino Library supports the following SparkFun products
 <!-- ----------WHITE SPACE BETWEEN PRODUCTS---------- -->
 -   <a href="https://www.sparkfun.com/products/15173">
       <figure markdown>
-        <img src="https://cdn.sparkfun.com//assets/parts/1/3/5/8/8/15173-SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic_-01a.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Transparent Graphical OLED Breakout (Qwiic)">
+        <img src="https://cdn.sparkfun.com/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11-Blue.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Transparent Graphical OLED Breakout (Qwiic)">
       </figure>
     </a>
 
@@ -237,4 +237,6 @@ Below are a few of those processors populated on Arduino boards from the [SparkF
 
 ### License
 
-The SparkFun Qwiic OLED Arduino Library is licensed using the Open Source [MIT License](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/LICENSE.md).
+The SparkFun Qwiic OLED Arduino Library is licensed using the Open Source [MIT License](https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library/blob/main/LICENSE.md#code):
+
+    --8<-- "LICENSE.md:35:55"

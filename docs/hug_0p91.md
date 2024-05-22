@@ -7,7 +7,7 @@ The [SparkFun Qwiic OLED Display](https://www.sparkfun.com/products/24606) can d
 
 -   <a href="https://www.sparkfun.com/products/24606">
       <figure markdown>
-        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Qwiic OLED Display (0.91 in., 128x32)">
+        <img src="https://cdn.sparkfun.com/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11-Blue.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Qwiic OLED Display (0.91 in., 128x32)">
       </figure>
     </a>
 
@@ -278,7 +278,7 @@ Of course, you will also need a Qwiic Micro OLED if you have not added that to y
 <!-- ----------WHITE SPACE BETWEEN PRODUCTS---------- -->
 -   <a href="https://www.sparkfun.com/products/24606">
       <figure markdown>
-        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Qwiic OLED Display (0.91 in., 128x32)">
+        <img src="https://cdn.sparkfun.com/assets/parts/2/4/9/6/3/LCD-24606-Qwiic-OLED-Display-Action-11-Blue.jpg" style="width:140px; height:140px; object-fit:contain;" alt="SparkFun Qwiic OLED Display (0.91 in., 128x32)">
       </figure>
     </a>
 
@@ -485,6 +485,10 @@ For a more durable enclosure, you could use wood, metal, or plastic. However, yo
 ## Software
 
 The Qwiic OLED (0.91", 128x32) uses the SparkFun QWIIC OLED Arduino Library. The SparkFun Qwiic OLED Library's [Software Setup](../software/) has instructions and usage examples. Additionally, the full library API documentation is available in the SparkFun Qwiic OLED Library [API Reference](../api_device/) guide.
+
+<div style="text-align: center">
+    <a href="../api_device" class="md-button">SparkFun Qwiic OLED Library API Reference Guide</a>
+</div>
 
 
 
