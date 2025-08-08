@@ -52,6 +52,7 @@
 #include "qwiic_grbuffer.h"
 #include "qwiic_i2c.h"
 #include "res/qwiic_resdef.h"
+#include "qwiic_grcommon.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Device Config
@@ -77,15 +78,16 @@
 //      - Black     - Set value to always be black
 //      - White     - set value to always be white
 
-typedef enum gr_op_funcs_
-{
-    grROPCopy = 0,
-    grROPNotCopy = 1,
-    grROPNot = 2,
-    grROPXOR = 3,
-    grROPBlack = 4,
-    grROPWhite = 5
-} grRasterOp_t;
+// moved to common for now...
+// typedef enum gr_op_funcs_
+// {
+//     grROPCopy = 0,
+//     grROPNotCopy = 1,
+//     grROPNot = 2,
+//     grROPXOR = 3,
+//     grROPBlack = 4,
+//     grROPWhite = 5
+// } grRasterOp_t;
 
 /////////////////////////////////////////////////////////////////////////////
 // Flags for scrolling
@@ -146,11 +148,12 @@ typedef enum gr_op_funcs_
 
 #define kMaxPageNumber 8
 
-typedef struct
-{
-    int16_t xmin;
-    int16_t xmax;
-} pageState_t;
+// moved to common for now...
+// typedef struct
+// {
+//     int16_t xmin;
+//     int16_t xmax;
+// } pageState_t;
 
 /////////////////////////////////////////////////////////////////////////////
 // QwGrSSD1306
