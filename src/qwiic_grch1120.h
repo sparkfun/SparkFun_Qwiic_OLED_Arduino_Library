@@ -59,7 +59,7 @@
 #define SCROLL_INTERVAL_5_FRAMES 0x06
 #define SCROLL_INTERVAL_2_FRAMES 0x07
 
-#define kMaxPageNumber 8
+#define kMaxPageNumber 16
 
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
