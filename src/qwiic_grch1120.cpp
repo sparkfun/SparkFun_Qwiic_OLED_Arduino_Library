@@ -3,7 +3,11 @@
 //
 // This is a library written for SparkFun Qwiic OLED boards that use the
 // CH1120. This driver is VERY similar to the SSD1306 driver, but with a few 
-// subtle differences.
+// subtle differences. Currently, our only device with the CH1120 driver is 
+// the Qwiic OLED 1.5", on which row addressing has not been verified.
+// So, this library currently writes out the entire screen buffer each refresh
+// instead of only the dirty bits like the SSD1306 driver does. This makes this
+// display operate slower than the others in the library.
 //
 // SparkFun sells these at its website: www.sparkfun.com
 //
@@ -144,78 +148,6 @@
 #define kDefaultVCOMDeselect             ((uint8_t)0x3F) // default
 #define kDefaultExternalIREF             ((uint8_t)0x02)
 
-/////////////////////////////////////////////////////////////////////////////
-// Other Constant Definitions
-//
-// Other constants used by this driver for basic operation
-//
-
-
-
-//////////////////////////////////////////////////////////////////////////////////
-// Screen Buffer
-//
-// A key feature of this library is that it only sends "dirty" pixels to the
-// device, minimizing data transfer over the I2C bus. To accomplish this, the
-// dirty range of each graphics buffer page (see device memory layout in the
-// datasheet) is maintained during drawing operation. Whe data is sent to the
-// device, only the pixels in these regions are sent to the device, not the
-// entire page of data.
-//
-// The below macros are used to manage the record keeping of dirty page ranges.
-// Given that these actions are taking place in the draw loop, macros are used
-// for performance considerations.
-//
-// These macros work with the pageState_t struct type.
-//
-// Define unique values just outside of the screen buffer (1120) page range
-// (0 base) Note: A page  is 128 bits in length
-
-#define kPageMin -1  // outside bounds - low value
-#define kPageMax 128 // outside bounds - high value
-
-
-// clean/ no settings in the page
-#define pageIsClean(_page_) (_page_.xmin == kPageMax)
-
-// Macro to reset page descriptor
-#define pageSetClean(_page_)                                                                                           \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        _page_.xmin = kPageMax;                                                                                        \
-        _page_.xmax = kPageMin;                                                                                        \
-    } while (false)
-
-// Macro to check and adjust record bounds based on a single location
-#define pageCheckBounds(_page_, _x_)                                                                                   \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (_x_ < _page_.xmin)                                                                                         \
-            _page_.xmin = _x_;                                                                                         \
-        if (_x_ > _page_.xmax)                                                                                         \
-            _page_.xmax = _x_;                                                                                         \
-    } while (false)
-
-// Macro to check and adjust record bounds using another page descriptor
-#define pageCheckBoundsDesc(_page_, _page2_)                                                                           \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (_page2_.xmin < _page_.xmin)                                                                                \
-            _page_.xmin = _page2_.xmin;                                                                                \
-        if (_page2_.xmax > _page_.xmax)                                                                                \
-            _page_.xmax = _page2_.xmax;                                                                                \
-    } while (false)
-
-// Macro to check and adjust record bounds using bounds values
-#define pageCheckBoundsRange(_page_, _x0_, _x1_)                                                                       \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (_x0_ < _page_.xmin)                                                                                        \
-            _page_.xmin = _x0_;                                                                                        \
-        if (_x1_ > _page_.xmax)                                                                                        \
-            _page_.xmax = _x1_;                                                                                        \
-    } while (false)
-
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
 //
@@ -310,7 +242,10 @@ bool QwGrCH1120::init(void)
     // Finish up setting up this object
 
     // number of pages used for this device?
-    m_nPages = m_viewport.height / kByteNBits; // height / number of pixels per byte.
+    // By default, we are operating this device in "rotate 90" mode with "horizontal addressing"
+    // Each "page" is a byte representing 8 pixels
+    // so the number of pages that it takes to span entire row is the width divided by the number of bits in a byte
+    m_nPages = m_viewport.width / kByteNBits;  // width / number of pixels per byte.
                                                // TODO - support multiples != 8
 
     // init the graphics buffers
@@ -460,12 +395,16 @@ void QwGrCH1120::setBuffer(uint8_t *pBuffer)
 void QwGrCH1120::clearScreenBuffer(void)
 {
     // Clear out the screen buffer on the device
-    uint8_t emptyPage[kPageMax] = {0};
+    // each row is m_nPages bytes wide
+    // and we have m_viewport.height rows
+    uint8_t emptyRow[m_nPages] = {0};
 
-    for (int i = 0; i < kMaxPageNumber; i++)
+    setScreenBufferAddress(0, 0); // Warning: This function works-ish but only for even-numbered rows. 
+                                  // so we can use it here, but do not expect it to work in all instances
+
+    for (int i = 0; i < m_viewport.height; i++)
     {
-        setScreenBufferAddress(i, 0);                // start of page
-        sendDevData((uint8_t *)emptyPage, kPageMax); // clear out page
+        sendDevData((uint8_t *)emptyRow, m_nPages); // clear out row
     }
 }
 
@@ -478,16 +417,11 @@ void QwGrCH1120::initBuffers(void)
 {
     int i;
 
+    // TODO: the concept of ('width' and 'height' might be sorta swapped for this as opposed to old driver)
+    // that might not matter so much since this is square 128x128
     // clear out the local graphics buffer
     if (m_pBuffer)
         memset(m_pBuffer, 0, m_viewport.width * m_nPages);
-
-    // Set page descs to "clean" state
-    for (i = 0; i < m_nPages; i++)
-    {
-        pageSetClean(m_pageState[i]);
-        pageSetClean(m_pageErase[i]);
-    }
 
     m_pendingErase = false;
 
@@ -502,22 +436,14 @@ void QwGrCH1120::initBuffers(void)
 // graphics. This region is defined by the contents of the m_pageErase
 // descriptors.
 //
-// Copy these to the page state, and call display
-//
 
 void QwGrCH1120::resendGraphics(void)
 {
-    // Set the page state dirty bounds to the bounds of erase state
-    for (int i = 0; i < m_nPages; i++)
-        m_pageState[i] = m_pageErase[i];
-
     display(); // push bits to screen buffer
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Screen Control
-
-// TODO: It might make everything cleaner if we instead enumerate the flips as separate commands...
 
 ////////////////////////////////////////////////////////////////////////////////////
 // flip_vert()
@@ -663,39 +589,31 @@ void QwGrCH1120::displayPower(bool enable)
 // haven't been sent to the screen.
 //
 
-void QwGrCH1120::erase(void)
-{
-    if (!m_pBuffer)
-        return;
+// This function sort of becomes useless because the entire page is rewritten each time now, so there isn't so much a concept of "erasing"
+// void QwGrCH1120::erase(void)
+// {
+//     if (!m_pBuffer)
+//         return;
 
-    // Cleanup the dirty parts of each page in the graphics buffer.
-    for (uint8_t i = 0; i < m_nPages; i++)
-    {
-        // m_pageState
-        // The current "dirty" areas of the graphics [local] buffer.
-        // Areas that haven't been sent to the screen/device but are
-        // "dirty"
-        //
-        // Add the areas with pixels set and have been sent to the
-        // device - this is the contents of m_pageErase
+//     // Cleanup the dirty parts of each page in the graphics buffer.
+//     for (uint8_t i = 0; i < m_nPages; i++)
+//     {
+//         // clear out memory that is dirty on this page
+//         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
+//                m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
 
-        pageCheckBoundsDesc(m_pageState[i], m_pageErase[i]);
+//         // clear out any pending dirty range for this page - it's erased
+//         pageSetClean(m_pageState[i]);
+//     }
 
-        // if this page is clean, there is nothing to update
-        if (pageIsClean(m_pageState[i]))
-            continue;
-
-        // clear out memory that is dirty on this page
-        memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
-               m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
-
-        // clear out any pending dirty range for this page - it's erased
-        pageSetClean(m_pageState[i]);
-    }
-
-    // Indicate that the data transfer to the device should include the erase
-    // region
-    m_pendingErase = true;
+//     // Indicate that the data transfer to the device should include the erase
+//     // region
+//     m_pendingErase = true;
+// }
+//TODO: remove this if it's unused
+void QwGrCH1120::erase(void) {
+    Serial.println("qwiic_grch1120.cpp erase(): REDUNDANT ERASE FUNCTION CALLED!");
+    // if other layers assume that this will be used, this print will show us and we can handle that then...
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -817,9 +735,6 @@ void QwGrCH1120::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
             curROP(m_pBuffer + i * m_viewport.width + xinc, (clr ? setBits : 0), setBits);
 
         y0 += endBit - startBit + 1; // increment Y0 to next page
-
-        pageCheckBoundsRange(m_pageState[i], x0,
-                             x1); // mark dirty range in page desc
     }
 }
 
@@ -949,8 +864,6 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
         y0 += neededBits;
         bmp_y += neededBits;
 
-        pageCheckBoundsRange(m_pageState[iPage], x0,
-                             x0 + dst_width); // mark dirty range in page desc
     }
 }
 
@@ -961,25 +874,23 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
 //
 // Sets the target screen buffer address for graphics buffer transfer to the
 // device.
-//
-// The positon is specified by page and column
-//
-// The system runs in "page mode" - data is streamed along a page, based
-// on the set starting position.
-//
-// This class takes advantage of this to just write the "dirty" ranges in a
-// page.
-//
-// Page can be 0 to 0x9F
-// Column can be
 
-bool QwGrCH1120::setScreenBufferAddress(uint8_t page, uint8_t column)
+// The set page row command 0xB0 isn't working right! We are skipping every other column
+// I've also tried this with the different 0x22 command for setting start and stop row and it still doesn't 
+// seem to work (either with the same (target) row specified twice or with the target row and the maximum row (0x9F) specified)
+// SO: THIS COMMAND ONLY WORKS FOR EVEN NUMBERED ROWS ON THE 1.5" DISPLAY
+//
+//
+// row can be 0 to 0x9F
+// Column can be 0 to 0x9F
+
+bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 {
-    if (page >= m_nPages || column >= m_viewport.width)
+    if (row >= m_viewport.height || column >= m_viewport.width)
         return false;
 
-    // send the page (row) address
-    sendDevCommand(kCmdStartRow, page); // difference from the 1306, bytes sent after each other instead of OR'd together...
+    // send the (row) address
+    sendDevCommand(kCmdStartRow, row); // difference from the 1306, bytes sent after each other instead of OR'd together...
 
     // For the column start address, add the viewport x offset. Some devices
     // (Micro OLED) don't start at column 0 in the screen buffer
@@ -992,53 +903,54 @@ bool QwGrCH1120::setScreenBufferAddress(uint8_t page, uint8_t column)
 ////////////////////////////////////////////////////////////////////////////////////
 // display()
 //
+
+// OLD: 
 // Send the "dirty" areas of the graphics buffer to the device's screen buffer.
 // Only send the areas that need to be updated. The update region is based on
 // new graphics to display, and any currently displayed items that need to be
 // erased.
+
+// NEW:
+// Send the ENTIRE graphics buffer to the device's screen buffer. Include things that are updated or not updated 
+// This is necessary because we cannot directly index to pixels since the row setting command is broken.
+// In the future, if we ever get a row setting command that works, we can re-instate the fancy (only-update-dirty methodology)
 
 void QwGrCH1120::display()
 {
     // Loop over our page descriptors - if a page is dirty, send the graphics
     // buffer dirty region to the device for the current page
 
-    pageState_t transferRange;
+    // pageState_t transferRange;
 
-    for (int i = 0; i < m_nPages; i++)
-    {
-        // We keep the erase rect seperate from dirty rect. Make temp copy of
-        // dirty rect page range, expand to include erase rect page range.
+    // for (int i = 0; i < m_nPages; i++)
+    // {
+    //     // We keep the erase rect seperate from dirty rect. Make temp copy of
+    //     // dirty rect page range, expand to include erase rect page range.
 
-        transferRange = m_pageState[i];
+    //     // If an erase has happend, we need to transfer/include erase update range
+    //     if (m_pendingErase)
+    //         pageCheckBoundsDesc(transferRange, m_pageErase[i]);
 
-        // If an erase has happend, we need to transfer/include erase update range
-        if (m_pendingErase)
-            pageCheckBoundsDesc(transferRange, m_pageErase[i]);
+    //     if (pageIsClean(transferRange)) // both dirty and erase range for this
+    //                                     // page were null
+    //         continue;                   // next
 
-        if (pageIsClean(transferRange)) // both dirty and erase range for this
-                                        // page were null
-            continue;                   // next
+    //     // set the start address to write the updated data to the devices screen
+    //     // buffer
+    //     setScreenBufferAddress(i, transferRange.xmin);
 
-        // set the start address to write the updated data to the devices screen
-        // buffer
-        setScreenBufferAddress(i, transferRange.xmin);
+    //     // send the dirty data to the device
+    //     sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
+    //                 transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
 
-        // send the dirty data to the device
-        sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
-                    transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
+    //     // If we sent the erase bounds, zero out the erase bounds - this area is now
+    //     // clear
+    //     if (m_pendingErase)
+    //         pageSetClean(m_pageErase[i]);
 
-        // If we sent the erase bounds, zero out the erase bounds - this area is now
-        // clear
-        if (m_pendingErase)
-            pageSetClean(m_pageErase[i]);
-
-        // add the just send dirty range (non erase rec)  to the erase rect
-        pageCheckBoundsDesc(m_pageErase[i], m_pageState[i]);
-
-        // this page is no longer dirty - mark it  clean
-        pageSetClean(m_pageState[i]);
-    }
-    m_pendingErase = false; // no longer pending
+    // }
+    // m_pendingErase = false; // no longer pending
+    sendDevData(m_pBuffer, m_nPages * m_viewport.width);
 }
 
 

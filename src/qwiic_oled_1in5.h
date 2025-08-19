@@ -54,7 +54,7 @@
 #define kOLED1in5YOffset 0
 
 // Parameters for this device
-#define kOLED1in5PinConfig 0x12
+#define kOLED1in5PinConfig 0x00
 #define kOLED1in5PreCharge 0xF1
 #define kOLED1in5VCOM 0x40
 #define kOLED1in5Contrast 0xCF

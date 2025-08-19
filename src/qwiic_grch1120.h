@@ -151,7 +151,7 @@ class QwGrCH1120 : public QwGrBufferDevice {
 
     private:
         // Internal buffer management methods
-        bool setScreenBufferAddress(uint8_t page, uint8_t column);
+        // bool setScreenBufferAddress(uint8_t page, uint8_t column);
         void initBuffers(void); // clear graphics and screen buffer
         void clearScreenBuffer(void);
         void resendGraphics(void);
@@ -170,8 +170,6 @@ class QwGrCH1120 : public QwGrBufferDevice {
         // Buffer variables
         uint8_t *m_pBuffer;                      // Pointer to the graphics buffer
         uint8_t m_nPages;                        // number of pages for current device
-        pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
-        pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
         bool m_pendingErase;
 
         // display variables
