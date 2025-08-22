@@ -135,7 +135,8 @@
 #define kDefaultRowEnd                   ((uint8_t)0x3F) // default
 #define kDefaultColEnd                   ((uint8_t)0x1F) // default
 #define kDefaultDisplayStart             ((uint8_t)0x00) // default
-#define kDefaultHorizontalAddressing     ((uint8_t)0x00) // default
+// #define kDefaultHorizontalAddressing     ((uint8_t)0x00) // default
+#define kDefaultHorizontalAddressing     ((uint8_t)0x01) // default
 #define kDefaultContrast                 ((uint8_t)0xC8) // default = 0x80, upper end = 0xFF
 #define kDefaultRotateDisplayNinety      ((uint8_t)0x01) // Default is 0 degrees
 #define kDefaultMultiplexRatio           ((uint8_t)0x7F) // default is 0x9F
@@ -147,6 +148,12 @@
 #define kDefaultSegPads                  ((uint8_t)0x00) // default
 #define kDefaultVCOMDeselect             ((uint8_t)0x3F) // default
 #define kDefaultExternalIREF             ((uint8_t)0x02)
+
+// When we flip, we begin displaying data between our viewport and the maximum viewport of 160
+#define kPartialDisplayStartDefault ((uint8_t) 0)
+#define kPartialDisplayEndDefault   ((uint8_t) 127)
+#define kPartialDisplayStartFlipped ((uint8_t) 32)
+#define kPartialDisplayEndFlipped   ((uint8_t) 159)
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
@@ -327,15 +334,40 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     if (clearDisplay)
         sendDevCommand(kCmdDisplayOff);
 
+    // TODO: dynamically calculate row start and row end and column start and column end based on passed in viewport
+    // we have to operate in "horizontally flipped" mode for text to appear correctly as it does in the rest of the library
+    // so, we will justify the columns we write out to the right of the screen memory so that when horizontally flipped,
+    // we don't get artifacts
     sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
+    // sendDevCommand(kCmdRowStartEnd, 0x20, 0x9F);
+    // sendDevCommand(kCmdRowStartEnd, 0x10, 0x4F);
     sendDevCommand(kCmdColStartEnd, kDefaultColStart, kDefaultColEnd);
+
+    // Note: do to either our rotation or addressing mode or both, below shifted in the axis we didn't want, so let's do it with rows like above...
+    //sendDevCommand(kCmdColStartEnd, 0x08, 0x27); // from columns 32 - 160 ( 32 / 4 = 8 and 160 / 4 - 1 = 39 = 0x27)
+
     sendDevCommand(kCmdStartLine, kDefaultDisplayStart);
+    // sendDevCommand(kCmdStartLine, 5);
+
+    // Instead of the startRow/endRow and startColumn/endColumn above, we will try here manually setting them at once with the
+    // "partial display" command
+    // uint8_t partialDisplayCmd[5] = {
+    //     0x2D, // partial display ON
+    //     kPartialDisplayStartDefault, // Column Start (might have to change to follow weird paradigm above for all of these, for now: 0 - 128)
+    //     kPartialDisplayEndDefault, // Column End
+    //     kPartialDisplayStartDefault, // Row Start
+    //     kPartialDisplayEndDefault, // Row End
+    // };
+
+    // sendDevCommand(partialDisplayCmd, 5);
+
     sendDevCommand(kCmdContrastControl, m_initContrast);
     sendDevCommand(kCmdGrayMono, kDefaultMonoMode);
     sendDevCommand(kCmdHorizAddressing, kDefaultHorizontalAddressing);
     sendDevCommand(kCmdSegRemapDown);
-    sendDevCommand(kCmdComOutScan0First);
-    sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
+    sendDevCommand(kCmdComOutScan0Last);
+    // sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
+    sendDevCommand(kCmdDisplayRotation, 0x00);
     sendDevCommand(kCmdDisableEntireDisplay);
     sendDevCommand(kCmdNormalDisplay);
     sendDevCommand(kCmdMultiplexRatio, kDefaultMultiplexRatio);
@@ -347,11 +379,15 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     sendDevCommand(kCmdVCOMDeselectLevel, kDefaultVCOMDeselect);
     sendDevCommand(kCmdExternalIREF, kDefaultExternalIREF);
     
-    // TODO: In Eli's example, we also performed additional commands after the manufacturer setup: 
-    // writeCommandParameter(0xB0, 0x00);
-    // writeCommand(0x00);
-    // writeCommand(0x10);
-    // Is this needed?
+    // // TODO: In Eli's example, we also performed additional commands after the manufacturer setup: 
+    // // writeCommandParameter(0xB0, 0x00);
+    // // writeCommand(0x00);
+    // // writeCommand(0x10);
+    // sendDevCommand(0xB0, 0x00);
+    // sendDevCommand(0x00);
+    // sendDevCommand(0x10);
+    // // setScreenBufferAddress(0,0);
+    // // Is this needed?
 
     if (clearDisplay)
         // now, turn it back on
@@ -399,8 +435,10 @@ void QwGrCH1120::clearScreenBuffer(void)
     // and we have m_viewport.height rows
     uint8_t emptyRow[m_nPages] = {0};
 
-    setScreenBufferAddress(0, 0); // Warning: This function works-ish but only for even-numbered rows. 
+    // setScreenBufferAddress(0, 0); // Warning: This function works-ish but only for even-numbered rows. 
                                   // so we can use it here, but do not expect it to work in all instances
+
+    // setScreenBufferAddress(0, 32);
 
     for (int i = 0; i < m_viewport.height; i++)
     {
@@ -449,22 +487,57 @@ void QwGrCH1120::resendGraphics(void)
 // flip_vert()
 //
 // Flip the onscreen graphics vertically.
-void QwGrCH1120::flipVert(bool bFlip)
-{
-    sendDevCommand(bFlip ? kCmdComOutScan0Last : kCmdComOutScan0First);
+void QwGrCH1120::flipVert(bool bFlip){
+    // If we are already formatted for the flipped display, just return
+    // if (rowStart == kPartialDisplayStartFlipped && rowEnd == kPartialDisplayEndFlipped)
+    //     return;
+    sendDevCommand(bFlip ? kCmdSegRemapUp : kCmdSegRemapDown);
+
+    // if (bFlip) {
+    //     // Set the row start/end for flipped display
+    //     sendDevCommand(kCmdRowStartEnd, kPartialDisplayStartFlipped, kPartialDisplayEndFlipped);
+
+    //     rowStart = kPartialDisplayStartFlipped;
+    //     rowEnd = kPartialDisplayEndFlipped;
+
+    //     sendDevCommand(kCmdComOutScan0First);
+    // }
+    // else{
+    //     // Set the row start/end for normal (not flipped) display
+    //     sendDevCommand(kCmdRowStartEnd, kPartialDisplayStartDefault, kPartialDisplayEndDefault);
+
+    //     rowStart = kPartialDisplayStartDefault;
+    //     rowEnd = kPartialDisplayEndDefault;
+
+    //     sendDevCommand(kCmdComOutScan0Last);
+    // }
+
+    // resendGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // flip_horz()
 //
-// Flip the onscreen graphcis horizontally. This requires a resend of the
+// Flip the onscreen graphics horizontally. This requires a resend of the
 // graphics data to the device/screen buffer.
-//
-void QwGrCH1120::flipHorz(bool bFlip)
-{
-    sendDevCommand(bFlip ? kCmdSegRemapUp : kCmdSegRemapDown);
-    clearScreenBuffer();
-    resendGraphics();
+void QwGrCH1120::flipHorz(bool bFlip){ 
+
+    sendDevCommand(bFlip ? kCmdComOutScan0First : kCmdComOutScan0Last);
+    // // follow a similar process to the flipVert above (but with columns being set to default or flipped instead of rows)
+    // if (bFlip) {
+    //     // Set the column start/end for flipped display
+    //     sendDevCommand(kCmdColStartEnd, kPartialDisplayStartFlipped, kPartialDisplayEndFlipped);
+
+    //     sendDevCommand(kCmdSegRemapUp);
+    // }
+    // else {
+    //     // Set the column start/end for normal (not flipped) display
+    //     sendDevCommand(kCmdColStartEnd, kPartialDisplayStartDefault, kPartialDisplayEndDefault);
+
+    //     sendDevCommand(kCmdSegRemapDown);
+    // }
+
+    // resendGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -612,8 +685,10 @@ void QwGrCH1120::displayPower(bool enable)
 // }
 //TODO: remove this if it's unused
 void QwGrCH1120::erase(void) {
-    Serial.println("qwiic_grch1120.cpp erase(): REDUNDANT ERASE FUNCTION CALLED!");
-    // if other layers assume that this will be used, this print will show us and we can handle that then...
+    // memset the entire buffer to 0
+    memset(m_pBuffer, 0, m_nPages * m_viewport.width);
+
+    m_pendingErase = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -626,6 +701,7 @@ void QwGrCH1120::erase(void) {
 
 void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 {
+    //Serial.println("Calling drawPixel with x: " + String(x) + ", y: " + String(y) + ", color: " + String(clr));
     // quick sanity check on range
     if (x >= m_viewport.width || y >= m_viewport.height)
         return; // out of bounds
@@ -634,9 +710,10 @@ void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 
     m_rasterOps[m_rop](m_pBuffer + x + y / kByteNBits * m_viewport.width, // pixel offset
                        (clr ? bit : 0), bit);                             // which bit to set in byte
-
-    pageCheckBounds(m_pageState[y / kByteNBits],
-                    x); // update dirty range for page
+    
+    // print Buffer after drawing pixel:
+    // printBuffer();
+    //rawPrintBuffer();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -648,6 +725,7 @@ void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
 {
     // Basically we set a bit within a range in a page of our graphics buffer.
 
+    Serial.println("Calling Draw Line Horz with x0: " + String(x0) + ", y0: " + String(y0) + ", x1: " + String(x1) + ", y1: " + String(y1));
     // in range
     if (y0 >= m_viewport.height)
         return;
@@ -667,9 +745,6 @@ void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
     // walk up x and set the target pixel using the pixel operator function
     for (int i = x0; i <= x1; i++, pBuffer++)
         curROP(pBuffer, (clr ? bit : 0), bit);
-
-    // Mark the page dirty for the range drawn
-    pageCheckBoundsRange(m_pageState[y0 / kByteNBits], x0, x1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -886,6 +961,7 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
 
 bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 {
+    Serial.println("Calling setScreenBufferAddress with row: " + String(row) + ", column: " + String(column));
     if (row >= m_viewport.height || column >= m_viewport.width)
         return false;
 
@@ -898,6 +974,34 @@ bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
     sendDevCommand(kCmdStartColLow & column);
 
     return true;
+}
+
+bool QwGrCH1120::getPixel(uint8_t x, uint8_t y) {
+    if (x >= m_viewport.width || y >= m_viewport.height)
+        return 0;
+
+    return (m_pBuffer[( y * (m_viewport.width / kByteNBits)) + (x / kByteNBits)] >> (x % kByteNBits)) & 0x01;
+}
+
+// Print the buffer as a 2D array of bits
+void QwGrCH1120::printBuffer() {
+    for (uint8_t y = 0; y < m_viewport.height; y++) {
+        for (uint8_t x = 0; x < m_viewport.width; x++) {
+            Serial.print(QwGrCH1120::getPixel(x, y) ? "1" : "0");
+        }
+        Serial.println();
+    }
+}
+
+void QwGrCH1120::rawPrintBuffer() {
+    for (uint8_t y = 0; y < m_viewport.height; y++) {
+        for (uint8_t x = 0; x < m_viewport.width / kByteNBits; x++) {
+            // Serial.print(m_pBuffer[x + y * (m_viewport.width / kByteNBits)], HEX);
+            uint8_t val = m_pBuffer[x + y * (m_viewport.width / kByteNBits)];
+            Serial.printf(" %02X", val);
+        }
+        Serial.println();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -917,40 +1021,12 @@ bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 
 void QwGrCH1120::display()
 {
-    // Loop over our page descriptors - if a page is dirty, send the graphics
-    // buffer dirty region to the device for the current page
-
-    // pageState_t transferRange;
-
-    // for (int i = 0; i < m_nPages; i++)
-    // {
-    //     // We keep the erase rect seperate from dirty rect. Make temp copy of
-    //     // dirty rect page range, expand to include erase rect page range.
-
-    //     // If an erase has happend, we need to transfer/include erase update range
-    //     if (m_pendingErase)
-    //         pageCheckBoundsDesc(transferRange, m_pageErase[i]);
-
-    //     if (pageIsClean(transferRange)) // both dirty and erase range for this
-    //                                     // page were null
-    //         continue;                   // next
-
-    //     // set the start address to write the updated data to the devices screen
-    //     // buffer
-    //     setScreenBufferAddress(i, transferRange.xmin);
-
-    //     // send the dirty data to the device
-    //     sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
-    //                 transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
-
-    //     // If we sent the erase bounds, zero out the erase bounds - this area is now
-    //     // clear
-    //     if (m_pendingErase)
-    //         pageSetClean(m_pageErase[i]);
-
-    // }
-    // m_pendingErase = false; // no longer pending
-    sendDevData(m_pBuffer, m_nPages * m_viewport.width);
+    // Serial.println("Display Called with buffers: ");
+    // printBuffer();
+    // Serial.println("Raw Hex:");
+    // rawPrintBuffer();
+    // setScreenBufferAddress(0, 32);
+    sendDevData(m_pBuffer, m_nPages * m_viewport.height); // send the entire buffer to the device
 }
 
 
@@ -1008,10 +1084,16 @@ void QwGrCH1120::sendDevCommand(uint8_t command, uint8_t start, uint8_t stop)
 // sendDeviceData()
 //
 // send a block of data to the RAM of the device via the current bus object
-void QwGrCH1120::sendDevData(uint8_t *pData, uint8_t nData)
+void QwGrCH1120::sendDevData(uint8_t *pData, uint16_t nData)
 {
-    if (!pData || nData == 0)
+    if (!pData || nData == 0){
+        Serial.println("Invalid data");
+        Serial.print("pData: ");
+        Serial.println((uintptr_t)pData, HEX);
+        Serial.print("nData: ");
+        Serial.println(nData);
         return;
+    }
 
     m_i2cBus->writeRegisterRegion(m_i2cAddress, kCmdRamControlByte, pData, nData);
 }

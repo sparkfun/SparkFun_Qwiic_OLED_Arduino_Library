@@ -151,17 +151,22 @@ class QwGrCH1120 : public QwGrBufferDevice {
 
     private:
         // Internal buffer management methods
-        // bool setScreenBufferAddress(uint8_t page, uint8_t column);
+        bool setScreenBufferAddress(uint8_t page, uint8_t column);
         void initBuffers(void); // clear graphics and screen buffer
         void clearScreenBuffer(void);
         void resendGraphics(void);
         void setupOLEDDevice(bool clearDisplay = true);
 
+        // Added debug functions
+        bool getPixel(uint8_t x, uint8_t y); // Gets the pixel value at (x, y)
+        void printBuffer(void); // Prints all of the bits in the buffer as a 2D pixel array over serial
+        void rawPrintBuffer(void); // Prints all of the bits in the buffer directly
+
         // device communication methods
         void sendDevCommand(uint8_t command);
         void sendDevCommand(uint8_t command, uint8_t value);
         void sendDevCommand(uint8_t *commands, uint8_t n);
-        void sendDevData(uint8_t *pData, uint8_t nData);
+        void sendDevData(uint8_t *pData, uint16_t nData);
         void sendDevCommand(uint8_t command, uint8_t start, uint8_t stop);
 
         /////////////////////////////////////////////////////////////////////////////
@@ -187,4 +192,9 @@ class QwGrCH1120 : public QwGrBufferDevice {
         uint8_t m_initContrast;
 
         bool m_isInitialized; // general init flag
+
+        uint8_t colStart = 0;
+        uint8_t colEnd = 127;
+        uint8_t rowStart = 0;
+        uint8_t rowEnd = 127;
 };
