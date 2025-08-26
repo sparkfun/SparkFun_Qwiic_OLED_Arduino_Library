@@ -60,6 +60,69 @@
 // Class that implements graphics support for devices that use the CH1120
 //
 
+//////////////////////////////////////////////////////////////////////////////////
+// Screen Buffer
+//
+// A key feature of this library is that it only sends "dirty" pixels to the
+// device, minimizing data transfer over the I2C bus. To accomplish this, the
+// dirty range of each graphics buffer page (see device memory layout in the
+// datasheet) is maintained during drawing operation. Whe data is sent to the
+// device, only the pixels in these regions are sent to the device, not the
+// entire page of data.
+//
+// The below macros are used to manage the record keeping of dirty page ranges.
+// Given that these actions are taking place in the draw loop, macros are used
+// for performance considerations.
+//
+// These macros work with the pageState_t struct type.
+//
+// Define unique values just outside of the screen buffer (SSD1306) page range
+// (0 base) Note: A page  is 128 bits in length
+
+#define kPageMin -1  // outside bounds - low value
+#define kPageMax 160 // outside bounds - high value
+
+// clean/ no settings in the page
+#define pageIsClean(_page_) (_page_.xmin == kPageMax)
+
+// Macro to reset page descriptor
+#define pageSetClean(_page_)                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        _page_.xmin = kPageMax;                                                                                        \
+        _page_.xmax = kPageMin;                                                                                        \
+    } while (false)
+
+// Macro to check and adjust record bounds based on a single location
+#define pageCheckBounds(_page_, _x_)                                                                                   \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_x_ < _page_.xmin)                                                                                         \
+            _page_.xmin = _x_;                                                                                         \
+        if (_x_ > _page_.xmax)                                                                                         \
+            _page_.xmax = _x_;                                                                                         \
+    } while (false)
+
+// Macro to check and adjust record bounds using another page descriptor
+#define pageCheckBoundsDesc(_page_, _page2_)                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_page2_.xmin < _page_.xmin)                                                                                \
+            _page_.xmin = _page2_.xmin;                                                                                \
+        if (_page2_.xmax > _page_.xmax)                                                                                \
+            _page_.xmax = _page2_.xmax;                                                                                \
+    } while (false)
+
+// Macro to check and adjust record bounds using bounds values
+#define pageCheckBoundsRange(_page_, _x0_, _x1_)                                                                       \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (_x0_ < _page_.xmin)                                                                                        \
+            _page_.xmin = _x0_;                                                                                        \
+        if (_x1_ > _page_.xmax)                                                                                        \
+            _page_.xmax = _x1_;                                                                                        \
+    } while (false)
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Device Commands
@@ -349,21 +412,12 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     if (clearDisplay)
         sendDevCommand(kCmdDisplayOff);
 
-    // TODO: dynamically calculate row start and row end and column start and column end based on passed in viewport
-    // we have to operate in "horizontally flipped" mode for text to appear correctly as it does in the rest of the library
-    // so, we will justify the columns we write out to the right of the screen memory so that when horizontally flipped,
-    // we don't get artifacts
-    sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
-    // sendDevCommand(kCmdRowStartEnd, 0x20, 0x9F);
-    // sendDevCommand(kCmdRowStartEnd, 0x10, 0x4F);
-    sendDevCommand(kCmdColStartEnd, kDefaultColStart, kDefaultColEnd);
+    // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
+    // sendDevCommand(kCmdColStartEnd, kDefaultColStart, kDefaultColEnd);
+    // TODO: This may have to happen when the display is on or be broken out into its separate commands
+    setScreenBufferAddress(kDefaultRowStart, kDefaultRowEnd);
 
-    // Note: do to either our rotation or addressing mode or both, below shifted in the axis we didn't want, so let's do it with rows like above...
-    //sendDevCommand(kCmdColStartEnd, 0x08, 0x27); // from columns 32 - 160 ( 32 / 4 = 8 and 160 / 4 - 1 = 39 = 0x27)
-
-    sendDevCommand(kCmdStartLine, kDefaultDisplayStart);
-    // sendDevCommand(kCmdStartLine, 30);
-    // sendDevCommand(kCmdStartLine, 5);
+    sendDevCommand(kCmdStartLine, kDefaultDisplayStart); 
 
     // ELI HAD THIS AS 0x0F, 200...
     sendDevCommand(kCmdContrastControl, m_initContrast);
@@ -390,16 +444,6 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     if (clearDisplay)
         // now, turn it back on
         sendDevCommand(kCmdDisplayOn);
-
-    // // TODO: In Eli's example, we also performed additional commands after the manufacturer setup: 
-    // // writeCommandParameter(0xB0, 0x00);
-    // // writeCommand(0x00);
-    // // writeCommand(0x10);
-    sendDevCommand(0xB0, 0x00);
-    sendDevCommand(0x00);
-    sendDevCommand(0x10);
-    // // setScreenBufferAddress(0,0);
-    // // Is this needed?
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -441,16 +485,24 @@ void QwGrCH1120::clearScreenBuffer(void)
     // Clear out the screen buffer on the device
     // each row is m_nPages bytes wide
     // and we have m_viewport.height rows
-    uint8_t emptyRow[m_nPages] = {0};
+    // uint8_t emptyRow[m_nPages] = {0};
 
     // setScreenBufferAddress(0, 0); // Warning: This function works-ish but only for even-numbered rows. 
                                   // so we can use it here, but do not expect it to work in all instances
 
     // setScreenBufferAddress(0, 32);
 
-    for (int i = 0; i < m_viewport.height; i++)
+    // for (int i = 0; i < m_viewport.height; i++)
+    // {
+    //     sendDevData((uint8_t *)emptyRow, m_nPages); // clear out row
+    // }
+    uint8_t emptyPage[kPageMax] = {0};
+
+    for (int i = 0 ; i < kMaxPageNumber; i++)
     {
-        sendDevData((uint8_t *)emptyRow, m_nPages); // clear out row
+        // setScreenBufferAddress(i * kPageHeight, (i + 1) * kPageHeight);
+        setScreenBufferAddress(i, 0); 
+        sendDevData(emptyPage, kPageMax);
     }
 }
 
@@ -469,6 +521,13 @@ void QwGrCH1120::initBuffers(void)
     if (m_pBuffer)
         memset(m_pBuffer, 0, m_viewport.width * m_nPages);
 
+    // Set page descs to "clean" state
+    for (i = 0; i < m_nPages; i++)
+    {
+        pageSetClean(m_pageState[i]);
+        pageSetClean(m_pageErase[i]);
+    }
+
     m_pendingErase = false;
 
     // clear out the screen buffer
@@ -485,7 +544,10 @@ void QwGrCH1120::initBuffers(void)
 
 void QwGrCH1120::resendGraphics(void)
 {
-    // erase();
+    // Set the page state dirty bounds to the bounds of erase state
+    for (int i = 0; i < m_nPages; i++)
+        m_pageState[i] = m_pageErase[i];
+
     display(); // push bits to screen buffer
 }
 
@@ -513,19 +575,24 @@ void QwGrCH1120::flipHorz(bool bFlip){
 
     // sendDevCommand(kCmdDisplayOff); // TODO: verify is this necessary?
 
+    // TODO: Implement this for the new way with individual pixel addressing. 
+    //       we might have to have a variable that is used by setScreenBufferAddress to account for the necessary shift
+    //       when flipped
     if (bFlip){
         // If we are flipping to horizontal, we need to adjust row start and end to the end of the display memory
         // This is because when we horizontally flip, if our viewport is smaller than the total area, we will flip in some garbage
         // When flipping we need to offset by the max width minus the viewport width (or height, I've kind of lost the plot on which is which with this square display in 90 degree rotation mode)
-        uint8_t offset = kMaxCH1120Width - m_viewport.width; // TODO: Should these really be widths or heights?
-        sendDevCommand(kCmdRowStartEnd, kDefaultRowStart + offset, kDefaultRowEnd + offset);
+        // uint8_t offset = kMaxCH1120Width - m_viewport.width; // TODO: Should these really be widths or heights?
+        // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart + offset, kDefaultRowEnd + offset);
+        horz_flip_offset = kMaxCH1120Width - m_viewport.width;
 
         sendDevCommand(kCmdSegRemapUp);
     }
 
     else{
         // If in normal mode, just set to the defaults
-        sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
+        // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
+        horz_flip_offset = 0;
 
         sendDevCommand(kCmdSegRemapDown);
     }
@@ -661,33 +728,34 @@ void QwGrCH1120::displayPower(bool enable)
 //
 
 // This function sort of becomes useless because the entire page is rewritten each time now, so there isn't so much a concept of "erasing"
-// void QwGrCH1120::erase(void)
-// {
-//     if (!m_pBuffer)
-//         return;
+void QwGrCH1120::erase(void)
+{
+    if (!m_pBuffer)
+        return;
 
-//     // Cleanup the dirty parts of each page in the graphics buffer.
-//     for (uint8_t i = 0; i < m_nPages; i++)
-//     {
-//         // clear out memory that is dirty on this page
-//         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
-//                m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
+    // Cleanup the dirty parts of each page in the graphics buffer.
+    for (uint8_t i = 0; i < m_nPages; i++)
+    {
+        // clear out memory that is dirty on this page
+        memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
+               m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
 
-//         // clear out any pending dirty range for this page - it's erased
-//         pageSetClean(m_pageState[i]);
-//     }
+        // clear out any pending dirty range for this page - it's erased
+        pageSetClean(m_pageState[i]);
+    }
 
-//     // Indicate that the data transfer to the device should include the erase
-//     // region
-//     m_pendingErase = true;
-// }
-//TODO: remove this if it's unused
-void QwGrCH1120::erase(void) {
-    // memset the entire buffer to 0
-    memset(m_pBuffer, 0, m_nPages * m_viewport.width);
-
+    // Indicate that the data transfer to the device should include the erase
+    // region
     m_pendingErase = true;
 }
+
+// //TODO: remove this if it's unused
+// void QwGrCH1120::erase(void) {
+//     // memset the entire buffer to 0
+//     memset(m_pBuffer, 0, m_nPages * m_viewport.width);
+
+//     m_pendingErase = true;
+// }
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -712,6 +780,8 @@ void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
     // print Buffer after drawing pixel:
     // printBuffer();
     //rawPrintBuffer();
+    pageCheckBounds(m_pageState[y / kByteNBits],
+                x); // update dirty range for page
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -743,6 +813,9 @@ void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
     // walk up x and set the target pixel using the pixel operator function
     for (int i = x0; i <= x1; i++, pBuffer++)
         curROP(pBuffer, (clr ? bit : 0), bit);
+
+    // Mark the page dirty for the range drawn
+    pageCheckBoundsRange(m_pageState[y0 / kByteNBits], x0, x1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -808,6 +881,9 @@ void QwGrCH1120::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
             curROP(m_pBuffer + i * m_viewport.width + xinc, (clr ? setBits : 0), setBits);
 
         y0 += endBit - startBit + 1; // increment Y0 to next page
+
+        pageCheckBoundsRange(m_pageState[i], x0,
+                        x1); // mark dirty range in page desc
     }
 }
 
@@ -936,7 +1012,9 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
         // transferred
         y0 += neededBits;
         bmp_y += neededBits;
-
+        
+        pageCheckBoundsRange(m_pageState[iPage], x0,
+                        x0 + dst_width); // mark dirty range in page desc
     }
 }
 
@@ -947,11 +1025,6 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
 //
 // Sets the target screen buffer address for graphics buffer transfer to the
 // device.
-
-// The set page row command 0xB0 isn't working right! We are skipping every other column
-// I've also tried this with the different 0x22 command for setting start and stop row and it still doesn't 
-// seem to work (either with the same (target) row specified twice or with the target row and the maximum row (0x9F) specified)
-// SO: THIS COMMAND ONLY WORKS FOR EVEN NUMBERED ROWS ON THE 1.5" DISPLAY
 //
 //
 // row can be 0 to 0x9F
@@ -1018,13 +1091,49 @@ void QwGrCH1120::rawPrintBuffer() {
 // In the future, if we ever get a row setting command that works, we can re-instate the fancy (only-update-dirty methodology)
 
 void QwGrCH1120::display()
-{
-    // Serial.println("Display Called with buffers: ");
-    // printBuffer();
-    // Serial.println("Raw Hex:");
-    // rawPrintBuffer();
-    // setScreenBufferAddress(0, 32);
-    sendDevData(m_pBuffer, m_nPages * m_viewport.height); // send the entire buffer to the device
+{   
+    //sendDevData(m_pBuffer, m_nPages * m_viewport.height); // send the entire buffer to the device
+
+    // Loop over our page descriptors - if a page is dirty, send the graphics
+    // buffer dirty region to the device for the current page
+    
+    pageState_t transferRange;
+
+    for (int i = 0 ; i < m_nPages; i++) {
+        // We keep the erase rect seperate from dirty rect. Make temp copy of
+        // dirty rect page range, expand to include erase rect page range.
+
+        transferRange = m_pageState[i];
+
+        // If an erase has happend, we need to transfer/include erase update range
+        if (m_pendingErase)
+            pageCheckBoundsDesc(transferRange, m_pageErase[i]);
+
+        if (pageIsClean(transferRange)) // both dirty and erase range for this
+                                        // page were null
+            continue;                   // next
+
+        // set the start address to write the updated data to the devices screen
+        // buffer
+        // TODO: should the offset be applied to the first or second arg?
+        setScreenBufferAddress(i, transferRange.xmin + horz_flip_offset);
+
+        // send the dirty data to the device
+        sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
+                    transferRange.xmax - transferRange.xmin + 1); // dirty region xmax - xmin. Add 1 b/c 0 based
+
+        // If we sent the erase bounds, zero out the erase bounds - this area is now
+        // clear
+        if (m_pendingErase)
+            pageSetClean(m_pageErase[i]);
+
+        // add the just send dirty range (non erase rec)  to the erase rect
+        pageCheckBoundsDesc(m_pageErase[i], m_pageState[i]);
+
+        // this page is no longer dirty - mark it  clean
+        pageSetClean(m_pageState[i]);
+    }
+    m_pendingErase = false; // no longer pending
 }
 
 

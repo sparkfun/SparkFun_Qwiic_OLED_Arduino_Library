@@ -159,6 +159,8 @@ class QwGrCH1120 : public QwGrBufferDevice {
         // Buffer variables
         uint8_t *m_pBuffer;                      // Pointer to the graphics buffer
         uint8_t m_nPages;                        // number of pages for current device
+        pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
+        pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
         bool m_pendingErase;
 
         // display variables
@@ -177,8 +179,5 @@ class QwGrCH1120 : public QwGrBufferDevice {
 
         bool m_isInitialized; // general init flag
 
-        uint8_t colStart = 0;
-        uint8_t colEnd = 127;
-        uint8_t rowStart = 0;
-        uint8_t rowEnd = 127;
+        uint8_t horz_flip_offset  = 0; // Shift applied when horizontally flipped to account for viewport < max screen size
 };
