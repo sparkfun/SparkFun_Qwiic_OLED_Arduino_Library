@@ -501,7 +501,8 @@ void QwGrCH1120::clearScreenBuffer(void)
     for (int i = 0 ; i < kMaxPageNumber; i++)
     {
         // setScreenBufferAddress(i * kPageHeight, (i + 1) * kPageHeight);
-        setScreenBufferAddress(i, 0); 
+        // setScreenBufferAddress(i, 0); 
+        setScreenBufferAddress(0, i);
         sendDevData(emptyPage, kPageMax);
     }
 }
@@ -1096,7 +1097,11 @@ void QwGrCH1120::display()
 
     // Loop over our page descriptors - if a page is dirty, send the graphics
     // buffer dirty region to the device for the current page
-    
+
+    // Print the buffer and print the raw buffer
+    printBuffer();
+    rawPrintBuffer();
+
     pageState_t transferRange;
 
     for (int i = 0 ; i < m_nPages; i++) {
@@ -1116,7 +1121,9 @@ void QwGrCH1120::display()
         // set the start address to write the updated data to the devices screen
         // buffer
         // TODO: should the offset be applied to the first or second arg?
-        setScreenBufferAddress(i, transferRange.xmin + horz_flip_offset);
+        // write out the xmin and xmax for each page descriptor
+        // setScreenBufferAddress(i, transferRange.xmin + horz_flip_offset);
+        setScreenBufferAddress(transferRange.xmin + horz_flip_offset, i);
 
         // send the dirty data to the device
         sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
