@@ -42,24 +42,8 @@
 #include "res/qwiic_resdef.h"
 #include "qwiic_grcommon.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// Flags for scrolling
-/////////////////////////////////////////////////////////////////////////////
-#define SCROLL_RIGHT 0x02
-#define SCROLL_LEFT 0x04
-#define SCROLL_UP 0x08
-#define SCROLL_DOWN 0x10
-
-#define SCROLL_INTERVAL_6_FRAMES 0x00
-#define SCROLL_INTERVAL_32_FRAMES 0x01
-#define SCROLL_INTERVAL_64_FRAMES 0x02
-#define SCROLL_INTERVAL_128_FRAMES 0x03
-#define SCROLL_INTERVAL_3_FRAMES 0x04
-#define SCROLL_INTERVAL_4_FRAMES 0x05
-#define SCROLL_INTERVAL_5_FRAMES 0x06
-#define SCROLL_INTERVAL_2_FRAMES 0x07
-
-#define kMaxPageNumber 16
+#define kMaxPageNumber 20
+#define kMaxCH1120Width 160
 
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management

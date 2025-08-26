@@ -16,6 +16,7 @@
    Transparent OLED       https://www.sparkfun.com/products/15173
    "Narrow" OLED          https://www.sparkfun.com/products/24606
    Qwiic OLED 1.3in       https://www.sparkfun.com/products/23453
+   Qwiic OLED 1.5in       https://www.sparkfun.com/products/29530
 
   Written by Kirk Benell @ SparkFun Electronics, March 2022
 
@@ -37,6 +38,12 @@ QwiicMicroOLED myOLED;
 //QwiicTransparentOLED myOLED;
 //QwiicNarrowOLED myOLED;
 //Qwiic1in3OLED myOLED;
+//Qwiic1in5OLED myOLED;
+
+// Get the end page based on the type of myOLED. If it is 1.5" OLED with 128 rows (15 pages),
+// the end page is 15 otherwise we'll pass 7 (for displays with only 64 rows)
+int endPage = 7;
+// int endPage = 15; // Only use for 1.5" OLED
 
 int yoffset;
 
@@ -44,25 +51,25 @@ int yoffset;
 void scrollRight(void)
 {
     myOLED.scrollStop();
-    myOLED.scrollRight(0, 7, SCROLL_INTERVAL_2_FRAMES);
+    myOLED.scrollRight(0, endPage, SCROLL_INTERVAL_2_FRAMES);
 }
 
 void scrollRightVertical(void)
 {
     myOLED.scrollStop();
-    myOLED.scrollVertRight(0, 7, SCROLL_INTERVAL_3_FRAMES);
+    myOLED.scrollVertRight(0, endPage, SCROLL_INTERVAL_3_FRAMES);
 }
 
 void scrollLeft(void)
 {
     myOLED.scrollStop();
-    myOLED.scrollLeft(0, 7, SCROLL_INTERVAL_4_FRAMES);
+    myOLED.scrollLeft(0, endPage, SCROLL_INTERVAL_4_FRAMES);
 }
 
 void scrollLeftVertical(void)
 {
     myOLED.scrollStop();
-    myOLED.scrollVertLeft(0, 7, SCROLL_INTERVAL_5_FRAMES);
+    myOLED.scrollVertLeft(0, endPage, SCROLL_INTERVAL_5_FRAMES);
 }
 
 void scrollStop(void)
@@ -107,9 +114,9 @@ typedef struct _testRoutines
 
 static const testRoutine testFunctions[] = {
     {scrollRight, "Right>"},
-    {scrollRightVertical, "^Right-Up>"},
+    {scrollRightVertical, "^Vertical-Mode1>"}, // Right-Up for most displays, Up for 1.5" display
     {scrollLeft, "<Left"},
-    {scrollLeftVertical, "<Left-Up^"},
+    {scrollLeftVertical, "<Vertical-Mode2^"}, // Left-Up for most displays, Down for 1.5" display
     {scrollStop, "<STOP>"},
     {flipHorizontal, "-Flip-Horz-"},
     {flipVertical, "|Flip-Vert|"},

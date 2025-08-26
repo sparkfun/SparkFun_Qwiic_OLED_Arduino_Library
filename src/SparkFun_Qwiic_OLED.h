@@ -276,8 +276,8 @@ template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: 
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed below
     //
     // Defined values for the interval parameter:
@@ -308,8 +308,8 @@ template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: 
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval)
@@ -327,8 +327,8 @@ template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: 
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
@@ -346,8 +346,8 @@ template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: 
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval)

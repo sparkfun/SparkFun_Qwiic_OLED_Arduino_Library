@@ -54,6 +54,7 @@
 //    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "qwiic_grch1120.h"
+#include <map>
 
 /////////////////////////////////////////////////////////////////////////////
 // Class that implements graphics support for devices that use the CH1120
@@ -138,7 +139,7 @@
 // #define kDefaultHorizontalAddressing     ((uint8_t)0x00) // default
 #define kDefaultHorizontalAddressing     ((uint8_t)0x01) // default
 #define kDefaultContrast                 ((uint8_t)0xC8) // default = 0x80, upper end = 0xFF
-#define kDefaultRotateDisplayNinety      ((uint8_t)0x01) // Default is 0 degrees
+#define kDefaultRotateDisplayNinety      ((uint8_t)0x01) // Default is 0 degrees (NOTE: start and end values for row/column need adjusting if rotate=0)
 #define kDefaultMultiplexRatio           ((uint8_t)0x7F) // default is 0x9F
 #define kDefaultDisplayOffset            ((uint8_t)0x10) // default is 0x00
 #define kDefaultDivideRatio              ((uint8_t)0x00) // default
@@ -148,12 +149,6 @@
 #define kDefaultSegPads                  ((uint8_t)0x00) // default
 #define kDefaultVCOMDeselect             ((uint8_t)0x3F) // default
 #define kDefaultExternalIREF             ((uint8_t)0x02)
-
-// When we flip, we begin displaying data between our viewport and the maximum viewport of 160
-#define kPartialDisplayStartDefault ((uint8_t) 0)
-#define kPartialDisplayEndDefault   ((uint8_t) 127)
-#define kPartialDisplayStartFlipped ((uint8_t) 32)
-#define kPartialDisplayEndFlipped   ((uint8_t) 159)
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
@@ -187,6 +182,26 @@ static const rasterOPsFn m_rasterOps[] = {
     [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = ~mask & *dst; },
     // Always White
     [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = mask | *dst; }};
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Map for scrolling. See qwiic_grcommon.h for original definitions and descriptions
+/////////////////////////////////////////////////////////////////////////////
+
+const std::map<uint8_t, uint8_t> scrollIntervals = {
+    {SCROLL_INTERVAL_6_FRAMES, 0x00},
+    {SCROLL_INTERVAL_32_FRAMES, 0x01},
+    {SCROLL_INTERVAL_64_FRAMES, 0x02},
+    {SCROLL_INTERVAL_128_FRAMES, 0x03},
+    {SCROLL_INTERVAL_3_FRAMES, 0x04},
+    {SCROLL_INTERVAL_4_FRAMES, 0x05},
+    {SCROLL_INTERVAL_5_FRAMES, 0x06},
+    {SCROLL_INTERVAL_2_FRAMES, 0x07},
+    // The following intervals are not directly available for the CH1120
+    // so we will include their closest mappings for compatiblity with other driver/examples
+    {SCROLL_INTERVAL_25_FRAMES, 0x01}, // closest to 25 frames is 32 frames (0x01)
+    {SCROLL_INTERVAL_256_FRAMES, 0x03}  // closest to 256 frames is 128 frames (0x03)
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // setup defaults - called from constructors
@@ -347,51 +362,44 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     //sendDevCommand(kCmdColStartEnd, 0x08, 0x27); // from columns 32 - 160 ( 32 / 4 = 8 and 160 / 4 - 1 = 39 = 0x27)
 
     sendDevCommand(kCmdStartLine, kDefaultDisplayStart);
+    // sendDevCommand(kCmdStartLine, 30);
     // sendDevCommand(kCmdStartLine, 5);
 
-    // Instead of the startRow/endRow and startColumn/endColumn above, we will try here manually setting them at once with the
-    // "partial display" command
-    // uint8_t partialDisplayCmd[5] = {
-    //     0x2D, // partial display ON
-    //     kPartialDisplayStartDefault, // Column Start (might have to change to follow weird paradigm above for all of these, for now: 0 - 128)
-    //     kPartialDisplayEndDefault, // Column End
-    //     kPartialDisplayStartDefault, // Row Start
-    //     kPartialDisplayEndDefault, // Row End
-    // };
-
-    // sendDevCommand(partialDisplayCmd, 5);
-
+    // ELI HAD THIS AS 0x0F, 200...
     sendDevCommand(kCmdContrastControl, m_initContrast);
     sendDevCommand(kCmdGrayMono, kDefaultMonoMode);
     sendDevCommand(kCmdHorizAddressing, kDefaultHorizontalAddressing);
     sendDevCommand(kCmdSegRemapDown);
-    sendDevCommand(kCmdComOutScan0Last);
-    // sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
-    sendDevCommand(kCmdDisplayRotation, 0x00);
+    // sendDevCommand(kCmdComOutScan0Last);
+    sendDevCommand(kCmdComOutScan0First);
+    sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
+    // sendDevCommand(kCmdDisplayRotation, 0x00);
     sendDevCommand(kCmdDisableEntireDisplay);
-    sendDevCommand(kCmdNormalDisplay);
-    sendDevCommand(kCmdMultiplexRatio, kDefaultMultiplexRatio);
+
+    // sendDevCommand(kCmdNormalDisplay);
+    // sendDevCommand(kCmdMultiplexRatio, kDefaultMultiplexRatio);
     sendDevCommand(kCmdDisplayOffset, kDefaultDisplayOffset);
+    // sendDevCommand(kCmdDisplayOffset, 0);
     sendDevCommand(kCmdDischargeFront, kDefaultDischargeFront);
     sendDevCommand(kCmdDischargeBack, kDefaultDischargeBack);
     sendDevCommand(kCmdPreCharge, m_initPreCharge);
     sendDevCommand(kCmdSEGpads, kDefaultSegPads);
     sendDevCommand(kCmdVCOMDeselectLevel, kDefaultVCOMDeselect);
     sendDevCommand(kCmdExternalIREF, kDefaultExternalIREF);
-    
-    // // TODO: In Eli's example, we also performed additional commands after the manufacturer setup: 
-    // // writeCommandParameter(0xB0, 0x00);
-    // // writeCommand(0x00);
-    // // writeCommand(0x10);
-    // sendDevCommand(0xB0, 0x00);
-    // sendDevCommand(0x00);
-    // sendDevCommand(0x10);
-    // // setScreenBufferAddress(0,0);
-    // // Is this needed?
 
     if (clearDisplay)
         // now, turn it back on
         sendDevCommand(kCmdDisplayOn);
+
+    // // TODO: In Eli's example, we also performed additional commands after the manufacturer setup: 
+    // // writeCommandParameter(0xB0, 0x00);
+    // // writeCommand(0x00);
+    // // writeCommand(0x10);
+    sendDevCommand(0xB0, 0x00);
+    sendDevCommand(0x00);
+    sendDevCommand(0x10);
+    // // setScreenBufferAddress(0,0);
+    // // Is this needed?
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -477,6 +485,7 @@ void QwGrCH1120::initBuffers(void)
 
 void QwGrCH1120::resendGraphics(void)
 {
+    // erase();
     display(); // push bits to screen buffer
 }
 
@@ -489,30 +498,10 @@ void QwGrCH1120::resendGraphics(void)
 // Flip the onscreen graphics vertically.
 void QwGrCH1120::flipVert(bool bFlip){
     // If we are already formatted for the flipped display, just return
-    // if (rowStart == kPartialDisplayStartFlipped && rowEnd == kPartialDisplayEndFlipped)
-    //     return;
-    sendDevCommand(bFlip ? kCmdSegRemapUp : kCmdSegRemapDown);
+    // sendDevCommand(bFlip ? kCmdSegRemapUp : kCmdSegRemapDown);
+    sendDevCommand(bFlip ?  kCmdComOutScan0Last : kCmdComOutScan0First);
 
-    // if (bFlip) {
-    //     // Set the row start/end for flipped display
-    //     sendDevCommand(kCmdRowStartEnd, kPartialDisplayStartFlipped, kPartialDisplayEndFlipped);
-
-    //     rowStart = kPartialDisplayStartFlipped;
-    //     rowEnd = kPartialDisplayEndFlipped;
-
-    //     sendDevCommand(kCmdComOutScan0First);
-    // }
-    // else{
-    //     // Set the row start/end for normal (not flipped) display
-    //     sendDevCommand(kCmdRowStartEnd, kPartialDisplayStartDefault, kPartialDisplayEndDefault);
-
-    //     rowStart = kPartialDisplayStartDefault;
-    //     rowEnd = kPartialDisplayEndDefault;
-
-    //     sendDevCommand(kCmdComOutScan0Last);
-    // }
-
-    // resendGraphics();
+    resendGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -522,22 +511,28 @@ void QwGrCH1120::flipVert(bool bFlip){
 // graphics data to the device/screen buffer.
 void QwGrCH1120::flipHorz(bool bFlip){ 
 
-    sendDevCommand(bFlip ? kCmdComOutScan0First : kCmdComOutScan0Last);
-    // // follow a similar process to the flipVert above (but with columns being set to default or flipped instead of rows)
-    // if (bFlip) {
-    //     // Set the column start/end for flipped display
-    //     sendDevCommand(kCmdColStartEnd, kPartialDisplayStartFlipped, kPartialDisplayEndFlipped);
+    // sendDevCommand(kCmdDisplayOff); // TODO: verify is this necessary?
 
-    //     sendDevCommand(kCmdSegRemapUp);
-    // }
-    // else {
-    //     // Set the column start/end for normal (not flipped) display
-    //     sendDevCommand(kCmdColStartEnd, kPartialDisplayStartDefault, kPartialDisplayEndDefault);
+    if (bFlip){
+        // If we are flipping to horizontal, we need to adjust row start and end to the end of the display memory
+        // This is because when we horizontally flip, if our viewport is smaller than the total area, we will flip in some garbage
+        // When flipping we need to offset by the max width minus the viewport width (or height, I've kind of lost the plot on which is which with this square display in 90 degree rotation mode)
+        uint8_t offset = kMaxCH1120Width - m_viewport.width; // TODO: Should these really be widths or heights?
+        sendDevCommand(kCmdRowStartEnd, kDefaultRowStart + offset, kDefaultRowEnd + offset);
 
-    //     sendDevCommand(kCmdSegRemapDown);
-    // }
+        sendDevCommand(kCmdSegRemapUp);
+    }
 
-    // resendGraphics();
+    else{
+        // If in normal mode, just set to the defaults
+        sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
+
+        sendDevCommand(kCmdSegRemapDown);
+    }
+
+    // sendDevCommand(kCmdDisplayOn); // TODO: verify is this necessary?
+
+    resendGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -571,7 +566,7 @@ void QwGrCH1120::stopScroll(void)
 ////////////////////////////////////////////////////////////////////////////////////
 // scroll()
 //
-// Set scroll parametes on the device and start scrolling
+// Set scroll parameters on the device and start scrolling
 //
 void QwGrCH1120::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval)
 {
@@ -592,38 +587,41 @@ void QwGrCH1120::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8
     // 5) Time Interval Set (X + B0) where B0 is 0b000 (6frames) to 0b111 (2 frames) (with several options up to 128 frames in between)
 
     uint8_t commands[n_commands] = {kCmdRightHorizontalScroll, // default scroll right
-                           0x00,                      // default 0x00 start column
-                           0x80,                      // let's default to 128 for the 128x128 display
-                           0x00,                      // default 0x00 start row
-                           0x80,                      // let's default to 128 for the 128x128 display
-                           0x00                       // default of 6 frames
+                           0x00,                        // default 0x00 start column
+                           0x7F,                        // let's default to 128 for the 128x128 display
+                           0x00,                        // default 0x00 start row
+                           0x7F,                        // let's default to 128 for the 128x128 display
+                           scrollIntervals.at(interval) // map passed interval to correct value
                           };
 
     
     // Which way to scroll
+    // Note how we multiply the start/stop values passed in by 8 such that it more closely aligns with
+    // the behavior of the other SSD1306 driver (which had 64 rows as 8 pages), and example code can be similar between them
+    // We add 7 to the stop value so it is the last row of the page
     switch (scroll_type)
     {
     case SCROLL_LEFT:
         commands[0] = kCmdLeftHorizontalScroll;
-        commands[1] = start;
-        commands[2] = stop;
+        commands[1] = start * 8;
+        commands[2] = stop * 8 + 7;
         break;
-    case SCROLL_UP:
+    case SCROLL_VERT_MODE1:
         commands[0] = kCmdUpVerticalScroll;
-        commands[3] = start;
-        commands[4] = stop;
+        commands[3] = start * 8;
+        commands[4] = stop * 8 + 7;
         break;
-    case SCROLL_DOWN:
+    case SCROLL_VERT_MODE2:
         commands[0] = kCmdDownVerticalScroll;
-        commands[3] = start;
-        commands[4] = stop;
+        commands[3] = start * 8;
+        commands[4] = stop * 8 + 7;
         break;
     case SCROLL_RIGHT:
     default:
         // Note that the 1306 (and thus the higher level driver) support scroll right vert etc. which we don't. We'll stick w/ horizontal right in this case
         commands[0] = kCmdRightHorizontalScroll;
-        commands[1] = start;
-        commands[2] = stop;
+        commands[1] = start * 8;
+        commands[2] = stop * 8 + 7;
     }
 
     // send the scroll commands to the device
