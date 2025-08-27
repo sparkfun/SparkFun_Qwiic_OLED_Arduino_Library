@@ -4,19 +4,13 @@
 // This is a library written for SparkFun Qwiic OLED boards that use the
 // CH1120. This driver is VERY similar to the SSD1306 driver, but with a few 
 // subtle differences. Currently, our only device with the CH1120 driver is 
-// the Qwiic OLED 1.5", on which row addressing has not been verified.
-// So, this library currently writes out the entire screen buffer each refresh
-// instead of only the dirty bits like the SSD1306 driver does. This makes this
-// display operate slower than the others in the library.
+// the Qwiic OLED 1.5".
 //
 // SparkFun sells these at its website: www.sparkfun.com
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED             https://www.sparkfun.com/products/14532
-//   Transparent OLED       https://www.sparkfun.com/products/15173
-//   "Narrow" OLED          https://www.sparkfun.com/products/17153
-//
+// Qwiic OLED 1.5in       https://www.sparkfun.com/products/29530
 //
 // Written by SparkFun Electronics, August 2025
 //
@@ -76,8 +70,7 @@
 //
 // These macros work with the pageState_t struct type.
 //
-// Define unique values just outside of the screen buffer (SSD1306) page range
-// (0 base) Note: A page  is 128 bits in length
+// Define unique values just outside of the screen buffer (valid is 0 - 159)
 
 #define kPageMin -1  // outside bounds - low value
 #define kPageMax 160 // outside bounds - high value
@@ -151,7 +144,7 @@
 
 #define kCmdRowStartEnd              ((uint8_t)0x22)  // Two byte command - command, start, stop
 #define kCmdColStartEnd              ((uint8_t)0x21)  // Two byte command - command, start, stop
-#define kCmdStartRow                 ((uint8_t)0xB0) // TODO: this is analagous to the start "page" for the SSD1306
+#define kCmdStartRow                 ((uint8_t)0xB0) 
 #define kCmdStartColLow              ((uint8_t)0x0F) // Start Column = StartColHigh (MSB) | StartColLow (LSB)
 #define kCmdStartColHigh             ((uint8_t)0x10)
 #define kCmdStartLine                ((uint8_t)0xA2) // Notice how this is different from the same cmd on the 1306 (0x40)
@@ -269,7 +262,7 @@ const std::map<uint8_t, uint8_t> scrollIntervals = {
 ////////////////////////////////////////////////////////////////////////////////////
 // setup defaults - called from constructors
 //
-// Just a bunch of member variable inits (TODO: should these be the defaults on reset or what we want them to be after init?)
+// Just a bunch of member variable inits
 
 void QwGrCH1120::setupDefaults(void)
 {
@@ -279,9 +272,7 @@ void QwGrCH1120::setupDefaults(void)
     m_rop = {grROPCopy};
     m_i2cBus = {nullptr};
     m_i2cAddress = {0x3C}; // address of the device (0x3D for closed)
-    // m_initHWComPins = {kDefaultPinConfig};
     m_initPreCharge = {kDefaultPreCharge};
-    // m_initVCOMDeselect = {kDefaultVCOMDeselect};
     m_initContrast = {kDefaultContrast};
     m_isInitialized = {false};
 }
@@ -412,28 +403,18 @@ void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     if (clearDisplay)
         sendDevCommand(kCmdDisplayOff);
 
-    // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
-    // sendDevCommand(kCmdColStartEnd, kDefaultColStart, kDefaultColEnd);
-    // TODO: This may have to happen when the display is on or be broken out into its separate commands
     setScreenBufferAddress(kDefaultRowStart, kDefaultRowEnd);
 
     sendDevCommand(kCmdStartLine, kDefaultDisplayStart); 
-
-    // ELI HAD THIS AS 0x0F, 200...
     sendDevCommand(kCmdContrastControl, m_initContrast);
     sendDevCommand(kCmdGrayMono, kDefaultMonoMode);
     sendDevCommand(kCmdHorizAddressing, kDefaultHorizontalAddressing);
     sendDevCommand(kCmdSegRemapDown);
-    // sendDevCommand(kCmdComOutScan0Last);
     sendDevCommand(kCmdComOutScan0First);
     sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
-    // sendDevCommand(kCmdDisplayRotation, 0x00);
     sendDevCommand(kCmdDisableEntireDisplay);
 
-    // sendDevCommand(kCmdNormalDisplay);
-    // sendDevCommand(kCmdMultiplexRatio, kDefaultMultiplexRatio);
     sendDevCommand(kCmdDisplayOffset, kDefaultDisplayOffset);
-    // sendDevCommand(kCmdDisplayOffset, 0);
     sendDevCommand(kCmdDischargeFront, kDefaultDischargeFront);
     sendDevCommand(kCmdDischargeBack, kDefaultDischargeBack);
     sendDevCommand(kCmdPreCharge, m_initPreCharge);
@@ -483,25 +464,10 @@ void QwGrCH1120::setBuffer(uint8_t *pBuffer)
 void QwGrCH1120::clearScreenBuffer(void)
 {
     // Clear out the screen buffer on the device
-    // each row is m_nPages bytes wide
-    // and we have m_viewport.height rows
-    // uint8_t emptyRow[m_nPages] = {0};
-
-    // setScreenBufferAddress(0, 0); // Warning: This function works-ish but only for even-numbered rows. 
-                                  // so we can use it here, but do not expect it to work in all instances
-
-    // setScreenBufferAddress(0, 32);
-
-    // for (int i = 0; i < m_viewport.height; i++)
-    // {
-    //     sendDevData((uint8_t *)emptyRow, m_nPages); // clear out row
-    // }
     uint8_t emptyPage[kPageMax] = {0};
 
     for (int i = 0 ; i < kMaxPageNumber; i++)
     {
-        // setScreenBufferAddress(i * kPageHeight, (i + 1) * kPageHeight);
-        // setScreenBufferAddress(i, 0); 
         setScreenBufferAddress(0, i);
         sendDevData(emptyPage, kPageMax);
     }
@@ -516,8 +482,6 @@ void QwGrCH1120::initBuffers(void)
 {
     int i;
 
-    // TODO: the concept of ('width' and 'height' might be sorta swapped for this as opposed to old driver)
-    // that might not matter so much since this is square 128x128
     // clear out the local graphics buffer
     if (m_pBuffer)
         memset(m_pBuffer, 0, m_viewport.width * m_nPages);
@@ -560,11 +524,7 @@ void QwGrCH1120::resendGraphics(void)
 //
 // Flip the onscreen graphics vertically.
 void QwGrCH1120::flipVert(bool bFlip){
-    // If we are already formatted for the flipped display, just return
-    // sendDevCommand(bFlip ? kCmdSegRemapUp : kCmdSegRemapDown);
     sendDevCommand(bFlip ?  kCmdComOutScan0Last : kCmdComOutScan0First);
-
-    resendGraphics();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -574,17 +534,10 @@ void QwGrCH1120::flipVert(bool bFlip){
 // graphics data to the device/screen buffer.
 void QwGrCH1120::flipHorz(bool bFlip){ 
 
-    // sendDevCommand(kCmdDisplayOff); // TODO: verify is this necessary?
-
-    // TODO: Implement this for the new way with individual pixel addressing. 
-    //       we might have to have a variable that is used by setScreenBufferAddress to account for the necessary shift
-    //       when flipped
     if (bFlip){
         // If we are flipping to horizontal, we need to adjust row start and end to the end of the display memory
         // This is because when we horizontally flip, if our viewport is smaller than the total area, we will flip in some garbage
-        // When flipping we need to offset by the max width minus the viewport width (or height, I've kind of lost the plot on which is which with this square display in 90 degree rotation mode)
-        // uint8_t offset = kMaxCH1120Width - m_viewport.width; // TODO: Should these really be widths or heights?
-        // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart + offset, kDefaultRowEnd + offset);
+        // When flipping we need to offset by the max width minus the viewport width (maybe should be height, may have to update with non-square display)
         horz_flip_offset = kMaxCH1120Width - m_viewport.width;
 
         sendDevCommand(kCmdSegRemapUp);
@@ -592,14 +545,12 @@ void QwGrCH1120::flipHorz(bool bFlip){
 
     else{
         // If in normal mode, just set to the defaults
-        // sendDevCommand(kCmdRowStartEnd, kDefaultRowStart, kDefaultRowEnd);
         horz_flip_offset = 0;
 
         sendDevCommand(kCmdSegRemapDown);
     }
 
-    // sendDevCommand(kCmdDisplayOn); // TODO: verify is this necessary?
-
+    clearScreenBuffer();
     resendGraphics();
 }
 
@@ -731,41 +682,12 @@ void QwGrCH1120::displayPower(bool enable)
 // This function sort of becomes useless because the entire page is rewritten each time now, so there isn't so much a concept of "erasing"
 void QwGrCH1120::erase(void)
 {
-    // Serial.println("Calling erase()");
     if (!m_pBuffer)
         return;
-
-    // Print all the page states and corresponding memset they will have:
-    // for (uint8_t i = 0 ; i < m_nPages; i++){
-    //     Serial.print("Page ");
-    //     Serial.print(i);
-    //     Serial.print(" xmin: ");
-    //     Serial.print(m_pageState[i].xmin);
-    //     Serial.print(" xmax: ");
-    //     Serial.println(m_pageState[i].xmax);
-
-    //     Serial.print("Corresponding memset: ");
-    //     Serial.print("memset(m_pBuffer + ");
-    //     Serial.print(i * m_viewport.width + m_pageState[i].xmin);
-    //     Serial.print(", 0, ");
-    //     Serial.print(m_pageState[i].xmax - m_pageState[i].xmin + 1);
-    //     Serial.println(");");
-    // }
 
     // Cleanup the dirty parts of each page in the graphics buffer.
     for (uint8_t i = 0; i < m_nPages; i++)
     {
-        // Serial.print("Erasing page ");
-        // Serial.println(i);
-
-        // Now, print the arguments we are about to pass to memset:
-        // Serial.print("First Arg to Memset (offset into buffer): ");
-        // Serial.println(i * m_viewport.width + m_pageState[i].xmin);
-        // Serial.print("Second Arg to Memset: ");
-        // Serial.println(0);
-        // Serial.print("Third Arg to Memset: ");
-        // Serial.println(m_pageState[i].xmax - m_pageState[i].xmin + 1);
-        // m_pageState
         // The current "dirty" areas of the graphics [local] buffer.
         // Areas that haven't been sent to the screen/device but are
         // "dirty"
@@ -783,25 +705,14 @@ void QwGrCH1120::erase(void)
         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
                m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
 
-        // Serial.print("setting page clean ");
-        // Serial.println(i);
         // clear out any pending dirty range for this page - it's erased
         pageSetClean(m_pageState[i]);
     }
 
     // Indicate that the data transfer to the device should include the erase
     // region
-    // Serial.println("Erasing pages:");
     m_pendingErase = true;
 }
-
-// //TODO: remove this if it's unused
-// void QwGrCH1120::erase(void) {
-//     // memset the entire buffer to 0
-//     memset(m_pBuffer, 0, m_nPages * m_viewport.width);
-
-//     m_pendingErase = true;
-// }
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -813,7 +724,6 @@ void QwGrCH1120::erase(void)
 
 void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 {
-    //Serial.println("Calling drawPixel with x: " + String(x) + ", y: " + String(y) + ", color: " + String(clr));
     // quick sanity check on range
     if (x >= m_viewport.width || y >= m_viewport.height)
         return; // out of bounds
@@ -824,8 +734,6 @@ void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
                        (clr ? bit : 0), bit);                             // which bit to set in byte
     
     // print Buffer after drawing pixel:
-    // printBuffer();
-    //rawPrintBuffer();
     pageCheckBounds(m_pageState[y / kByteNBits],
                 x); // update dirty range for page
 }
@@ -839,7 +747,6 @@ void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
 {
     // Basically we set a bit within a range in a page of our graphics buffer.
 
-    // Serial.println("Calling Draw Line Horz with x0: " + String(x0) + ", y0: " + String(y0) + ", x1: " + String(x1) + ", y1: " + String(y1));
     // in range
     if (y0 >= m_viewport.height)
         return;
@@ -1078,7 +985,6 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
 
 bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 {
-    // Serial.println("Calling setScreenBufferAddress with row: " + String(row) + ", column: " + String(column));
     if (row >= m_viewport.height || column >= m_viewport.width)
         return false;
 
@@ -1125,28 +1031,15 @@ void QwGrCH1120::rawPrintBuffer() {
 // display()
 //
 
-// OLD: 
 // Send the "dirty" areas of the graphics buffer to the device's screen buffer.
 // Only send the areas that need to be updated. The update region is based on
 // new graphics to display, and any currently displayed items that need to be
 // erased.
 
-// NEW:
-// Send the ENTIRE graphics buffer to the device's screen buffer. Include things that are updated or not updated 
-// This is necessary because we cannot directly index to pixels since the row setting command is broken.
-// In the future, if we ever get a row setting command that works, we can re-instate the fancy (only-update-dirty methodology)
-
 void QwGrCH1120::display()
 {   
-    //sendDevData(m_pBuffer, m_nPages * m_viewport.height); // send the entire buffer to the device
-
     // Loop over our page descriptors - if a page is dirty, send the graphics
     // buffer dirty region to the device for the current page
-
-    // Print the buffer and print the raw buffer
-    // printBuffer();
-    // rawPrintBuffer();
-
     pageState_t transferRange;
 
     for (int i = 0 ; i < m_nPages; i++) {
@@ -1154,14 +1047,6 @@ void QwGrCH1120::display()
         // dirty rect page range, expand to include erase rect page range.
 
         transferRange = m_pageState[i];
-
-        // print the transferRange:
-        // Serial.print("Transfer range for page ");
-        // Serial.print(i);
-        // Serial.print(": min: ");
-        // Serial.print(transferRange.xmin);
-        // Serial.print(" - max: ");
-        // Serial.println(transferRange.xmax);
 
         // If an erase has happend, we need to transfer/include erase update range
         if (m_pendingErase)
@@ -1173,7 +1058,7 @@ void QwGrCH1120::display()
 
         // set the start address to write the updated data to the devices screen
         // buffer
-        // TODO: should the offset be applied to the first or second arg?
+
         // write out the xmin and xmax for each page descriptor
         // setScreenBufferAddress(i, transferRange.xmin + horz_flip_offset);
         setScreenBufferAddress(transferRange.xmin + horz_flip_offset, i);
