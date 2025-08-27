@@ -731,22 +731,67 @@ void QwGrCH1120::displayPower(bool enable)
 // This function sort of becomes useless because the entire page is rewritten each time now, so there isn't so much a concept of "erasing"
 void QwGrCH1120::erase(void)
 {
+    // Serial.println("Calling erase()");
     if (!m_pBuffer)
         return;
+
+    // Print all the page states and corresponding memset they will have:
+    // for (uint8_t i = 0 ; i < m_nPages; i++){
+    //     Serial.print("Page ");
+    //     Serial.print(i);
+    //     Serial.print(" xmin: ");
+    //     Serial.print(m_pageState[i].xmin);
+    //     Serial.print(" xmax: ");
+    //     Serial.println(m_pageState[i].xmax);
+
+    //     Serial.print("Corresponding memset: ");
+    //     Serial.print("memset(m_pBuffer + ");
+    //     Serial.print(i * m_viewport.width + m_pageState[i].xmin);
+    //     Serial.print(", 0, ");
+    //     Serial.print(m_pageState[i].xmax - m_pageState[i].xmin + 1);
+    //     Serial.println(");");
+    // }
 
     // Cleanup the dirty parts of each page in the graphics buffer.
     for (uint8_t i = 0; i < m_nPages; i++)
     {
+        // Serial.print("Erasing page ");
+        // Serial.println(i);
+
+        // Now, print the arguments we are about to pass to memset:
+        // Serial.print("First Arg to Memset (offset into buffer): ");
+        // Serial.println(i * m_viewport.width + m_pageState[i].xmin);
+        // Serial.print("Second Arg to Memset: ");
+        // Serial.println(0);
+        // Serial.print("Third Arg to Memset: ");
+        // Serial.println(m_pageState[i].xmax - m_pageState[i].xmin + 1);
+        // m_pageState
+        // The current "dirty" areas of the graphics [local] buffer.
+        // Areas that haven't been sent to the screen/device but are
+        // "dirty"
+        //
+        // Add the areas with pixels set and have been sent to the
+        // device - this is the contents of m_pageErase
+        pageCheckBoundsDesc(m_pageState[i], m_pageErase[i]);
+
+        // if this page is clean, there is nothing to update
+        if (pageIsClean(m_pageState[i]))
+            continue;
+
+
         // clear out memory that is dirty on this page
         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
                m_pageState[i].xmax - m_pageState[i].xmin + 1); // add one b/c values are 0 based
 
+        // Serial.print("setting page clean ");
+        // Serial.println(i);
         // clear out any pending dirty range for this page - it's erased
         pageSetClean(m_pageState[i]);
     }
 
     // Indicate that the data transfer to the device should include the erase
     // region
+    // Serial.println("Erasing pages:");
     m_pendingErase = true;
 }
 
@@ -794,7 +839,7 @@ void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, ui
 {
     // Basically we set a bit within a range in a page of our graphics buffer.
 
-    Serial.println("Calling Draw Line Horz with x0: " + String(x0) + ", y0: " + String(y0) + ", x1: " + String(x1) + ", y1: " + String(y1));
+    // Serial.println("Calling Draw Line Horz with x0: " + String(x0) + ", y0: " + String(y0) + ", x1: " + String(x1) + ", y1: " + String(y1));
     // in range
     if (y0 >= m_viewport.height)
         return;
@@ -1033,7 +1078,7 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
 
 bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 {
-    Serial.println("Calling setScreenBufferAddress with row: " + String(row) + ", column: " + String(column));
+    // Serial.println("Calling setScreenBufferAddress with row: " + String(row) + ", column: " + String(column));
     if (row >= m_viewport.height || column >= m_viewport.width)
         return false;
 
@@ -1099,8 +1144,8 @@ void QwGrCH1120::display()
     // buffer dirty region to the device for the current page
 
     // Print the buffer and print the raw buffer
-    printBuffer();
-    rawPrintBuffer();
+    // printBuffer();
+    // rawPrintBuffer();
 
     pageState_t transferRange;
 
@@ -1109,6 +1154,14 @@ void QwGrCH1120::display()
         // dirty rect page range, expand to include erase rect page range.
 
         transferRange = m_pageState[i];
+
+        // print the transferRange:
+        // Serial.print("Transfer range for page ");
+        // Serial.print(i);
+        // Serial.print(": min: ");
+        // Serial.print(transferRange.xmin);
+        // Serial.print(" - max: ");
+        // Serial.println(transferRange.xmax);
 
         // If an erase has happend, we need to transfer/include erase update range
         if (m_pendingErase)
