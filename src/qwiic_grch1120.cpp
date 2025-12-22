@@ -149,7 +149,7 @@
 #define kCmdStartColHigh             ((uint8_t)0x10)
 #define kCmdStartLine                ((uint8_t)0xA2) // Notice how this is different from the same cmd on the 1306 (0x40)
 
-#define kCmdContrastControl          ((uint8_t)0x81) // Eli had this as 0x0F, is that what this should be?
+#define kCmdContrastControl          ((uint8_t)0x81)
 #define kCmdHorizAddressing          ((uint8_t)0x20)
 #define kCmdDownVerticalScroll       ((uint8_t)0x24) // Down vertical scroll
 #define kCmdUpVerticalScroll         ((uint8_t)0x25) // Up vertical scroll
