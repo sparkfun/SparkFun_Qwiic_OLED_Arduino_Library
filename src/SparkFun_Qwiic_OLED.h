@@ -49,6 +49,7 @@
 // for the Qwiic OLED driver.
 
 // include the underlying SDK implementation headers for the OLED devices
+#include "qwiic_oled_1in5.h"
 #include "qwiic_oled_1in3.h"
 #include "qwiic_oled_custom.h"
 #include "qwiic_oledmicro.h"
@@ -83,11 +84,11 @@ typedef QwBitmap QwiicBitmap;
 
 // Define the template and fill in the interface methods in-line.
 
-template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: implementing Arduino Print
+template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: implementing Arduino Print
 {
   protected:
     // our device driver
-    SSD1306DeviceType m_device;
+    DeviceType m_device;
 
   private:
     QwI2C m_i2cBus; // our i2c object
@@ -275,8 +276,8 @@ template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print //
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed below
     //
     // Defined values for the interval parameter:
@@ -307,8 +308,8 @@ template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print //
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollVertRight(uint8_t start, uint8_t stop, uint8_t interval)
@@ -326,8 +327,8 @@ template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print //
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollLeft(uint8_t start, uint8_t stop, uint8_t interval)
@@ -345,8 +346,8 @@ template <typename SSD1306DeviceType> class QwiicOLEDBaseClass : public Print //
     //
     // Parameter    Description
     // ---------    -----------------------------
-    // start        The start page address of the scroll - valid values are 0 thru 7
-    // stop         The stop/end page address of the scroll - valid values are 0 thru 7
+    // start        The start page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
+    // stop         The stop/end page address of the scroll - valid values are 0 thru 15 (only 0 thru 7 valid for most small displays w/ SSD1306)
     // interval     The time interval between scroll step - values listed in scrollRight()
 
     void scrollVertLeft(uint8_t start, uint8_t stop, uint8_t interval)
@@ -841,6 +842,11 @@ class QwiicTransparentOLED : public QwiicOLEDBaseClass<QwOLEDTransparent>
 };
 
 class Qwiic1in3OLED : public QwiicOLEDBaseClass<QwOLED1in3>
+{
+    // nothing here - see above
+};
+
+class Qwiic1in5OLED : public QwiicOLEDBaseClass<QwOLED1in5>
 {
     // nothing here - see above
 };

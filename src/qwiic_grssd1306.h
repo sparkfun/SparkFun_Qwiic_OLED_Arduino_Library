@@ -52,6 +52,7 @@
 #include "qwiic_grbuffer.h"
 #include "qwiic_i2c.h"
 #include "res/qwiic_resdef.h"
+#include "qwiic_grcommon.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Device Config
@@ -66,45 +67,6 @@
 #define kDefaultPreCharge 0xF1
 #define kDefaultVCOMDeselect 0x40
 #define kDefaultContrast 0x8F
-
-/////////////////////////////////////////////////////////////////////////////
-// The graphics Raster Operator functions (ROPS)
-/////////////////////////////////////////////////////////////////////////////
-//      - Copy      - copy the pixel value in to the buffer (default)
-//      - Not Copy  - copy the not of the pixel value to buffer
-//      - Not       - Set the buffer value to not it's current value
-//      - XOR       - XOR of color and current pixel value
-//      - Black     - Set value to always be black
-//      - White     - set value to always be white
-
-typedef enum gr_op_funcs_
-{
-    grROPCopy = 0,
-    grROPNotCopy = 1,
-    grROPNot = 2,
-    grROPXOR = 3,
-    grROPBlack = 4,
-    grROPWhite = 5
-} grRasterOp_t;
-
-/////////////////////////////////////////////////////////////////////////////
-// Flags for scrolling
-/////////////////////////////////////////////////////////////////////////////
-
-#define SCROLL_VERTICAL 0x01
-#define SCROLL_RIGHT 0x02
-#define SCROLL_LEFT 0x04
-#define SCROLL_VERT_RIGHT SCROLL_VERTICAL | SCROLL_RIGHT
-#define SCROLL_VERT_LEFT SCROLL_VERTICAL | SCROLL_LEFT
-
-#define SCROLL_INTERVAL_5_FRAMES 0x00
-#define SCROLL_INTERVAL_64_FRAMES 0x01
-#define SCROLL_INTERVAL_128_FRAMES 0x02
-#define SCROLL_INTERVAL_256_FRAMES 0x03
-#define SCROLL_INTERVAL_3_FRAMES 0x04
-#define SCROLL_INTERVAL_4_FRAMES 0x05
-#define SCROLL_INTERVAL_25_FRAMES 0x06
-#define SCROLL_INTERVAL_2_FRAMES 0x07
 
 /////////////////////////////////////////////////////////////////////////////
 // Buffer Management
@@ -146,11 +108,12 @@ typedef enum gr_op_funcs_
 
 #define kMaxPageNumber 8
 
-typedef struct
-{
-    int16_t xmin;
-    int16_t xmax;
-} pageState_t;
+// moved to common for now...
+// typedef struct
+// {
+//     int16_t xmin;
+//     int16_t xmax;
+// } pageState_t;
 
 /////////////////////////////////////////////////////////////////////////////
 // QwGrSSD1306

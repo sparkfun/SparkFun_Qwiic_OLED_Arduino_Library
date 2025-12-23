@@ -1,22 +1,21 @@
 
-// qwiic_grssd1306.cpp
+// qwiic_grch1120.cpp
 //
 // This is a library written for SparkFun Qwiic OLED boards that use the
-// SSD1306.
+// CH1120. This driver is VERY similar to the SSD1306 driver, but with a few 
+// subtle differences. Currently, our only device with the CH1120 driver is 
+// the Qwiic OLED 1.5".
 //
 // SparkFun sells these at its website: www.sparkfun.com
 //
 // Do you like this library? Help support SparkFun. Buy a board!
 //
-//   Micro OLED             https://www.sparkfun.com/products/14532
-//   Transparent OLED       https://www.sparkfun.com/products/15173
-//   "Narrow" OLED          https://www.sparkfun.com/products/17153
+// Qwiic OLED 1.5in       https://www.sparkfun.com/products/29530
 //
-//
-// Written by Kirk Benell @ SparkFun Electronics, March 2022
+// Written by SparkFun Electronics, August 2025
 //
 // This library configures and draws graphics to OLED boards that use the
-// SSD1306 display hardware. The library only supports I2C.
+// CH1120 display hardware. The library only supports I2C.
 //
 // Repository:
 //     https://github.com/sparkfun/SparkFun_Qwiic_OLED_Arduino_Library
@@ -48,53 +47,12 @@
 //    ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "qwiic_grssd1306.h"
+#include "qwiic_grch1120.h"
+#include <map>
 
 /////////////////////////////////////////////////////////////////////////////
-// Class that implements graphics support for devices that use the SSD1306
+// Class that implements graphics support for devices that use the CH1120
 //
-/////////////////////////////////////////////////////////////////////////////
-// Device Commands
-//
-// The commands are codes used to communicate with the SSD1306 device and are
-// from the devices datasheet.
-//
-
-#define kCmdSetContrast 0x81
-#define kCmdDisplayAllOnResume 0xA4
-#define kCmdDisplayAllOn 0xA5
-#define kCmdNormalDisplay 0xA6
-#define kCmdInvertDisplay 0xA7
-#define kCmdDisplayOff 0xAE
-#define kCmdDisplayOn 0xAF
-#define kCmdSetDisplayOffset 0xD3
-#define kCmdSetComPins 0xDA
-#define kCmdSetVComDeselect 0xDB
-#define kCmdSetDisplayClockDiv 0xD5
-#define kCmdSetPreCharge 0xD9
-#define kCmdSetMultiplex 0xA8
-#define kCmdSetLowColumn 0x00
-#define kCmdSetHighColumn 0x10
-#define kCmdSetStartLine 0x40
-#define kCmdMemoryMode 0x20
-#define kCmdComScanInc 0xC0
-#define kCmdComScanDec 0xC8
-#define kCmdSegRemap 0xA0
-#define kCmdChargePump 0x8D
-#define kCmdExternalVCC 0x01
-#define kCmdSwitchCapVCC 0x02
-#define kCmdPageAddress 0x22
-#define kCmdColumnAddress 0x21
-#define kCmdActivateScroll 0x2F
-#define kCmdDeactivateScroll 0x2E
-#define kCmdSetVerticalScrollArea 0xA3
-#define kCmdRightHorizontalScroll 0x26
-#define kCmdLeftHorizontalScroll 0x27
-#define kCmdVerticalRightHorzScroll 0x29
-#define kCmdVerticalLeftHorzScroll 0x2A
-#define kCmdPageModePageBase 0xB0
-#define kCmdPageModeColTopBase 0x10
-#define kCmdPageModeColLowBase 0x0F
 
 //////////////////////////////////////////////////////////////////////////////////
 // Screen Buffer
@@ -112,11 +70,10 @@
 //
 // These macros work with the pageState_t struct type.
 //
-// Define unique values just outside of the screen buffer (SSD1306) page range
-// (0 base) Note: A page  is 128 bits in length
+// Define unique values just outside of the screen buffer (valid is 0 - 159)
 
 #define kPageMin -1  // outside bounds - low value
-#define kPageMax 128 // outside bounds - high value
+#define kPageMax 160 // outside bounds - high value
 
 // clean/ no settings in the page
 #define pageIsClean(_page_) (_page_.xmin == kPageMax)
@@ -159,16 +116,95 @@
             _page_.xmax = _x1_;                                                                                        \
     } while (false)
 
-//////////////////////////////////////////////////////////////////////////////////
-// Communication
+
+/////////////////////////////////////////////////////////////////////////////
+// Device Commands
 //
-// When communicating with the device, you either send commands or data. Define
-// our codes for these two options - these are basically i2c registers/offsets.
+// The commands are codes used to communicate with the CH1120 device and are
+// from the devices datasheet. (See )
 //
-// See datasheet for details
+// Control Bytes:
+// Control Bytes consist of C0 and D~C Bits followed by the rest of the command byte:
+
+//            | ---- Command Byte --- |     
+// | C0 | D~C | 0 | 0 | 0 | 0 | 0 | 0 |
+
+// The Co bit (MSB) has the following meaning: 
+// 0 : This is the last control byte, only data bytes follow.
+// 1: More control bytes follow
+
+// The D~C bit (2nd MSB) has the following meaning:
+// 0: The data byte is for command operation
+// 1: The byte is for RAM (data) operation
+
+#define kCmdControlByte              ((uint8_t)0x00)
+#define kCmdAnotherControlByte       ((uint8_t)0xC0)
+#define kCmdControlDataByteFollow    ((uint8_t)0x80)
+#define kCmdRamControlByte           ((uint8_t)0x40)
+
+#define kCmdRowStartEnd              ((uint8_t)0x22)  // Two byte command - command, start, stop
+#define kCmdColStartEnd              ((uint8_t)0x21)  // Two byte command - command, start, stop
+#define kCmdStartRow                 ((uint8_t)0xB0) 
+#define kCmdStartColLow              ((uint8_t)0x0F) // Start Column = StartColHigh (MSB) | StartColLow (LSB)
+#define kCmdStartColHigh             ((uint8_t)0x10)
+#define kCmdStartLine                ((uint8_t)0xA2) // Notice how this is different from the same cmd on the 1306 (0x40)
+
+#define kCmdContrastControl          ((uint8_t)0x81)
+#define kCmdHorizAddressing          ((uint8_t)0x20)
+#define kCmdDownVerticalScroll       ((uint8_t)0x24) // Down vertical scroll
+#define kCmdUpVerticalScroll         ((uint8_t)0x25) // Up vertical scroll
+#define kCmdRightHorizontalScroll    ((uint8_t)0x26) // Right horizontal scroll
+#define kCmdLeftHorizontalScroll     ((uint8_t)0x27) // Left horizontal scroll
+#define kCmdDeactivateScroll         ((uint8_t)0x2E) // Stop scrolling (default)
+#define kCmdActivateScroll           ((uint8_t)0x2F) // Activate Scrolling scrolling
+#define kCmdDisplayOn                ((uint8_t)0xAF)
+#define kCmdDisplayOff               ((uint8_t)0xAE)
+#define kCmdPanelID                  ((uint8_t)0xE1)
+#define kCmdDriverID                 ((uint8_t)0xE2) // BUSY+ON/OFF+0x60
+#define kCmdGrayMono                 ((uint8_t)0xAC)
+#define kCmdSegRemapDown             ((uint8_t)0xA0) // default
+#define kCmdSegRemapUp               ((uint8_t)0xA1) // reverse
+#define kCmdComOutScan0First         ((uint8_t)0xC0) // scan COM0 to COM[n-1] (default)
+#define kCmdComOutScan0Last          ((uint8_t)0xC8) // scan COM[n-1] to COM0 (reverse)
+#define kCmdDisplayRotation          ((uint8_t)0xA3)
+#define kCmdDisableEntireDisplay     ((uint8_t)0xA4)
+#define kCmdEnableEntireDisplay      ((uint8_t)0xA5)
+#define kCmdNormalDisplay            ((uint8_t)0xA6) // default
+#define kCmdReverseDisplay           ((uint8_t)0xA7)
+#define kCmdMultiplexRatio           ((uint8_t)0xA8)
+#define kCmdDisplayOffset            ((uint8_t)0xD3)
+#define kCmdDisplayDivideRatio       ((uint8_t)0xD5)
+#define kCmdDischargeFront           ((uint8_t)0x93)
+#define kCmdDischargeBack            ((uint8_t)0xD8)
+#define kCmdPreCharge                ((uint8_t)0xD9)
+#define kCmdSEGpads                  ((uint8_t)0xDA)
+#define kCmdVCOMDeselectLevel        ((uint8_t)0xDB)
+#define kCmdExternalIREF             ((uint8_t)0xAD)
+
+/////////////////////////////////////////////////////////////////////////////
+// Manufacturer Default Settings
 //
-#define kDeviceSendCommand 0x00
-#define kDeviceSendData 0x40
+// The default settings given in the sample quickstart code.
+//
+#define kDefaultMonoMode                 ((uint8_t)0x01) // grayscale by default "0x00"
+#define kDefaultRowStart                 ((uint8_t)0x00) // default
+#define kDefaultColStart                 ((uint8_t)0x00) // default
+#define kDefaultRowEnd                   ((uint8_t)0x3F) // default
+#define kDefaultColEnd                   ((uint8_t)0x1F) // default
+#define kDefaultDisplayStart             ((uint8_t)0x00) // default
+// #define kDefaultHorizontalAddressing     ((uint8_t)0x00) // default
+#define kDefaultHorizontalAddressing     ((uint8_t)0x01) // default
+#define kDefaultContrast                 ((uint8_t)0xC8) // default = 0x80, upper end = 0xFF
+#define kDefaultRotateDisplayNinety      ((uint8_t)0x01) // Default is 0 degrees (NOTE: start and end values for row/column need adjusting if rotate=0)
+#define kDefaultMultiplexRatio           ((uint8_t)0x7F) // default is 0x9F
+#define kDefaultDisplayOffset            ((uint8_t)0x10) // default is 0x00
+#define kDefaultDivideRatio              ((uint8_t)0x00) // default
+#define kDefaultDischargeFront           ((uint8_t)0x02) // default is 0x02
+#define kDefaultDischargeBack            ((uint8_t)0x02) // default
+#define kDefaultPreCharge                ((uint8_t)0x1F) // 0x1F is default
+#define kDefaultSegPads                  ((uint8_t)0x00) // default
+#define kDefaultVCOMDeselect             ((uint8_t)0x3F) // default
+#define kDefaultExternalIREF             ((uint8_t)0x02)
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Pixel write/set operations
@@ -203,31 +239,50 @@ static const rasterOPsFn m_rasterOps[] = {
     // Always White
     [](uint8_t *dst, uint8_t src, uint8_t mask) -> void { *dst = mask | *dst; }};
 
+
+/////////////////////////////////////////////////////////////////////////////
+// Map for scrolling. See qwiic_grcommon.h for original definitions and descriptions
+/////////////////////////////////////////////////////////////////////////////
+
+const std::map<uint8_t, uint8_t> scrollIntervals = {
+    {SCROLL_INTERVAL_6_FRAMES, 0x00},
+    {SCROLL_INTERVAL_32_FRAMES, 0x01},
+    {SCROLL_INTERVAL_64_FRAMES, 0x02},
+    {SCROLL_INTERVAL_128_FRAMES, 0x03},
+    {SCROLL_INTERVAL_3_FRAMES, 0x04},
+    {SCROLL_INTERVAL_4_FRAMES, 0x05},
+    {SCROLL_INTERVAL_5_FRAMES, 0x06},
+    {SCROLL_INTERVAL_2_FRAMES, 0x07},
+    // The following intervals are not directly available for the CH1120
+    // so we will include their closest mappings for compatiblity with other driver/examples
+    {SCROLL_INTERVAL_25_FRAMES, 0x01}, // closest to 25 frames is 32 frames (0x01)
+    {SCROLL_INTERVAL_256_FRAMES, 0x03}  // closest to 256 frames is 128 frames (0x03)
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 // setup defaults - called from constructors
 //
 // Just a bunch of member variable inits
 
-void QwGrSSD1306::setupDefaults(void)
+void QwGrCH1120::setupDefaults(void)
 {
     default_address = {0};
     m_pBuffer = {nullptr};
     m_color = {1};
     m_rop = {grROPCopy};
     m_i2cBus = {nullptr};
-    m_i2cAddress = {0};
-    m_initHWComPins = {kDefaultPinConfig};
+    m_i2cAddress = {0x3C}; // address of the device (0x3D for closed)
     m_initPreCharge = {kDefaultPreCharge};
-    m_initVCOMDeselect = {kDefaultVCOMDeselect};
     m_initContrast = {kDefaultContrast};
     m_isInitialized = {false};
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // init()
 //
 // Called by user when the device/system is up and ready to be "initialized."
 //
-// This implementation performs the basic setup for the SSD1306 device
+// This implementation performs the basic setup for the CH1120 device
 //
 // The startup sequence is as follows:
 //
@@ -239,40 +294,44 @@ void QwGrSSD1306::setupDefaults(void)
 //
 // When this method is complete, the driver and device are ready for use
 //
-bool QwGrSSD1306::init(void)
+bool QwGrCH1120::init(void)
 {
     if (m_isInitialized)
         return true;
 
-    //  do we have a bus yet? Buffer? Note - buffer is set by subclass of this
-    //  object
+    // do we have a bus yet? Buffer? Note - buffer is set by subclass of this
+    // object
     if (!m_i2cBus || !m_i2cAddress || !m_pBuffer)
         return false;
 
     // Is the device connected?
     if (!m_i2cBus->ping(m_i2cAddress))
         return false;
-
-    // Super-class
-    if (!this->QwGrBufferDevice::init())
-        return false; // something isn't right
+    
+    // Call super class init
+    if (!(this->QwGrBufferDevice::init()))
+        return false;
 
     // setup the oled device
     setupOLEDDevice();
 
     // Finish up setting up this object
 
-    // Number of pages used for this device?
-    m_nPages = m_viewport.height / kByteNBits; // height / number of pixels per byte.
+    // number of pages used for this device?
+    // By default, we are operating this device in "rotate 90" mode with "horizontal addressing"
+    // Each "page" is a byte representing 8 pixels
+    // so the number of pages that it takes to span entire row is the width divided by the number of bits in a byte
+    m_nPages = m_viewport.width / kByteNBits;  // width / number of pixels per byte.
                                                // TODO - support multiples != 8
 
     // init the graphics buffers
     initBuffers();
 
-    m_isInitialized = true; // we're ready to rock
+    m_isInitialized = true;
 
     return true;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 // reset()
@@ -281,7 +340,7 @@ bool QwGrSSD1306::init(void)
 //
 // Returns true on success, false on failure
 
-bool QwGrSSD1306::reset(bool clearDisplay)
+bool QwGrCH1120::reset(bool clearDisplay)
 {
     // If we are not in an init state, just call init
     if (!m_isInitialized)
@@ -300,6 +359,7 @@ bool QwGrSSD1306::reset(bool clearDisplay)
 
     return true;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Configuration API
 //
@@ -310,27 +370,28 @@ bool QwGrSSD1306::reset(bool clearDisplay)
 //
 // For details of each of these settings -- see the datasheet
 //
-void QwGrSSD1306::setCommPins(uint8_t pin_code)
+void QwGrCH1120::setCommPins(uint8_t pin_code)
 {
+    // NOTE: For now, we won't really use this for the CH1120, but is here for compatibility/symmetry with other OLED drivers
     m_initHWComPins = pin_code;
 }
 
-void QwGrSSD1306::setPreCharge(uint8_t pre_charge)
+void QwGrCH1120::setPreCharge(uint8_t pre_charge)
 {
     m_initPreCharge = pre_charge;
 }
 
-void QwGrSSD1306::setVcomDeselect(uint8_t vcom_d)
+void QwGrCH1120::setVcomDeselect(uint8_t vcom_d)
 {
     m_initVCOMDeselect = vcom_d;
 }
 
-void QwGrSSD1306::setContrast(uint8_t contrast)
+void QwGrCH1120::setContrast(uint8_t contrast)
 {
     if (!m_isInitialized)
         m_initContrast = contrast;
     else
-        sendDevCommand(kCmdSetContrast, contrast);
+        sendDevCommand(kCmdContrastControl, contrast);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -338,37 +399,34 @@ void QwGrSSD1306::setContrast(uint8_t contrast)
 //
 // Method sends the init/setup commands to the OLED device, placing
 // it in a state for use by this driver/library.
-
-void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
-{
-    // Start the device setup - sending commands to device. See command defs in
-    // header, and device datasheet
+void QwGrCH1120::setupOLEDDevice(bool clearDisplay){
     if (clearDisplay)
         sendDevCommand(kCmdDisplayOff);
 
-    sendDevCommand(kCmdSetDisplayClockDiv, 0x80);
-    sendDevCommand(kCmdSetMultiplex, m_viewport.height - 1);
-    sendDevCommand(kCmdSetDisplayOffset, 0x0);
+    setScreenBufferAddress(kDefaultRowStart, kDefaultRowEnd);
 
-    sendDevCommand(kCmdSetStartLine | 0x0);
-    sendDevCommand(kCmdChargePump, 0x14);
-    sendDevCommand(kCmdMemoryMode, 0b10); // Page Addressing mode
+    sendDevCommand(kCmdStartLine, kDefaultDisplayStart); 
+    sendDevCommand(kCmdContrastControl, m_initContrast);
+    sendDevCommand(kCmdGrayMono, kDefaultMonoMode);
+    sendDevCommand(kCmdHorizAddressing, kDefaultHorizontalAddressing);
+    sendDevCommand(kCmdSegRemapDown);
+    sendDevCommand(kCmdComOutScan0First);
+    sendDevCommand(kCmdDisplayRotation, kDefaultRotateDisplayNinety);
+    sendDevCommand(kCmdDisableEntireDisplay);
 
-    sendDevCommand(kCmdNormalDisplay);
-    sendDevCommand(kCmdDisplayAllOnResume);
-    sendDevCommand(kCmdSegRemap | 0x1);
-
-    sendDevCommand(kCmdComScanDec);
-    sendDevCommand(kCmdSetComPins, m_initHWComPins);
-    sendDevCommand(kCmdSetContrast, m_initContrast);
-
-    sendDevCommand(kCmdSetPreCharge, m_initPreCharge);
-    sendDevCommand(kCmdSetVComDeselect, m_initVCOMDeselect);
-    sendDevCommand(kCmdDeactivateScroll);
+    sendDevCommand(kCmdDisplayOffset, kDefaultDisplayOffset);
+    sendDevCommand(kCmdDischargeFront, kDefaultDischargeFront);
+    sendDevCommand(kCmdDischargeBack, kDefaultDischargeBack);
+    sendDevCommand(kCmdPreCharge, m_initPreCharge);
+    sendDevCommand(kCmdSEGpads, kDefaultSegPads);
+    sendDevCommand(kCmdVCOMDeselectLevel, kDefaultVCOMDeselect);
+    sendDevCommand(kCmdExternalIREF, kDefaultExternalIREF);
 
     if (clearDisplay)
+        // now, turn it back on
         sendDevCommand(kCmdDisplayOn);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // setCommBus()
 //
@@ -376,7 +434,7 @@ void QwGrSSD1306::setupOLEDDevice(bool clearDisplay)
 //
 // TODO -  In the *future*, generalize to match SDK
 
-void QwGrSSD1306::setCommBus(QwI2C &theBus, uint8_t id_bus)
+void QwGrCH1120::setCommBus(QwI2C &theBus, uint8_t id_bus)
 {
     m_i2cBus = &theBus;
     m_i2cAddress = id_bus;
@@ -392,7 +450,7 @@ void QwGrSSD1306::setCommBus(QwI2C &theBus, uint8_t id_bus)
 // on_initialize() method.
 //
 //
-void QwGrSSD1306::setBuffer(uint8_t *pBuffer)
+void QwGrCH1120::setBuffer(uint8_t *pBuffer)
 {
     if (pBuffer)
         m_pBuffer = pBuffer;
@@ -403,24 +461,24 @@ void QwGrSSD1306::setBuffer(uint8_t *pBuffer)
 //
 // Clear out all the on-device memory.
 //
-void QwGrSSD1306::clearScreenBuffer(void)
+void QwGrCH1120::clearScreenBuffer(void)
 {
     // Clear out the screen buffer on the device
     uint8_t emptyPage[kPageMax] = {0};
 
-    for (int i = 0; i < kMaxPageNumber; i++)
+    for (int i = 0 ; i < kMaxPageNumber; i++)
     {
-        setScreenBufferAddress(i, 0);                // start of page
-        sendDevData((uint8_t *)emptyPage, kPageMax); // clear out page
+        setScreenBufferAddress(0, i);
+        sendDevData(emptyPage, kPageMax);
     }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // initBuffers()
 //
 // Will clear the local graphics buffer, and the devices screen buffer. Also
 // resets page state descriptors to a "clean" state.
-
-void QwGrSSD1306::initBuffers(void)
+void QwGrCH1120::initBuffers(void)
 {
     int i;
 
@@ -440,6 +498,7 @@ void QwGrSSD1306::initBuffers(void)
     // clear out the screen buffer
     clearScreenBuffer();
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // resendGraphics()
 //
@@ -447,10 +506,8 @@ void QwGrSSD1306::initBuffers(void)
 // graphics. This region is defined by the contents of the m_pageErase
 // descriptors.
 //
-// Copy these to the page state, and call display
-//
 
-void QwGrSSD1306::resendGraphics(void)
+void QwGrCH1120::resendGraphics(void)
 {
     // Set the page state dirty bounds to the bounds of erase state
     for (int i = 0; i < m_nPages; i++)
@@ -458,27 +515,41 @@ void QwGrSSD1306::resendGraphics(void)
 
     display(); // push bits to screen buffer
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Screen Control
+
 ////////////////////////////////////////////////////////////////////////////////////
 // flip_vert()
 //
 // Flip the onscreen graphics vertically.
-
-void QwGrSSD1306::flipVert(bool bFlip)
-{
-    sendDevCommand((bFlip ? kCmdComScanInc : kCmdComScanDec));
+void QwGrCH1120::flipVert(bool bFlip){
+    sendDevCommand(bFlip ?  kCmdComOutScan0Last : kCmdComOutScan0First);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // flip_horz()
 //
-// Flip the onscreen graphcis horizontally. This requires a resend of the
+// Flip the onscreen graphics horizontally. This requires a resend of the
 // graphics data to the device/screen buffer.
-//
+void QwGrCH1120::flipHorz(bool bFlip){ 
 
-void QwGrSSD1306::flipHorz(bool bFlip)
-{
-    sendDevCommand(kCmdSegRemap | (bFlip ? 0x0 : 0x1));
+    if (bFlip){
+        // If we are flipping to horizontal, we need to adjust row start and end to the end of the display memory
+        // This is because when we horizontally flip, if our viewport is smaller than the total area, we will flip in some garbage
+        // When flipping we need to offset by the max width minus the viewport width (maybe should be height, may have to update with non-square display)
+        horz_flip_offset = kMaxCH1120Width - m_viewport.width;
+
+        sendDevCommand(kCmdSegRemapUp);
+    }
+
+    else{
+        // If in normal mode, just set to the defaults
+        horz_flip_offset = 0;
+
+        sendDevCommand(kCmdSegRemapDown);
+    }
+
     clearScreenBuffer();
     resendGraphics();
 }
@@ -488,14 +559,13 @@ void QwGrSSD1306::flipHorz(bool bFlip)
 //
 // Inverts the display contents on device
 //
-
-void QwGrSSD1306::invert(bool bInvert)
+void QwGrCH1120::invert(bool bInvert)
 {
-    sendDevCommand((bInvert ? kCmdInvertDisplay : kCmdNormalDisplay));
+    sendDevCommand(bInvert ? kCmdReverseDisplay : kCmdNormalDisplay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-void QwGrSSD1306::stopScroll(void)
+void QwGrCH1120::stopScroll(void)
 {
     sendDevCommand(kCmdDeactivateScroll);
 
@@ -515,50 +585,62 @@ void QwGrSSD1306::stopScroll(void)
 ////////////////////////////////////////////////////////////////////////////////////
 // scroll()
 //
-// Set scroll parametes on the device and start scrolling
+// Set scroll parameters on the device and start scrolling
 //
-void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval)
+void QwGrCH1120::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint8_t interval)
 {
     // parameter sanity?
     if (stop < start)
         return;
 
     // Setup a default command list
-    uint8_t n_commands = 7;
-    uint8_t commands[7] = {kCmdRightHorizontalScroll, // default scroll right
-                           0x00,                      // dummy byte
-                           start,                     // start page address
-                           interval,                  // interval between scroll steps - in terms of frame fequency
-                           stop,                      // end page address
-                           0x00,                      // dummy byte for non vert, for vert it's scroll offset
-                           0xFF};                     // Dummy byte for non vert - set to FFX, not used for vert.
+    uint8_t n_commands = 6;
 
+    // See page 48 of the CH1120 datasheet. This differs from the SSD1306
+    // This is a 6 Byte Command With the Bytes:
+    // 0) Scroll Direction Set (0x24 - down, 0x25 - up, 0x26 - right, 0x27 - left)
+    // 1) Start Column Position Set (0x00 to 0x9F)
+    // 2) End Column Position Set (0x00 to 0x9F)
+    // 3) Start Row Position Set (0x00 to 0x9F)
+    // 4) End Row Position Set (0x00 to 0x9F)
+    // 5) Time Interval Set (X + B0) where B0 is 0b000 (6frames) to 0b111 (2 frames) (with several options up to 128 frames in between)
+
+    uint8_t commands[n_commands] = {kCmdRightHorizontalScroll, // default scroll right
+                           0x00,                        // default 0x00 start column
+                           0x7F,                        // let's default to 128 for the 128x128 display
+                           0x00,                        // default 0x00 start row
+                           0x7F,                        // let's default to 128 for the 128x128 display
+                           scrollIntervals.at(interval) // map passed interval to correct value
+                          };
+
+    
     // Which way to scroll
+    // Note how we multiply the start/stop values passed in by 8 such that it more closely aligns with
+    // the behavior of the other SSD1306 driver (which had 64 rows as 8 pages), and example code can be similar between them
+    // We add 7 to the stop value so it is the last row of the page
     switch (scroll_type)
     {
-    case SCROLL_RIGHT:
-        break; // set in initializer of command array
     case SCROLL_LEFT:
         commands[0] = kCmdLeftHorizontalScroll;
+        commands[1] = start * 8;
+        commands[2] = stop * 8 + 7;
         break;
-    case SCROLL_VERT_LEFT:
-        commands[0] = kCmdVerticalLeftHorzScroll;
+    case SCROLL_VERT_MODE1:
+        commands[0] = kCmdUpVerticalScroll;
+        commands[3] = start * 8;
+        commands[4] = stop * 8 + 7;
         break;
-    case SCROLL_VERT_RIGHT:
-        commands[0] = kCmdVerticalRightHorzScroll;
+    case SCROLL_VERT_MODE2:
+        commands[0] = kCmdDownVerticalScroll;
+        commands[3] = start * 8;
+        commands[4] = stop * 8 + 7;
         break;
-    }
-
-    // If we are scrolling vertically, modify the command list, and set the
-    // vertical scroll area on display
-    if (scroll_type & SCROLL_VERTICAL)
-    {
-        commands[5] = 0x01; // set the scrolling offset
-        n_commands--;       // don't use the last byte of command buffer
-
-        // Set on display scroll area
-        sendDevCommand(kCmdSetVerticalScrollArea, 0x00);
-        sendDevCommand(m_viewport.height);
+    case SCROLL_RIGHT:
+    default:
+        // Note that the 1306 (and thus the higher level driver) support scroll right vert etc. which we don't. We'll stick w/ horizontal right in this case
+        commands[0] = kCmdRightHorizontalScroll;
+        commands[1] = start * 8;
+        commands[2] = stop * 8 + 7;
     }
 
     // send the scroll commands to the device
@@ -579,16 +661,17 @@ void QwGrSSD1306::scroll(uint16_t scroll_type, uint8_t start, uint8_t stop, uint
 // displayPower()
 //
 // Used to set the power of the screen.
-
-void QwGrSSD1306::displayPower(bool enable)
+void QwGrCH1120::displayPower(bool enable)
 {
     if (!m_isInitialized)
         return;
 
     sendDevCommand((enable ? kCmdDisplayOn : kCmdDisplayOff));
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Drawing Methods
+
 ////////////////////////////////////////////////////////////////////////////////////
 // erase()
 //
@@ -596,7 +679,8 @@ void QwGrSSD1306::displayPower(bool enable)
 // haven't been sent to the screen.
 //
 
-void QwGrSSD1306::erase(void)
+// This function sort of becomes useless because the entire page is rewritten each time now, so there isn't so much a concept of "erasing"
+void QwGrCH1120::erase(void)
 {
     if (!m_pBuffer)
         return;
@@ -604,19 +688,18 @@ void QwGrSSD1306::erase(void)
     // Cleanup the dirty parts of each page in the graphics buffer.
     for (uint8_t i = 0; i < m_nPages; i++)
     {
-        // m_pageState
         // The current "dirty" areas of the graphics [local] buffer.
         // Areas that haven't been sent to the screen/device but are
         // "dirty"
         //
         // Add the areas with pixels set and have been sent to the
         // device - this is the contents of m_pageErase
-
         pageCheckBoundsDesc(m_pageState[i], m_pageErase[i]);
 
         // if this page is clean, there is nothing to update
         if (pageIsClean(m_pageState[i]))
             continue;
+
 
         // clear out memory that is dirty on this page
         memset(m_pBuffer + i * m_viewport.width + m_pageState[i].xmin, 0,
@@ -639,7 +722,7 @@ void QwGrSSD1306::erase(void)
 // function
 //
 
-void QwGrSSD1306::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
+void QwGrCH1120::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 {
     // quick sanity check on range
     if (x >= m_viewport.width || y >= m_viewport.height)
@@ -649,17 +732,18 @@ void QwGrSSD1306::drawPixel(uint8_t x, uint8_t y, uint8_t clr)
 
     m_rasterOps[m_rop](m_pBuffer + x + y / kByteNBits * m_viewport.width, // pixel offset
                        (clr ? bit : 0), bit);                             // which bit to set in byte
-
+    
+    // print Buffer after drawing pixel:
     pageCheckBounds(m_pageState[y / kByteNBits],
-                    x); // update dirty range for page
+                x); // update dirty range for page
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // draw_line_horz()
 //
 // Fast horizontal line drawing routine
 //
-
-void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+void QwGrCH1120::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 {
     // Basically we set a bit within a range in a page of our graphics buffer.
 
@@ -686,12 +770,13 @@ void QwGrSSD1306::drawLineHorz(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, u
     // Mark the page dirty for the range drawn
     pageCheckBoundsRange(m_pageState[y0 / kByteNBits], x0, x1);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // draw_line_vert()
 //
 // Fast vertical line drawing routine - also supports fast filled rects
 //
-void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
+void QwGrCH1120::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t clr)
 {
     if (x0 >= m_viewport.width) // out of bounds
         return;
@@ -751,15 +836,16 @@ void QwGrSSD1306::drawLineVert(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, u
         y0 += endBit - startBit + 1; // increment Y0 to next page
 
         pageCheckBoundsRange(m_pageState[i], x0,
-                             x1); // mark dirty range in page desc
+                        x1); // mark dirty range in page desc
     }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // draw_rect_fill()
 //
 // Does the actual drawing/logic
 
-void QwGrSSD1306::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
+void QwGrCH1120::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint8_t clr)
 {
     uint8_t x1 = x0 + width - 1;
     uint8_t y1 = y0 + height - 1;
@@ -767,13 +853,14 @@ void QwGrSSD1306::drawRectFilled(uint8_t x0, uint8_t y0, uint8_t width, uint8_t 
     // just call vert line
     drawLineVert(x0, y0, x1, y1, clr);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 // draw_bitmap()
 //
 // Draw a 8 bit encoded (aka same y layout as this device) bitmap to the screen
 //
 
-void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t dst_height, uint8_t *pBitmap,
+void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t dst_height, uint8_t *pBitmap,
                              uint8_t bmp_width, uint8_t bmp_height)
 {
     // some simple checks
@@ -878,9 +965,9 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t 
         // transferred
         y0 += neededBits;
         bmp_y += neededBits;
-
+        
         pageCheckBoundsRange(m_pageState[iPage], x0,
-                             x0 + dst_width); // mark dirty range in page desc
+                        x0 + dst_width); // mark dirty range in page desc
     }
 }
 
@@ -892,48 +979,70 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t 
 // Sets the target screen buffer address for graphics buffer transfer to the
 // device.
 //
-// The positon is specified by page and column
 //
-// The system runs in "page mode" - data is streamed along a page, based
-// on the set starting position.
-//
-// This class takes advantage of this to just write the "dirty" ranges in a
-// page.
-//
+// row can be 0 to 0x9F
+// Column can be 0 to 0x9F
 
-bool QwGrSSD1306::setScreenBufferAddress(uint8_t page, uint8_t column)
+bool QwGrCH1120::setScreenBufferAddress(uint8_t row, uint8_t column)
 {
-    if (page >= m_nPages || column >= m_viewport.width)
+    if (row >= m_viewport.height || column >= m_viewport.width)
         return false;
 
-    // send the page address
-    sendDevCommand(kCmdPageModePageBase | page);
+    // send the (row) address
+    sendDevCommand(kCmdStartRow, row); // difference from the 1306, bytes sent after each other instead of OR'd together...
 
     // For the column start address, add the viewport x offset. Some devices
     // (Micro OLED) don't start at column 0 in the screen buffer
-    sendDevCommand((kCmdPageModeColTopBase | (column >> 4)) + m_viewport.x);
-    sendDevCommand(kCmdPageModeColLowBase & column);
+    sendDevCommand((kCmdStartColHigh | (column >> 4)) + m_viewport.x);
+    sendDevCommand(kCmdStartColLow & column);
 
     return true;
+}
+
+bool QwGrCH1120::getPixel(uint8_t x, uint8_t y) {
+    if (x >= m_viewport.width || y >= m_viewport.height)
+        return 0;
+
+    return (m_pBuffer[( y * (m_viewport.width / kByteNBits)) + (x / kByteNBits)] >> (x % kByteNBits)) & 0x01;
+}
+
+// Print the buffer as a 2D array of bits
+void QwGrCH1120::printBuffer() {
+    for (uint8_t y = 0; y < m_viewport.height; y++) {
+        for (uint8_t x = 0; x < m_viewport.width; x++) {
+            Serial.print(QwGrCH1120::getPixel(x, y) ? "1" : "0");
+        }
+        Serial.println();
+    }
+}
+
+void QwGrCH1120::rawPrintBuffer() {
+    for (uint8_t y = 0; y < m_viewport.height; y++) {
+        for (uint8_t x = 0; x < m_viewport.width / kByteNBits; x++) {
+            // Serial.print(m_pBuffer[x + y * (m_viewport.width / kByteNBits)], HEX);
+            uint8_t val = m_pBuffer[x + y * (m_viewport.width / kByteNBits)];
+            Serial.printf(" %02X", val);
+        }
+        Serial.println();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // display()
 //
+
 // Send the "dirty" areas of the graphics buffer to the device's screen buffer.
 // Only send the areas that need to be updated. The update region is based on
 // new graphics to display, and any currently displayed items that need to be
 // erased.
 
-void QwGrSSD1306::display()
-{
+void QwGrCH1120::display()
+{   
     // Loop over our page descriptors - if a page is dirty, send the graphics
     // buffer dirty region to the device for the current page
-
     pageState_t transferRange;
 
-    for (int i = 0; i < m_nPages; i++)
-    {
+    for (int i = 0 ; i < m_nPages; i++) {
         // We keep the erase rect seperate from dirty rect. Make temp copy of
         // dirty rect page range, expand to include erase rect page range.
 
@@ -949,7 +1058,10 @@ void QwGrSSD1306::display()
 
         // set the start address to write the updated data to the devices screen
         // buffer
-        setScreenBufferAddress(i, transferRange.xmin);
+
+        // write out the xmin and xmax for each page descriptor
+        // setScreenBufferAddress(i, transferRange.xmin + horz_flip_offset);
+        setScreenBufferAddress(transferRange.xmin + horz_flip_offset, i);
 
         // send the dirty data to the device
         sendDevData(m_pBuffer + (i * m_viewport.width) + transferRange.xmin, // this page start + xmin
@@ -969,6 +1081,7 @@ void QwGrSSD1306::display()
     m_pendingErase = false; // no longer pending
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////
 // Device communication methods
 ////////////////////////////////////////////////////////////////////////////////////
@@ -976,9 +1089,9 @@ void QwGrSSD1306::display()
 //
 // send a single command to the device via the current bus object
 
-void QwGrSSD1306::sendDevCommand(uint8_t command)
+void QwGrCH1120::sendDevCommand(uint8_t command)
 {
-    m_i2cBus->writeRegisterByte(m_i2cAddress, kDeviceSendCommand, command);
+    m_i2cBus->writeRegisterByte(m_i2cAddress, kCmdControlByte, command);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -986,12 +1099,12 @@ void QwGrSSD1306::sendDevCommand(uint8_t command)
 //
 // send a single command and value to the device via the current bus object.
 
-void QwGrSSD1306::sendDevCommand(uint8_t *commands, uint8_t n_commands)
+void QwGrCH1120::sendDevCommand(uint8_t *commands, uint8_t n_commands)
 {
     if (!commands || n_commands == 0)
         return;
 
-    m_i2cBus->writeRegisterRegion(m_i2cAddress, kDeviceSendCommand, commands, n_commands);
+    m_i2cBus->writeRegisterRegion(m_i2cAddress, kCmdControlByte, commands, n_commands);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1000,18 +1113,39 @@ void QwGrSSD1306::sendDevCommand(uint8_t *commands, uint8_t n_commands)
 // send a single command and value to the device via the current bus object.
 //
 
-void QwGrSSD1306::sendDevCommand(uint8_t command, uint8_t value)
+void QwGrCH1120::sendDevCommand(uint8_t command, uint8_t value)
 {
     uint8_t buffer[] = {command, value};
 
     sendDevCommand(buffer, 2);
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+// sendDeviceCommand()
+//
+// send a single command and value to the device via the current bus object.
+//
+void QwGrCH1120::sendDevCommand(uint8_t command, uint8_t start, uint8_t stop)
+{
+    uint8_t buffer[] = {command, start, stop};
+
+    sendDevCommand(buffer, 3);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 // sendDeviceData()
 //
-// send a single command to the device via the current bus object
-
-void QwGrSSD1306::sendDevData(uint8_t *pData, uint8_t nData)
+// send a block of data to the RAM of the device via the current bus object
+void QwGrCH1120::sendDevData(uint8_t *pData, uint16_t nData)
 {
-    m_i2cBus->writeRegisterRegion(m_i2cAddress, kDeviceSendData, pData, nData);
+    if (!pData || nData == 0){
+        Serial.println("Invalid data");
+        Serial.print("pData: ");
+        Serial.println((uintptr_t)pData, HEX);
+        Serial.print("nData: ");
+        Serial.println(nData);
+        return;
+    }
+
+    m_i2cBus->writeRegisterRegion(m_i2cAddress, kCmdRamControlByte, pData, nData);
 }

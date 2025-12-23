@@ -14,6 +14,7 @@
    Transparent OLED       https://www.sparkfun.com/products/15173
    "Narrow" OLED          https://www.sparkfun.com/products/24606
    Qwiic OLED 1.3in       https://www.sparkfun.com/products/23453
+   Qwiic OLED 1.5in       https://www.sparkfun.com/products/29530
 
   Written by Kirk Benell @ SparkFun Electronics, March 2022
 
@@ -35,6 +36,7 @@ QwiicMicroOLED myOLED;
 //QwiicTransparentOLED myOLED;
 //QwiicNarrowOLED myOLED;
 //Qwiic1in3OLED myOLED;
+//Qwiic1in5OLED myOLED;
 
 // Global variables - used to stash our screen size
 
