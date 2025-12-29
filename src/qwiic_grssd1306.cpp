@@ -130,6 +130,8 @@
     } while (false)
 
 // Macro to check and adjust record bounds based on a single location
+// The _x_ value must be within the screen (0 <= x < width), limit
+// values are ignored
 #define pageCheckBounds(_page_, _x_)                                                                                   \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -140,6 +142,8 @@
     } while (false)
 
 // Macro to check and adjust record bounds using another page descriptor
+// The _page2_ x values must be within the screen (0 <= x < width), limit
+// values are ignored
 #define pageCheckBoundsDesc(_page_, _page2_)                                                                           \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -150,6 +154,7 @@
     } while (false)
 
 // Macro to check and adjust record bounds using bounds values
+// Values _x0_ and _x1_ must be within the screen (0 <= x < width)
 #define pageCheckBoundsRange(_page_, _x0_, _x1_)                                                                       \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -880,7 +885,7 @@ void QwGrSSD1306::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t 
         bmp_y += neededBits;
 
         pageCheckBoundsRange(m_pageState[iPage], x0,
-                             x0 + dst_width); // mark dirty range in page desc
+                             x0 + dst_width - 1); // mark dirty range in page desc
     }
 }
 
