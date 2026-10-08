@@ -42,7 +42,7 @@
 #include "res/qwiic_resdef.h"
 #include "qwiic_grcommon.h"
 
-#define kMaxPageNumber 20
+#define kMaxPageNumberCH1120 20
 #define kMaxCH1120Width 160
 
 /////////////////////////////////////////////////////////////////////////////
@@ -159,8 +159,8 @@ class QwGrCH1120 : public QwGrBufferDevice {
         // Buffer variables
         uint8_t *m_pBuffer;                      // Pointer to the graphics buffer
         uint8_t m_nPages;                        // number of pages for current device
-        pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
-        pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
+        pageState_t m_pageState[kMaxPageNumberCH1120]; // page state descriptors
+        pageState_t m_pageErase[kMaxPageNumberCH1120]; // keep track of erase boundaries
         bool m_pendingErase;
 
         // display variables

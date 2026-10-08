@@ -413,7 +413,7 @@ void QwGrSSD1306::clearScreenBuffer(void)
     // Clear out the screen buffer on the device
     uint8_t emptyPage[kPageMax] = {0};
 
-    for (int i = 0; i < kMaxPageNumber; i++)
+    for (int i = 0; i < kMaxPageNumberSSD1306; i++)
     {
         setScreenBufferAddress(i, 0);                // start of page
         sendDevData((uint8_t *)emptyPage, kPageMax); // clear out page

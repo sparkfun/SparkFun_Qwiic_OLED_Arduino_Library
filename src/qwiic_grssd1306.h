@@ -106,7 +106,7 @@
 //
 // Define variables to manage page state
 
-#define kMaxPageNumber 8
+#define kMaxPageNumberSSD1306 8
 
 // moved to common for now...
 // typedef struct
@@ -231,8 +231,8 @@ class QwGrSSD1306 : public QwGrBufferDevice
     // Buffer variables
     uint8_t *m_pBuffer;                      // Pointer to the graphics buffer
     uint8_t m_nPages;                        // number of pages for current device
-    pageState_t m_pageState[kMaxPageNumber]; // page state descriptors
-    pageState_t m_pageErase[kMaxPageNumber]; // keep track of erase boundaries
+    pageState_t m_pageState[kMaxPageNumberSSD1306]; // page state descriptors
+    pageState_t m_pageErase[kMaxPageNumberSSD1306]; // keep track of erase boundaries
     bool m_pendingErase;
 
     // display variables

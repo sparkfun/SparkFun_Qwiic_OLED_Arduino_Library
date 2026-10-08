@@ -744,8 +744,8 @@ template <typename DeviceType> class QwiicOLEDBaseClass : public Print // NOTE: 
 
     void setCursor(uint8_t x, uint8_t y)
     {
-
-        if (x < 0 || x >= m_device.width() || y < 0 || y >= m_device.height())
+        // Note: x < 0 and y < 0 are also illegal but are not possible with uint8_t arguments
+        if (x >= m_device.width() || y >= m_device.height())
             return;
 
         m_cursorX = x;

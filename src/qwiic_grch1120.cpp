@@ -466,7 +466,7 @@ void QwGrCH1120::clearScreenBuffer(void)
     // Clear out the screen buffer on the device
     uint8_t emptyPage[kPageMax] = {0};
 
-    for (int i = 0 ; i < kMaxPageNumber; i++)
+    for (int i = 0 ; i < kMaxPageNumberCH1120; i++)
     {
         setScreenBufferAddress(0, i);
         sendDevData(emptyPage, kPageMax);
@@ -967,7 +967,7 @@ void QwGrCH1120::drawBitmap(uint8_t x0, uint8_t y0, uint8_t dst_width, uint8_t d
         bmp_y += neededBits;
         
         pageCheckBoundsRange(m_pageState[iPage], x0,
-                        x0 + dst_width); // mark dirty range in page desc
+                        x0 + dst_width - 1); // mark dirty range in page desc
     }
 }
 
