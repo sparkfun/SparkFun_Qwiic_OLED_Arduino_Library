@@ -1021,7 +1021,9 @@ void QwGrCH1120::rawPrintBuffer() {
         for (uint8_t x = 0; x < m_viewport.width / kByteNBits; x++) {
             // Serial.print(m_pBuffer[x + y * (m_viewport.width / kByteNBits)], HEX);
             uint8_t val = m_pBuffer[x + y * (m_viewport.width / kByteNBits)];
-            Serial.printf(" %02X", val);
+            Serial.write(' ');
+            if (val < 16) Serial.write('0');
+            Serial.print(val, HEX);
         }
         Serial.println();
     }
